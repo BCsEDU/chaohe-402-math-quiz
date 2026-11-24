@@ -1,0 +1,3237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>康軒四上數學｜隨堂練習與線上測驗互動網</title>
+<style>
+  :root {
+    --bg: #eef4fa;
+    --surface: #ffffff;
+    --surface-sub: #f8fafc;
+    --primary: #1e40af;
+    --primary-hover: #1d4ed8;
+    --primary-light: #dbeafe;
+    --accent: #d97706;
+    --teal: #0f766e;
+    --text: #0f172a;
+    --text-muted: #475569;
+    --border: #cbd5e1;
+    --correct-bg: #dcfce7;
+    --correct-border: #16a34a;
+    --correct-text: #14532d;
+    --wrong-bg: #fee2e2;
+    --wrong-border: #dc2626;
+    --wrong-text: #7f1d1d;
+    --font-scale: 1;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* 頂部導覽列 */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: #1e3a8a;
+    color: #fff;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .brand-badge {
+    background: #fbbf24;
+    color: #1e3a8a;
+    font-weight: 900;
+    font-size: 1.15rem;
+    padding: 4px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .brand-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tool-btn {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tool-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+
+  .tool-btn.teacher-link {
+    background: rgba(251, 191, 36, 0.18);
+    border-color: rgba(251, 191, 36, 0.65);
+    color: #fef3c7;
+  }
+
+  main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px 18px 72px;
+  }
+
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
+  /* 首頁 Hero Banner */
+  .hero-banner {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #0284c7 100%);
+    color: #fff;
+    border-radius: 24px;
+    padding: 30px 34px;
+    margin-bottom: 26px;
+    box-shadow: 0 12px 28px rgba(30, 64, 175, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+
+  .hero-banner h1 {
+    font-size: calc(2.15rem * var(--font-scale));
+    font-weight: 900;
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+
+  .hero-banner p {
+    font-size: calc(1.2rem * var(--font-scale));
+    color: #dbeafe;
+    font-weight: 600;
+  }
+
+  .hero-meta-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .hero-pill {
+    background: rgba(255, 255, 255, 0.16);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+
+  /* 單元卡片格線 */
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 22px;
+  }
+
+  .lesson-card {
+    background: var(--surface);
+    border: 3px solid #cbd5e1;
+    border-radius: 22px;
+    padding: 26px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    transition: all 0.2s ease;
+  }
+
+  .lesson-card.ready {
+    border-color: #2563eb;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+  }
+
+  .lesson-card.locked {
+    background: #f1f5f9;
+    border-style: dashed;
+    opacity: 0.78;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .lesson-tag {
+    font-size: calc(1.1rem * var(--font-scale));
+    font-weight: 900;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  .lesson-card.locked .lesson-tag {
+    background: #e2e8f0;
+    color: #475569;
+  }
+
+  .status-pill {
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .status-pill.ready { background: #dcfce7; color: #15803d; }
+  .status-pill.soon { background: #e2e8f0; color: #475569; }
+
+  .lesson-name {
+    font-size: calc(1.95rem * var(--font-scale));
+    font-weight: 900;
+    color: var(--text);
+    margin-top: 12px;
+  }
+
+  .lesson-desc {
+    font-size: calc(1.12rem * var(--font-scale));
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+  }
+
+  .action-btn {
+    flex: 1;
+    min-width: 150px;
+    padding: 13px 12px;
+    border-radius: 14px;
+    font-size: calc(1.08rem * var(--font-scale));
+    font-weight: 900;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .action-btn.proj { background: #2563eb; color: #fff; }
+  .action-btn.proj:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-2px); }
+
+  .action-btn.exam { background: #059669; color: #fff; }
+  .action-btn.exam:hover:not(:disabled) { background: #047857; transform: translateY(-2px); }
+
+  .action-btn:disabled {
+    background: #cbd5e1;
+    color: #64748b;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ==================== 學生登入頁 ==================== */
+  .login-card {
+    max-width: 600px;
+    margin: 34px auto;
+    background: #fff;
+    border-radius: 24px;
+    border: 3.5px solid #2563eb;
+    padding: 36px 32px;
+    box-shadow: 0 18px 40px rgba(37, 99, 235, 0.12);
+  }
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .login-header h2 {
+    font-size: calc(2rem * var(--font-scale));
+    color: #1e3a8a;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .login-header p {
+    font-size: calc(1.18rem * var(--font-scale));
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: calc(1.25rem * var(--font-scale));
+    font-weight: 900;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2.5px solid #cbd5e1;
+    font-size: calc(1.3rem * var(--font-scale));
+    font-weight: 800;
+    color: #0f172a;
+    background: #f8fafc;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-control:focus { border-color: #2563eb; background: #fff; }
+
+  .btn-submit-login {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: #059669;
+    color: #fff;
+    font-size: calc(1.5rem * var(--font-scale));
+    font-weight: 900;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.3);
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .btn-submit-login:hover { background: #047857; transform: translateY(-2px); }
+
+  /* ==================== 練習與測驗共用頂部條 & 題號列 ==================== */
+  .mode-topbar {
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px 22px;
+    margin-bottom: 16px;
+    border: 2.5px solid #cbd5e1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .exam-bar {
+    background: #1e3a8a;
+    color: #fff;
+    border-radius: 18px;
+    padding: 16px 22px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .exam-student-badge {
+    font-size: calc(1.25rem * var(--font-scale));
+    font-weight: 900;
+    background: #fbbf24;
+    color: #1e3a8a;
+    padding: 5px 16px;
+    border-radius: 999px;
+  }
+
+  .exam-progress-text {
+    font-size: calc(1.18rem * var(--font-scale));
+    font-weight: 800;
+    color: #dbeafe;
+  }
+
+  /* 大題切換分頁列 */
+  .section-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .section-tab {
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: 2px solid #cbd5e1;
+    background: #fff;
+    color: #334155;
+    font-size: calc(1.08rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .section-tab:hover { border-color: #2563eb; background: #eff6ff; }
+  .section-tab.active {
+    background: #1e40af;
+    color: #fff;
+    border-color: #1e3a8a;
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.22);
+  }
+
+  /* 題組快選點點 */
+  .q-dots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .q-dot {
+    min-height: 46px;
+    padding: 4px 6px;
+    border-radius: 12px;
+    border: 2px solid #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    font-size: calc(1.05rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .q-dot.partial {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    color: #92400e;
+  }
+  .q-dot.answered {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e40af;
+  }
+  .q-dot.graded-ok {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #15803d;
+  }
+  .q-dot.graded-err {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #b91c1c;
+  }
+  .q-dot.current {
+    background: #1e40af;
+    color: #fff;
+    border-color: #1e3a8a;
+    transform: scale(1.06);
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.32);
+  }
+
+  /* ==================== 題目舞台卡片 ==================== */
+  .stage-card {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 30px 32px;
+    border: 3px solid #94a3b8;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    margin-bottom: 22px;
+  }
+
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .section-pill {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: calc(1.05rem * var(--font-scale));
+  }
+  .sec-1 { background: #dbeafe; color: #1e40af; }
+  .sec-2 { background: #ccfbf1; color: #0f766e; }
+  .sec-3 { background: #ede9fe; color: #5b21b6; }
+
+  .question-num-pill {
+    display: inline-block;
+    background: #1e40af;
+    color: #fff;
+    font-size: calc(1.45rem * var(--font-scale));
+    font-weight: 900;
+    padding: 4px 16px;
+    border-radius: 12px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  .question-title-text {
+    font-size: calc(1.85rem * var(--font-scale));
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  /* 填空題排版與輸入框 */
+  .fill-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .fill-row {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 22px;
+    font-size: calc(1.75rem * var(--font-scale));
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 2.1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sub-num {
+    display: inline-block;
+    color: #1e40af;
+    font-weight: 900;
+    margin-right: 8px;
+  }
+
+  .math-input-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    vertical-align: baseline;
+    margin: 0 6px;
+    flex-wrap: wrap;
+  }
+
+  .math-input {
+    width: calc(128px * var(--font-scale));
+    min-width: 92px;
+    height: calc(54px * var(--font-scale));
+    padding: 4px 10px;
+    font-size: calc(1.65rem * var(--font-scale));
+    font-weight: 900;
+    text-align: center;
+    color: #1e3a8a;
+    background: #ffffff;
+    border: 3px solid #64748b;
+    border-radius: 12px;
+    outline: none;
+    transition: all 0.15s;
+    font-variant-numeric: tabular-nums;
+  }
+  .math-input:focus {
+    border-color: #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+  }
+  .math-input.input-correct {
+    border-color: #16a34a;
+    background: #dcfce7;
+    color: #14532d;
+  }
+  .math-input.input-wrong {
+    border-color: #dc2626;
+    background: #fee2e2;
+    color: #7f1d1d;
+  }
+  .math-input:disabled {
+    cursor: default;
+    opacity: 0.95;
+  }
+
+  .inline-feedback {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: calc(1.05rem * var(--font-scale));
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 8px;
+    vertical-align: middle;
+  }
+  .inline-feedback.ok { background: #dcfce7; color: #15803d; border: 1.5px solid #86efac; }
+  .inline-feedback.err { background: #fee2e2; color: #b91c1c; border: 1.5px solid #fca5a5; }
+  .inline-feedback.locked-hint { background: #fef3c7; color: #92400e; border: 1.5px solid #fcd34d; }
+
+  /* ==================== 連連看 SVG 互動看板 ==================== */
+  .match-helper-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .match-status-hint {
+    font-size: calc(1.1rem * var(--font-scale));
+    font-weight: 800;
+    color: #1e40af;
+    background: #eff6ff;
+    border: 1.5px solid #93c5fd;
+    padding: 6px 14px;
+    border-radius: 10px;
+  }
+
+  .match-board {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 14px 0;
+    padding: 16px 12px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 18px;
+    user-select: none;
+  }
+
+  .match-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .match-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 14px;
+    z-index: 3;
+  }
+
+  .match-spacer {
+    min-width: 60px;
+    z-index: 1;
+  }
+
+  .match-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 64px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 3px solid #cbd5e1;
+    border-radius: 14px;
+    font-size: calc(1.45rem * var(--font-scale));
+    font-weight: 900;
+    color: #0f172a;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+  }
+  .match-item.right-item {
+    flex-direction: row-reverse;
+    text-align: right;
+  }
+  .match-item:hover:not(:disabled) {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+  .match-item.selected {
+    border-color: #f59e0b;
+    background: #fef3c7;
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.28);
+  }
+  .match-item.connected {
+    background: #eff6ff;
+  }
+  .match-item.graded-ok {
+    border-color: #16a34a !important;
+    background: #dcfce7 !important;
+    color: #14532d;
+  }
+  .match-item.graded-err {
+    border-color: #dc2626 !important;
+    background: #fee2e2 !important;
+    color: #7f1d1d;
+  }
+  .match-item:disabled {
+    cursor: default;
+  }
+
+  .match-dot {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #64748b;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #64748b;
+  }
+
+  .match-summary-list {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .match-chip {
+    font-size: calc(1.02rem * var(--font-scale));
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 1.5px solid #cbd5e1;
+    background: #fff;
+  }
+  .match-chip.ok { background: #dcfce7; border-color: #16a34a; color: #14532d; }
+  .match-chip.err { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+
+  /* ==================== 比大小題 ==================== */
+  .cmp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .cmp-row {
+    background: #f8fafc;
+    border: 2.5px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .cmp-row.row-ok { border-color: #16a34a; background: #f0fdf4; }
+  .cmp-row.row-err { border-color: #dc2626; background: #fef2f2; }
+
+  .cmp-expr {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: calc(2rem * var(--font-scale));
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cmp-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(64px * var(--font-scale));
+    height: calc(58px * var(--font-scale));
+    border: 3.5px solid #1e40af;
+    border-radius: 12px;
+    background: #fff;
+    color: #1e40af;
+    font-size: calc(2.1rem * var(--font-scale));
+    font-weight: 900;
+  }
+  .cmp-box.filled { background: #dbeafe; }
+  .cmp-box.ok { border-color: #16a34a; background: #dcfce7; color: #15803d; }
+  .cmp-box.err { border-color: #dc2626; background: #fee2e2; color: #b91c1c; }
+
+  .cmp-btns {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .cmp-btn {
+    min-width: calc(68px * var(--font-scale));
+    height: calc(58px * var(--font-scale));
+    border-radius: 14px;
+    border: 3px solid #cbd5e1;
+    background: #fff;
+    color: #0f172a;
+    font-size: calc(1.9rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cmp-btn:hover:not(:disabled) {
+    border-color: #2563eb;
+    background: #eff6ff;
+    transform: translateY(-2px);
+  }
+  .cmp-btn.active {
+    background: #1e40af;
+    border-color: #1e3a8a;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.28);
+  }
+  .cmp-btn:disabled { cursor: default; opacity: 0.7; }
+
+  /* 詳解箱 */
+  .explanation-box {
+    margin-top: 22px;
+    background: #fffbeb;
+    border: 3px solid #f59e0b;
+    border-radius: 16px;
+    padding: 18px 24px;
+    display: none;
+  }
+  .explanation-box.show { display: block; }
+  .exp-header {
+    font-size: calc(1.35rem * var(--font-scale));
+    font-weight: 900;
+    color: #b45309;
+    margin-bottom: 6px;
+  }
+  .exp-body {
+    font-size: calc(1.28rem * var(--font-scale));
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.6;
+  }
+
+  /* 底部控制鈕 */
+  .stage-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    padding: 14px 22px;
+    border-radius: 14px;
+    font-size: calc(1.22rem * var(--font-scale));
+    font-weight: 900;
+    border: 2.5px solid #cbd5e1;
+    background: #fff;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ctrl-btn:hover:not(:disabled) { border-color: #1e40af; background: #eff6ff; }
+  .ctrl-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .ctrl-btn.primary { background: #1e40af; color: #fff; border-color: #1e3a8a; }
+  .ctrl-btn.primary:hover:not(:disabled) { background: #1d4ed8; }
+  .ctrl-btn.success { background: #059669; color: #fff; border-color: #047857; }
+  .ctrl-btn.success:hover:not(:disabled) { background: #047857; }
+  .ctrl-btn.reveal { background: #f59e0b; color: #fff; border-color: #d97706; }
+  .ctrl-btn.reveal:hover:not(:disabled) { background: #d97706; }
+
+  /* 成績與訂正畫面 */
+  .result-card {
+    max-width: 820px;
+    margin: 24px auto;
+    background: #fff;
+    border-radius: 26px;
+    border: 4px solid #059669;
+    padding: 36px 30px;
+    text-align: center;
+    box-shadow: 0 16px 36px rgba(5, 150, 105, 0.15);
+  }
+  .result-score-title {
+    font-size: calc(1.65rem * var(--font-scale));
+    color: #065f46;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .result-score-num {
+    font-size: calc(4.5rem * var(--font-scale));
+    font-weight: 900;
+    color: #059669;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .result-desc {
+    font-size: calc(1.3rem * var(--font-scale));
+    color: #475569;
+    font-weight: 700;
+    margin-bottom: 22px;
+  }
+
+  .bonus-callout {
+    background: #fffbeb;
+    border: 3px solid #f59e0b;
+    border-radius: 18px;
+    padding: 18px 22px;
+    margin: 16px auto 24px;
+    max-width: 680px;
+    text-align: left;
+    font-size: calc(1.18rem * var(--font-scale));
+    font-weight: 800;
+    color: #92400e;
+    line-height: 1.6;
+  }
+
+  .result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .review-sheet-wrap {
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .retry-bar {
+    background: linear-gradient(135deg, #7c2d12 0%, #c2410c 100%);
+    color: #fff;
+    border-radius: 18px;
+    padding: 18px 24px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .keyboard-hint {
+    text-align: center;
+    margin-top: 18px;
+    color: #64748b;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 10px 14px; }
+    .brand-title { font-size: 1.2rem; }
+    main { padding: 16px 12px 56px; }
+    .stage-card { padding: 20px 16px; border-radius: 18px; }
+    .fill-row { padding: 14px 14px; font-size: calc(1.35rem * var(--font-scale)); }
+    .math-input { width: 92px; min-width: 74px; height: 46px; font-size: calc(1.3rem * var(--font-scale)); }
+    .match-board { grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr); padding: 12px 8px; }
+    .match-spacer { min-width: 44px; }
+    .match-item { padding: 10px 10px; font-size: calc(1.1rem * var(--font-scale)); min-height: 54px; }
+    .cmp-expr { font-size: calc(1.5rem * var(--font-scale)); gap: 10px; }
+    .cmp-btn { min-width: 56px; height: 50px; font-size: calc(1.5rem * var(--font-scale)); }
+    .lesson-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand" onclick="goHome()" title="返回單元首頁">
+    <span class="brand-badge">康軒四上數學</span>
+    <span class="brand-title">隨堂練習與線上測驗互動網</span>
+  </div>
+  <div class="toolbar">
+    <button class="tool-btn" id="btn-home" onclick="goHome()" style="display:none;">🏠 回首頁</button>
+    <button class="tool-btn" onclick="adjustFontSize(-0.1)" title="縮小字體">A-</button>
+    <button class="tool-btn" onclick="adjustFontSize(0)" title="標準字體">標準</button>
+    <button class="tool-btn" onclick="adjustFontSize(0.12)" title="放大字體">A+</button>
+    <button class="tool-btn" onclick="toggleFullscreen()">⛶ 全螢幕</button>
+    <a class="tool-btn teacher-link" href="teacher.html">👩‍🏫 教師後台</a>
+  </div>
+</header>
+
+<main>
+  <!-- 視圖 1：首頁（第六～十單元） -->
+  <section id="view-home" class="view-panel active">
+    <div class="hero-banner">
+      <div>
+        <h1>康軒四上數學｜單元隨堂練習與測驗</h1>
+        <p>請點選下方單元進入「課堂互動練習」或「隨堂線上測驗」</p>
+      </div>
+      <div class="hero-meta-pills">
+        <span class="hero-pill">📐 第六～十單元</span>
+        <span class="hero-pill">✨ 第七單元「小數」已開放</span>
+      </div>
+    </div>
+
+    <div class="lesson-grid" id="unit-grid"></div>
+
+    <div style="text-align:center;margin-top:44px;padding-top:16px;border-top:1px solid #cbd5e1;">
+      <a href="teacher.html" style="color:#475569;font-size:1rem;text-decoration:none;font-weight:800;">👩‍🏫 前往教師成績管理後台</a>
+    </div>
+  </section>
+
+  <!-- 視圖 2：學生線上測驗登入 -->
+  <section id="view-exam-login" class="view-panel">
+    <div class="login-card">
+      <div class="login-header">
+        <h2 id="login-unit-title">第七單元《小數》線上測驗</h2>
+        <p>請選擇班級與座號，即可開始進行隨堂線上測驗</p>
+      </div>
+      <form id="student-login-form" onsubmit="startStudentExam(event)">
+        <div class="form-group">
+          <label for="student-class">班級</label>
+          <select id="student-class" class="form-control" onchange="toggleCustomClassInput()">
+            <option value="402" selected>四年二班 (402)</option>
+            <option value="401">四年一班 (401)</option>
+            <option value="403">四年三班 (403)</option>
+            <option value="404">四年四班 (404)</option>
+            <option value="__custom__">其他班級（自行輸入）</option>
+          </select>
+          <input type="text" id="student-class-custom" class="form-control" style="display:none;margin-top:10px;" placeholder="例如：405 或 4-2">
+        </div>
+        <div class="form-group">
+          <label for="student-seat">座號（1～29 號）</label>
+          <select id="student-seat" class="form-control" required>
+            <option value="" disabled selected>-- 請選擇您的座號 --</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-submit-login">🚀 開始線上測驗</button>
+        <button type="button" class="ctrl-btn" style="width:100%;margin-top:14px;justify-content:center;" onclick="goHome()">取消，返回首頁</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 視圖 3：課堂互動練習模式 -->
+  <section id="view-practice" class="view-panel">
+    <div class="mode-topbar">
+      <div>
+        <span style="font-size:calc(1.6rem * var(--font-scale));font-weight:900;color:#1e3a8a;" id="prac-unit-title"></span>
+        <span style="background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:999px;font-weight:800;font-size:1rem;margin-left:8px;">課堂互動練習</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="ctrl-btn" onclick="togglePracticeViewMode()" id="btn-prac-view-toggle">📋 切換全大題一覽</button>
+      </div>
+    </div>
+
+    <div class="section-tabs" id="prac-section-tabs"></div>
+    <div class="q-dots" id="prac-q-dots"></div>
+
+    <div id="prac-single-container">
+      <div id="prac-stage-card-slot"></div>
+      <div class="stage-controls">
+        <div class="ctrl-group">
+          <button class="ctrl-btn" id="btn-prac-prev" onclick="prevPracCard()">⬅ 上一題</button>
+          <button class="ctrl-btn primary" id="btn-prac-next" onclick="nextPracCard()">下一題 ➡</button>
+        </div>
+        <div class="ctrl-group">
+          <button class="ctrl-btn success" onclick="checkPracCurrentCard()">✅ 即時批改本題</button>
+          <button class="ctrl-btn reveal" onclick="revealPracCurrentCard()">💡 顯示答案與解析</button>
+          <button class="ctrl-btn" onclick="resetPracCurrentCard()">🔄 重置本題</button>
+          <button class="ctrl-btn" onclick="goHome()">🏠 返回首頁</button>
+        </div>
+      </div>
+      <div class="keyboard-hint">
+        ⌨️ 課堂快捷鍵：輸入框外按 <b>← / →</b> 換題 ｜ <b>Enter</b> 可在填空欄跳至下一格
+      </div>
+    </div>
+
+    <div id="prac-list-container" style="display:none;flex-direction:column;gap:22px;"></div>
+  </section>
+
+  <!-- 視圖 4：學生正式線上測驗 -->
+  <section id="view-exam-test" class="view-panel">
+    <div class="exam-bar">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="exam-student-badge" id="exam-badge-info">402 班 01 號</span>
+        <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="exam-test-title">第七單元《小數》線上測驗</span>
+      </div>
+      <div class="exam-progress-text" id="exam-progress-text">已填答 0 / 45 格</div>
+    </div>
+
+    <div class="section-tabs" id="exam-section-tabs"></div>
+    <div class="q-dots" id="exam-q-dots"></div>
+
+    <div id="exam-stage-card-slot"></div>
+
+    <div class="stage-controls">
+      <div class="ctrl-group">
+        <button class="ctrl-btn" id="btn-exam-prev" onclick="prevExamCard()">⬅ 上一題</button>
+        <button class="ctrl-btn primary" id="btn-exam-next" onclick="nextExamCard()">下一題 ➡</button>
+      </div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn success" id="btn-submit-exam" onclick="confirmSubmitExam()" style="font-size:calc(1.35rem * var(--font-scale));">
+          📝 檢查並交卷
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 視圖 5：批改結果與詳解畫面 -->
+  <section id="view-exam-result" class="view-panel">
+    <div class="result-card" id="res-card">
+      <div class="result-score-title" id="res-student-header">測驗已送出！</div>
+      <div class="result-score-num" id="res-score-num">100 分</div>
+      <div class="result-desc" id="res-desc">共 45 格，答對 45 格</div>
+      <div class="bonus-callout" id="res-bonus-callout" style="display:none;"></div>
+      <div class="result-actions">
+        <button class="ctrl-btn" id="btn-start-retry" onclick="startWrongRetry()" style="display:none;background:#d97706;color:#fff;border-color:#b45309;font-size:1.3rem;">
+          💪 進行錯題訂正練習（全對 +10 分）
+        </button>
+        <button class="ctrl-btn primary" id="btn-peek-answers" onclick="revealAllWithoutRetry()" style="display:none;font-size:1.18rem;">
+          👁 直接查看完整正解與詳解
+        </button>
+        <button class="ctrl-btn" onclick="goHome()" style="font-size:1.25rem;">🏠 返回單元首頁</button>
+      </div>
+    </div>
+
+    <div id="correction-sheet" class="review-sheet-wrap"></div>
+  </section>
+
+  <!-- 視圖 6：錯題訂正練習畫面 -->
+  <section id="view-exam-retry" class="view-panel">
+    <div class="retry-bar">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="exam-student-badge" id="retry-badge-info">402 班 01 號</span>
+        <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="retry-unit-title">錯題訂正練習（全部答對加 10 分）</span>
+      </div>
+      <div class="exam-progress-text" id="retry-progress-text" style="color:#ffedd5;">待訂正 0 格</div>
+    </div>
+
+    <div id="retry-cards-list" style="display:flex;flex-direction:column;gap:22px;"></div>
+
+    <div class="stage-controls" style="margin-top:24px;justify-content:center;">
+      <button class="ctrl-btn success" id="btn-submit-retry" onclick="submitWrongRetry()" style="font-size:calc(1.4rem * var(--font-scale));padding:16px 32px;">
+        ✅ 送出錯題訂正（限一次加分機會）
+      </button>
+      <button class="ctrl-btn" onclick="cancelRetryBackToResult()" style="font-size:calc(1.2rem * var(--font-scale));">
+        ↩ 先返回成績頁
+      </button>
+    </div>
+  </section>
+</main>
+
+<script>
+// ==================== Supabase 連線設定（共用專案） ====================
+const SUPABASE_CONFIG = {
+  URL: "https://ppdgubracsneozahujxl.supabase.co",
+  ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZGd1YnJhY3NuZW96YWh1anhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDY2ODAsImV4cCI6MjEwOTg4MjY4MH0.sqLIf_xBLNyJ4zG0twoBfnMkYA8-UE0DvyG-3gXn-RE"
+};
+
+const MATCH_COLORS = ["#2563eb", "#d97706", "#7c3aed", "#0891b2"];
+const CMP_DISPLAY = { ">": "＞", "<": "＜", "=": "＝" };
+
+// ==================== 單元與題庫定義 ====================
+const UNITS = [
+  {
+    id: "U6",
+    examId: "U6-math-triangle",
+    unitNum: "第六單元",
+    title: "三角形",
+    subtitle: "認識三角形、以邊與角分類（建置中）",
+    ready: false,
+    cards: []
+  },
+  {
+    id: "U7",
+    examId: "U7-math-decimal",
+    unitNum: "第七單元",
+    title: "小數",
+    subtitle: "認識二位小數、長度換算、小數比大小（三大題 15 題組，共 45 格）",
+    ready: true,
+    sections: [
+      { idx: 1, name: "第一大題：認識二位小數" },
+      { idx: 2, name: "第二大題：小數與長度換算" },
+      { idx: 3, name: "第三大題：小數比大小" }
+    ],
+    cards: [
+      // ---------- 第一大題：認識二位小數（原卷 (6)~(12)） ----------
+      {
+        cardId: "u7-s1-q6",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(6)",
+        title: "認識二位小數的計數單位",
+        kind: "fill",
+        rows: [
+          {
+            parts: [
+              "0.06 是 ",
+              { id: "u0", type: "integer", expected: "6", label: "一(6) 0.06是幾個0.01" },
+              " 個 0.01 合起來的。"
+            ]
+          }
+        ],
+        explanation: "0.01 是 1 個百分位（0.01），0.06 裡面共有 6 個 0.01。"
+      },
+      {
+        cardId: "u7-s1-q7",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(7)",
+        title: "二位小數的組成與分解",
+        kind: "fill",
+        rows: [
+          {
+            parts: [
+              "0.27 是 27 個 ",
+              { id: "u1", type: "decimal", expected: "0.01", label: "一(7) 0.27是27個多少" },
+              " 合起來的，也是 2 個 0.1 和 ",
+              { id: "u2", type: "integer", expected: "7", label: "一(7) 幾個0.01" },
+              " 個 0.01 合起來的。"
+            ]
+          }
+        ],
+        explanation: "0.27 有 27 個 0.01；也可以看成十分位的 2 個 0.1（0.2）和百分位的 7 個 0.01（0.07）合起來。"
+      },
+      {
+        cardId: "u7-s1-q8",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(8)",
+        title: "辨識位值數字（個位→十分位→百分位）",
+        kind: "fill",
+        rows: [
+          {
+            parts: [
+              "6.49 的個位數字是 ",
+              { id: "u3", type: "integer", expected: "6", label: "一(8) 6.49個位數字" },
+              "，十分位數字是 ",
+              { id: "u4", type: "integer", expected: "4", label: "一(8) 6.49十分位數字" },
+              "，百分位數字是 ",
+              { id: "u5", type: "integer", expected: "9", label: "一(8) 6.49百分位數字" },
+              "。"
+            ]
+          }
+        ],
+        explanation: "小數點左邊第一位是個位（6），小數點右邊第一位是十分位（4），小數點右邊第二位是百分位（9）。"
+      },
+      {
+        cardId: "u7-s1-q9",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(9)",
+        title: "辨識位值數字（注意順序：百分位→十分位→個位）",
+        kind: "fill",
+        rows: [
+          {
+            parts: [
+              "4.28 的百分位數字是 ",
+              { id: "u6", type: "integer", expected: "8", label: "一(9) 4.28百分位數字" },
+              "，十分位數字是 ",
+              { id: "u7", type: "integer", expected: "2", label: "一(9) 4.28十分位數字" },
+              "，個位數字是 ",
+              { id: "u8", type: "integer", expected: "4", label: "一(9) 4.28個位數字" },
+              "。"
+            ]
+          }
+        ],
+        explanation: "⚠️ 請小心題目問的順序是「百分位 → 十分位 → 個位」！4.28 的百分位是 8、十分位是 2、個位是 4。"
+      },
+      {
+        cardId: "u7-s1-q10",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(10)",
+        title: "小數的定位板與進位合成",
+        kind: "fill",
+        rows: [
+          {
+            parts: [
+              "11 個 1、2 個 0.1 和 16 個 0.01 合起來是 ",
+              { id: "u9", type: "decimal", expected: "11.36", label: "一(10) 11個1、2個0.1、16個0.01" },
+              "。"
+            ]
+          }
+        ],
+        explanation: "11 個 1 是 11；16 個 0.01 可以進位成 1 個 0.1 和 6 個 0.01（0.16），加上 2 個 0.1（0.2），合起來是 11 ＋ 0.2 ＋ 0.16 ＝ 11.36。"
+      },
+      {
+        cardId: "u7-s1-q11",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(11)",
+        title: "十分位滿十進位與補零",
+        kind: "fill",
+        rows: [
+          {
+            parts: [
+              "20 個 0.1 和 5 個 0.01 合起來是 ",
+              { id: "u10", type: "decimal", expected: "2.05", label: "一(11) 20個0.1和5個0.01" },
+              "。"
+            ]
+          }
+        ],
+        explanation: "10 個 0.1 是 1，所以 20 個 0.1 是 2；再加上 5 個 0.01（0.05），合起來是 2.05（十分位一定要寫 0，不可寫成 2.5）。"
+      },
+      {
+        cardId: "u7-s1-q12",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(12)",
+        title: "將正確的讀法和記法連起來",
+        kind: "match",
+        left: ["30.03", "3.03", "33.3", "3.3"],
+        right: ["三點三", "三十三點三", "三點零三", "三十點零三"],
+        pairs: [
+          { id: "u11", leftIdx: 0, rightIdx: 3, label: "一(12) 30.03讀法" },
+          { id: "u12", leftIdx: 1, rightIdx: 2, label: "一(12) 3.03讀法" },
+          { id: "u13", leftIdx: 2, rightIdx: 1, label: "一(12) 33.3讀法" },
+          { id: "u14", leftIdx: 3, rightIdx: 0, label: "一(12) 3.3讀法" }
+        ],
+        explanation: "整數部分依整數讀法（30 讀三十、33 讀三十三），小數點讀「點」，小數部分依數字逐位讀出（.03 讀零三）。"
+      },
+
+      // ---------- 第二大題：小數與長度換算（原卷 (1)~(4)） ----------
+      {
+        cardId: "u7-s2-q1",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(1)",
+        title: "用小數填填看（公分換算成公尺）",
+        kind: "fill",
+        rows: [
+          { subLabel: "①", parts: ["815 公分＝", { id: "u15", type: "decimal", expected: "8.15", label: "二(1)① 815公分＝幾公尺" }, " 公尺"] },
+          { subLabel: "②", parts: ["6 公尺 52 公分＝", { id: "u16", type: "decimal", expected: "6.52", label: "二(1)② 6公尺52公分＝幾公尺" }, " 公尺"] },
+          { subLabel: "③", parts: ["7 公尺 50 公分＝", { id: "u17", type: "decimal", expected: "7.5", label: "二(1)③ 7公尺50公分＝幾公尺" }, " 公尺"] },
+          { subLabel: "④", parts: ["504 公分＝", { id: "u18", type: "decimal", expected: "5.04", label: "二(1)④ 504公分＝幾公尺" }, " 公尺"] },
+          { subLabel: "⑤", parts: ["8 公分＝", { id: "u19", type: "decimal", expected: "0.08", label: "二(1)⑤ 8公分＝幾公尺" }, " 公尺"] }
+        ],
+        explanation: "1 公尺＝100 公分，所以 1 公分＝0.01 公尺。① 815 公分＝8.15 公尺；② 6 公尺 52 公分＝6.52 公尺；③ 7 公尺 50 公分＝7.50 公尺＝7.5 公尺（填 7.5 或 7.50 皆對）；④ 504 公分＝5.04 公尺；⑤ 8 公分＝0.08 公尺（十分位為 0，不可寫成 0.8）。"
+      },
+      {
+        cardId: "u7-s2-q2",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(2)",
+        title: "用整數填填看（公尺拆成公尺與公分）",
+        kind: "fill",
+        rows: [
+          {
+            subLabel: "①",
+            parts: [
+              "4.86 公尺＝",
+              { id: "u20", type: "integer", expected: "4", label: "二(2)① 4.86公尺_公尺" }, " 公尺 ",
+              { id: "u21", type: "integer", expected: "86", label: "二(2)① 4.86公尺_公分" }, " 公分"
+            ]
+          },
+          {
+            subLabel: "②",
+            parts: [
+              "3.58 公尺＝",
+              { id: "u22", type: "integer", expected: "3", label: "二(2)② 3.58公尺_公尺" }, " 公尺 ",
+              { id: "u23", type: "integer", expected: "58", label: "二(2)② 3.58公尺_公分" }, " 公分"
+            ]
+          },
+          {
+            subLabel: "③",
+            parts: [
+              "8.07 公尺＝",
+              { id: "u24", type: "integer", expected: "8", label: "二(2)③ 8.07公尺_公尺" }, " 公尺 ",
+              { id: "u25", type: "integer", expected: "7", label: "二(2)③ 8.07公尺_公分" }, " 公分"
+            ]
+          },
+          {
+            subLabel: "④",
+            parts: [
+              "205.7 公尺＝",
+              { id: "u26", type: "integer", expected: "205", label: "二(2)④ 205.7公尺_公尺" }, " 公尺 ",
+              { id: "u27", type: "integer", expected: "70", label: "二(2)④ 205.7公尺_公分" }, " 公分"
+            ]
+          },
+          {
+            subLabel: "⑤",
+            parts: [
+              "40.08 公尺＝",
+              { id: "u28", type: "integer", expected: "40", label: "二(2)⑤ 40.08公尺_公尺" }, " 公尺 ",
+              { id: "u29", type: "integer", expected: "8", label: "二(2)⑤ 40.08公尺_公分" }, " 公分"
+            ]
+          }
+        ],
+        explanation: "整數部分是公尺，0.1 公尺＝10 公分、0.01 公尺＝1 公分。注意第③題 0.07 公尺＝7 公分；第④題 0.7 公尺＝0.70 公尺＝70 公分（不是 7 公分）；第⑤題 0.08 公尺＝8 公分。"
+      },
+      {
+        cardId: "u7-s2-q3",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(3)",
+        title: "把一樣的長度連起來（中文單位）",
+        kind: "match",
+        left: ["50 公尺 50 公分", "50.05 公尺", "55 公尺 50 公分", "5.5 公尺"],
+        right: ["5 公尺 50 公分", "55.5 公尺", "5005 公分", "50.5 公尺"],
+        pairs: [
+          { id: "u30", leftIdx: 0, rightIdx: 3, label: "二(3) 50公尺50公分" },
+          { id: "u31", leftIdx: 1, rightIdx: 2, label: "二(3) 50.05公尺" },
+          { id: "u32", leftIdx: 2, rightIdx: 1, label: "二(3) 55公尺50公分" },
+          { id: "u33", leftIdx: 3, rightIdx: 0, label: "二(3) 5.5公尺" }
+        ],
+        explanation: "先換成相同的單位再配對：50 公尺 50 公分＝50.5 公尺；50.05 公尺＝5005 公分；55 公尺 50 公分＝55.5 公尺；5.5 公尺＝5 公尺 50 公分。"
+      },
+      {
+        cardId: "u7-s2-q4",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(4)",
+        title: "把一樣的長度連起來（m 與 cm）",
+        kind: "match",
+        left: ["12 m 34 cm", "12340 cm", "123 m 4 cm"],
+        right: ["12.34 m", "123.04 m", "123.4 m"],
+        pairs: [
+          { id: "u34", leftIdx: 0, rightIdx: 0, label: "二(4) 12 m 34 cm" },
+          { id: "u35", leftIdx: 1, rightIdx: 2, label: "二(4) 12340 cm" },
+          { id: "u36", leftIdx: 2, rightIdx: 1, label: "二(4) 123 m 4 cm" }
+        ],
+        explanation: "1 m（公尺）＝100 cm（公分）。12 m 34 cm＝12.34 m；12340 cm＝123.40 m＝123.4 m；123 m 4 cm＝123.04 m。"
+      },
+
+      // ---------- 第三大題：小數比大小（原卷 (5)~(8)） ----------
+      {
+        cardId: "u7-s3-q5",
+        sectionIdx: 3,
+        section: "第三大題：小數比大小",
+        label: "(5)",
+        title: "在 □ 裡填入 ＞、＜ 或 ＝",
+        kind: "compare",
+        items: [
+          { id: "u37", subLabel: "①", leftExpr: "0.65", rightExpr: "0.56", expected: ">", label: "三(5)① 0.65□0.56" },
+          { id: "u38", subLabel: "②", leftExpr: "0.28", rightExpr: "0.3", expected: "<", label: "三(5)② 0.28□0.3" }
+        ],
+        explanation: "從高位往低位比：① 個位都是 0，十分位 6 ＞ 5，所以 0.65 ＞ 0.56；② 個位都是 0，十分位 2 ＜ 3（或看成 0.28 ＜ 0.30），所以 0.28 ＜ 0.3。"
+      },
+      {
+        cardId: "u7-s3-q6",
+        sectionIdx: 3,
+        section: "第三大題：小數比大小",
+        label: "(6)",
+        title: "在 □ 裡填入 ＞、＜ 或 ＝",
+        kind: "compare",
+        items: [
+          { id: "u39", subLabel: "①", leftExpr: "8.25", rightExpr: "8.52", expected: "<", label: "三(6)① 8.25□8.52" },
+          { id: "u40", subLabel: "②", leftExpr: "17.5", rightExpr: "16.92", expected: ">", label: "三(6)② 17.5□16.92" }
+        ],
+        explanation: "① 個位都是 8，比十分位 2 ＜ 5，所以 8.25 ＜ 8.52；② 先比整數部分 17 ＞ 16，所以 17.5 ＞ 16.92。"
+      },
+      {
+        cardId: "u7-s3-q7",
+        sectionIdx: 3,
+        section: "第三大題：小數比大小",
+        label: "(7)",
+        title: "在 □ 裡填入 ＞、＜ 或 ＝",
+        kind: "compare",
+        items: [
+          { id: "u41", subLabel: "①", leftExpr: "0.08", rightExpr: "0.6", expected: "<", label: "三(7)① 0.08□0.6" },
+          { id: "u42", subLabel: "②", leftExpr: "0.70", rightExpr: "0.7", expected: "=", label: "三(7)② 0.70□0.7" }
+        ],
+        explanation: "① 個位都是 0，十分位 0 ＜ 6（0.6＝0.60），所以 0.08 ＜ 0.6；② 0.70 和 0.7 都是 7 個 0.1，小數末尾的 0 不改變數值大小，所以 0.70 ＝ 0.7。"
+      },
+      {
+        cardId: "u7-s3-q8",
+        sectionIdx: 3,
+        section: "第三大題：小數比大小",
+        label: "(8)",
+        title: "在 □ 裡填入 ＞、＜ 或 ＝",
+        kind: "compare",
+        items: [
+          { id: "u43", subLabel: "①", leftExpr: "20.18", rightExpr: "20.2", expected: "<", label: "三(8)① 20.18□20.2" },
+          { id: "u44", subLabel: "②", leftExpr: "13.07", rightExpr: "14", expected: "<", label: "三(8)② 13.07□14" }
+        ],
+        explanation: "① 整數都是 20，比十分位 1 ＜ 2（20.2＝20.20），所以 20.18 ＜ 20.2；② 先比整數部分 13 ＜ 14，所以 13.07 ＜ 14。"
+      }
+    ]
+  },
+  {
+    id: "U8",
+    examId: "U8-math-arithmetic",
+    unitNum: "第八單元",
+    title: "整數四則計算",
+    subtitle: "兩步驟併式與括號運算規則（建置中）",
+    ready: false,
+    cards: []
+  },
+  {
+    id: "U9",
+    examId: "U9-math-fraction",
+    unitNum: "第九單元",
+    title: "分數",
+    subtitle: "真分數、假分數、帶分數與加減（建置中）",
+    ready: false,
+    cards: []
+  },
+  {
+    id: "U10",
+    examId: "U10-math-charts",
+    unitNum: "第十單元",
+    title: "統計圖",
+    subtitle: "長條圖與折線圖判讀應用（建置中）",
+    ready: false,
+    cards: []
+  }
+];
+
+// 從卡片展開出線性計分單元（共 45 格）
+function extractScoringUnits(unit) {
+  const list = [];
+  (unit.cards || []).forEach((card, cardIdx) => {
+    if (card.kind === "fill") {
+      card.rows.forEach(row => {
+        row.parts.forEach(p => {
+          if (typeof p === "object") {
+            list.push({ ...p, kind: "fill", cardIdx, cardLabel: card.label, section: card.section });
+          }
+        });
+      });
+    } else if (card.kind === "match") {
+      card.pairs.forEach(pair => {
+        list.push({
+          id: pair.id,
+          kind: "match",
+          type: "match",
+          expected: card.right[pair.rightIdx],
+          expectedRightIdx: pair.rightIdx,
+          leftLabel: card.left[pair.leftIdx],
+          label: pair.label,
+          cardIdx,
+          cardLabel: card.label,
+          section: card.section
+        });
+      });
+    } else if (card.kind === "compare") {
+      card.items.forEach(item => {
+        list.push({
+          ...item,
+          kind: "compare",
+          type: "compare",
+          cardIdx,
+          cardLabel: card.label,
+          section: card.section
+        });
+      });
+    }
+  });
+  return list;
+}
+
+UNITS.forEach(u => { u.scoringUnits = extractScoringUnits(u); });
+
+// ==================== 輸入正規化與精準判分 ====================
+function normalizeMathInput(raw) {
+  if (raw === null || raw === undefined) return "";
+  let s = String(raw);
+  // 全形數字轉半形
+  s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0));
+  // 全形小數點 / 中文句點轉半形小數點
+  s = s.replace(/[．。]/g, ".");
+  // 全形比較符號轉半形
+  s = s.replace(/＞/g, ">").replace(/＜/g, "<").replace(/＝/g, "=");
+  // 移除空白與全形空白
+  s = s.replace(/[\s\u3000]+/g, "");
+  return s;
+}
+
+function canonicalDecimal(str) {
+  const s = normalizeMathInput(str);
+  if (!/^(?:\d+(?:\.\d+)?|\.\d+)$/.test(s)) return null;
+  const parts = s.split(".");
+  const intPart = (parts[0] || "0").replace(/^0+/, "") || "0";
+  const fracPart = (parts[1] || "").replace(/0+$/, "");
+  return fracPart ? `${intPart}.${fracPart}` : intPart;
+}
+
+function gradeScoringUnit(unitItem, rawVal) {
+  const s = normalizeMathInput(rawVal);
+  if (!s) return { status: 0, isCorrect: false, normalized: "" };
+
+  if (unitItem.kind === "fill" || unitItem.type === "integer" || unitItem.type === "decimal") {
+    if (unitItem.type === "integer") {
+      if (!/^\d+$/.test(s)) return { status: 2, isCorrect: false, normalized: s };
+      const ok = String(parseInt(s, 10)) === String(parseInt(unitItem.expected, 10));
+      return { status: ok ? 1 : 2, isCorrect: ok, normalized: s };
+    }
+    if (unitItem.type === "decimal") {
+      const a = canonicalDecimal(s);
+      const b = canonicalDecimal(unitItem.expected);
+      const ok = a !== null && b !== null && a === b;
+      return { status: ok ? 1 : 2, isCorrect: ok, normalized: s };
+    }
+  }
+
+  if (unitItem.kind === "match") {
+    const ok = s === normalizeMathInput(unitItem.expected);
+    return { status: ok ? 1 : 2, isCorrect: ok, normalized: s };
+  }
+
+  if (unitItem.kind === "compare") {
+    const ok = s === unitItem.expected;
+    return { status: ok ? 1 : 2, isCorrect: ok, normalized: s };
+  }
+
+  return { status: 2, isCorrect: false, normalized: s };
+}
+
+function getCardUnitIds(card) {
+  if (card.kind === "fill") {
+    const ids = [];
+    card.rows.forEach(r => r.parts.forEach(p => { if (typeof p === "object") ids.push(p.id); }));
+    return ids;
+  }
+  if (card.kind === "match") return card.pairs.map(p => p.id);
+  if (card.kind === "compare") return card.items.map(it => it.id);
+  return [];
+}
+
+function escapeHTML(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ==================== 全域狀態 ====================
+let currentUnit = null;
+let currentMode = "home"; // 'home' | 'practice' | 'exam' | 'result' | 'retry'
+let fontScale = 1;
+
+// 課堂練習狀態
+let pracSectionFilter = 0; // 0 = 全部, 1/2/3 = 大題
+let pracCardIndex = 0;
+let pracIsListMode = false;
+let pracValues = {}; // { unitId: rawString }
+let pracCardState = {}; // { cardId: { graded: bool, revealed: bool } }
+
+// 線上測驗狀態
+let currentStudent = { class: "402", seat: 1 };
+let examSectionFilter = 0;
+let examCardIndex = 0;
+let examValues = {}; // { unitId: rawString }
+let currentSubmission = null;
+let answersRevealedWithoutRetry = false;
+let retryValues = {}; // { unitId: rawString }
+let retryWrongIds = []; // 需訂正之 unitId 清單
+
+// 連連看選取暫存：{ [boardDomId]: { side: 'left'|'right', idx: number } }
+let matchSelections = {};
+
+// ==================== 頁面切換與首頁 ====================
+function showView(viewId) {
+  document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(viewId).classList.add("active");
+  document.getElementById("btn-home").style.display = (viewId === "view-home") ? "none" : "inline-flex";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+function goHome() {
+  currentUnit = null;
+  currentMode = "home";
+  matchSelections = {};
+  showView("view-home");
+}
+
+function renderHome() {
+  const grid = document.getElementById("unit-grid");
+  grid.innerHTML = UNITS.map(u => `
+    <div class="lesson-card ${u.ready ? 'ready' : 'locked'}">
+      <div>
+        <div class="card-top">
+          <span class="lesson-tag">${u.unitNum}</span>
+          <span class="status-pill ${u.ready ? 'ready' : 'soon'}">
+            ${u.ready ? `✅ 已上線（${u.cards.length} 題組 / ${u.scoringUnits.length} 格）` : '⏳ 即將推出'}
+          </span>
+        </div>
+        <div class="lesson-name">${u.title}</div>
+        <div class="lesson-desc">${u.subtitle}</div>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn proj" ${u.ready ? '' : 'disabled'} onclick="openPracticeMode('${u.id}')">
+          🖥 課堂互動練習
+        </button>
+        <button class="action-btn exam" ${u.ready ? '' : 'disabled'} onclick="openExamLogin('${u.id}')">
+          ✍️ 隨堂線上測驗
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function initSeatSelect() {
+  const sel = document.getElementById("student-seat");
+  sel.innerHTML = '<option value="" disabled selected>-- 請選擇您的座號 --</option>';
+  for (let i = 1; i <= 29; i++) {
+    const pad = i < 10 ? `0${i}` : `${i}`;
+    sel.innerHTML += `<option value="${i}">${pad} 號</option>`;
+  }
+}
+
+function toggleCustomClassInput() {
+  const sel = document.getElementById("student-class").value;
+  const custom = document.getElementById("student-class-custom");
+  custom.style.display = (sel === "__custom__") ? "block" : "none";
+  if (sel === "__custom__") custom.focus();
+}
+
+// ==================== 題卡共用渲染器 + SVG 連連看引擎 ====================
+function getUnitItemById(unit, uid) {
+  return unit.scoringUnits.find(x => x.id === uid);
+}
+
+function renderCardHTML(card, ctx) {
+  const unitIds = getCardUnitIds(card);
+  const unitItems = unitIds.map(id => getUnitItemById(currentUnit, id));
+  const secClass = `sec-${card.sectionIdx}`;
+  const boardDomId = `${ctx.domPrefix}-${card.cardId}`;
+
+  // 狀態計算（若已批改）
+  let cardBadgeHtml = "";
+  if (ctx.graded) {
+    let okCnt = 0;
+    unitItems.forEach(item => {
+      const val = ctx.values[item.id] ?? "";
+      if (gradeScoringUnit(item, val).isCorrect) okCnt++;
+    });
+    if (okCnt === unitItems.length) {
+      cardBadgeHtml = `<span class="inline-feedback ok">✅ 本題組全對（${okCnt}/${unitItems.length}）</span>`;
+    } else {
+      cardBadgeHtml = `<span class="inline-feedback err">❌ 需訂正（對 ${okCnt}/${unitItems.length} 格）</span>`;
+    }
+  }
+
+  let bodyHtml = "";
+
+  if (card.kind === "fill") {
+    bodyHtml = `<div class="fill-rows">` + card.rows.map(row => {
+      const subHtml = row.subLabel ? `<span class="sub-num">${row.subLabel}</span>` : "";
+      const partsHtml = row.parts.map(p => {
+        if (typeof p === "string") return escapeHTML(p);
+        const uid = p.id;
+        const unitObj = getUnitItemById(currentUnit, uid) || { ...p, kind: "fill" };
+        const val = ctx.values[uid] ?? "";
+        const isLocked = !!(ctx.lockedUnits && ctx.lockedUnits[uid]);
+        const isDisabled = !!(ctx.readOnly || isLocked);
+        const modeAttr = (p.type === "integer") ? "numeric" : "decimal";
+        const gRes = ctx.graded ? gradeScoringUnit(unitObj, val) : null;
+
+        let inpCls = "math-input";
+        if (isLocked) inpCls += " input-correct";
+        else if (gRes) inpCls += gRes.isCorrect ? " input-correct" : " input-wrong";
+
+        let fbHtml = "";
+        if (ctx.mode === "retry") {
+          if (isLocked) {
+            fbHtml = `<span class="inline-feedback ok">✅ 原已答對</span>`;
+          } else {
+            const prev = ctx.prevWrongValues?.[uid];
+            fbHtml = `<span class="inline-feedback err">上次：${prev ? escapeHTML(prev) : "未填"}</span>`;
+          }
+        } else if (ctx.graded) {
+          if (ctx.mode === "correction" && ctx.retryValues && ctx.retryValues[uid] !== undefined) {
+            const rVal = ctx.retryValues[uid];
+            const rRes = gradeScoringUnit(unitObj, rVal);
+            if (rRes.isCorrect) {
+              fbHtml = `<span class="inline-feedback ok">💪 訂正答對：${escapeHTML(rVal)}</span>`;
+            } else {
+              fbHtml = `<span class="inline-feedback err">❌ 訂正「${escapeHTML(rVal || "未填")}」｜正解：${escapeHTML(p.expected)}</span>`;
+            }
+          } else if (gRes.isCorrect) {
+            fbHtml = `<span class="inline-feedback ok">✓</span>`;
+          } else if (ctx.hideAnswers) {
+            fbHtml = `<span class="inline-feedback locked-hint">🔒 訂正後看正解</span>`;
+          } else {
+            const extraNote = (p.expected === "7.5") ? "（7.5 或 7.50 皆對）" : "";
+            fbHtml = `<span class="inline-feedback err">正解：${escapeHTML(p.expected)}${extraNote}</span>`;
+          }
+        }
+
+        const displayVal = (ctx.revealedOnly && !val) ? p.expected : val;
+
+        return `
+          <span class="math-input-wrap">
+            <input
+              type="text"
+              class="${inpCls}"
+              data-uid="${uid}"
+              data-card="${card.cardId}"
+              inputmode="${modeAttr}"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="?"
+              value="${escapeHTML(displayVal)}"
+              ${isDisabled ? "disabled" : ""}
+              oninput="handleFillInput('${ctx.scope}', '${uid}', this)"
+              onblur="handleFillBlur('${ctx.scope}', '${uid}', this)"
+              onkeydown="handleFillKeydown(event, this)"
+            />
+            ${fbHtml}
+          </span>
+        `;
+      }).join("");
+
+      return `<div class="fill-row">${subHtml}${partsHtml}</div>`;
+    }).join("") + `</div>`;
+  } else if (card.kind === "match") {
+    const sel = matchSelections[boardDomId] || null;
+    const isBoardDisabled = !!ctx.readOnly;
+
+    // 建構左右配對狀態（leftIdx -> rightIdx）
+    const leftToRight = {};
+    const rightToLeft = {};
+    card.pairs.forEach((pair, lIdx) => {
+      const chosenRightText = ctx.revealedOnly ? card.right[pair.rightIdx] : (ctx.values[pair.id] || "");
+      if (chosenRightText) {
+        const rIdx = card.right.indexOf(chosenRightText);
+        if (rIdx !== -1) {
+          leftToRight[lIdx] = rIdx;
+          rightToLeft[rIdx] = lIdx;
+        }
+      }
+    });
+
+    const hintText = isBoardDisabled
+      ? "連線作答結果如下："
+      : (sel
+        ? `已選取「${escapeHTML(sel.side === "left" ? card.left[sel.idx] : card.right[sel.idx])}」，請點另一欄項目完成連線（再點自己可取消）`
+        : "點選左邊與右邊卡片即可畫線連連看；點擊已連線卡片可取消重連");
+
+    const leftHtml = card.left.map((txt, lIdx) => {
+      const pair = card.pairs[lIdx];
+      const isLocked = !!(ctx.lockedUnits && ctx.lockedUnits[pair.id]);
+      const isSel = sel && sel.side === "left" && sel.idx === lIdx;
+      const connectedR = leftToRight[lIdx];
+      const hasConn = connectedR !== undefined;
+      const gRes = ctx.graded ? gradeScoringUnit(getUnitItemById(currentUnit, pair.id), ctx.values[pair.id] || "") : null;
+
+      let cls = "match-item left-item";
+      if (isSel) cls += " selected";
+      else if (hasConn) cls += " connected";
+      if (isLocked) cls += " graded-ok";
+      else if (gRes) cls += gRes.isCorrect ? " graded-ok" : " graded-err";
+
+      const color = MATCH_COLORS[lIdx % MATCH_COLORS.length];
+      const borderStyle = (!gRes && !isLocked && hasConn && !isSel) ? `style="border-color:${color};"` : "";
+      const dotStyle = `style="background:${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (isLocked ? '#16a34a' : (hasConn ? color : '#64748b'))};box-shadow:0 0 0 2px ${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (hasConn ? color : '#64748b')};"`;
+
+      return `
+        <button type="button" class="${cls}" ${borderStyle}
+          data-side="left" data-idx="${lIdx}"
+          ${(isBoardDisabled || isLocked) ? "disabled" : ""}
+          onclick="handleMatchTap('${ctx.scope}', '${card.cardId}', '${boardDomId}', 'left', ${lIdx})">
+          <span>${escapeHTML(txt)}</span>
+          <span class="match-dot" data-anchor="${boardDomId}-L-${lIdx}" ${dotStyle}></span>
+        </button>
+      `;
+    }).join("");
+
+    const rightHtml = card.right.map((txt, rIdx) => {
+      const isSel = sel && sel.side === "right" && sel.idx === rIdx;
+      const connectedL = rightToLeft[rIdx];
+      const hasConn = connectedL !== undefined;
+      let cls = "match-item right-item";
+      if (isSel) cls += " selected";
+      else if (hasConn) cls += " connected";
+
+      let isLocked = false;
+      let gRes = null;
+      if (hasConn) {
+        const pair = card.pairs[connectedL];
+        isLocked = !!(ctx.lockedUnits && ctx.lockedUnits[pair.id]);
+        if (ctx.graded) {
+          gRes = gradeScoringUnit(getUnitItemById(currentUnit, pair.id), ctx.values[pair.id] || "");
+        }
+      }
+      if (isLocked) cls += " graded-ok";
+      else if (gRes) cls += gRes.isCorrect ? " graded-ok" : " graded-err";
+
+      const color = hasConn ? MATCH_COLORS[connectedL % MATCH_COLORS.length] : "#64748b";
+      const borderStyle = (!gRes && !isLocked && hasConn && !isSel) ? `style="border-color:${color};"` : "";
+      const dotStyle = `style="background:${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (isLocked ? '#16a34a' : color)};box-shadow:0 0 0 2px ${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : color};"`;
+
+      return `
+        <button type="button" class="${cls}" ${borderStyle}
+          data-side="right" data-idx="${rIdx}"
+          ${(isBoardDisabled || isLocked) ? "disabled" : ""}
+          onclick="handleMatchTap('${ctx.scope}', '${card.cardId}', '${boardDomId}', 'right', ${rIdx})">
+          <span>${escapeHTML(txt)}</span>
+          <span class="match-dot" data-anchor="${boardDomId}-R-${rIdx}" ${dotStyle}></span>
+        </button>
+      `;
+    }).join("");
+
+    let summaryChips = "";
+    if (ctx.graded || ctx.mode === "retry") {
+      summaryChips = `<div class="match-summary-list">` + card.pairs.map((pair, lIdx) => {
+        const lTxt = card.left[lIdx];
+        const expectedTxt = card.right[pair.rightIdx];
+        const chosenTxt = ctx.values[pair.id] || "";
+        const isLocked = !!(ctx.lockedUnits && ctx.lockedUnits[pair.id]);
+        if (ctx.mode === "retry") {
+          if (isLocked) {
+            return `<span class="match-chip ok">✅ ${escapeHTML(lTxt)} → ${escapeHTML(expectedTxt)}</span>`;
+          }
+          const prev = ctx.prevWrongValues?.[pair.id] || "未連線";
+          return `<span class="match-chip err">上次：${escapeHTML(lTxt)} → ${escapeHTML(prev)}</span>`;
+        }
+        const gRes = gradeScoringUnit(getUnitItemById(currentUnit, pair.id), chosenTxt);
+        if (ctx.mode === "correction" && ctx.retryValues && ctx.retryValues[pair.id] !== undefined) {
+          const rTxt = ctx.retryValues[pair.id];
+          const rRes = gradeScoringUnit(getUnitItemById(currentUnit, pair.id), rTxt);
+          if (rRes.isCorrect) {
+            return `<span class="match-chip ok">💪 訂正答對：${escapeHTML(lTxt)} → ${escapeHTML(rTxt)}</span>`;
+          }
+          return `<span class="match-chip err">❌ 訂正「${escapeHTML(lTxt)} → ${escapeHTML(rTxt || "未連")}」｜正解：${escapeHTML(expectedTxt)}</span>`;
+        }
+        if (gRes.isCorrect) {
+          return `<span class="match-chip ok">✅ ${escapeHTML(lTxt)} → ${escapeHTML(expectedTxt)}</span>`;
+        }
+        if (ctx.hideAnswers) {
+          return `<span class="match-chip err">❌ ${escapeHTML(lTxt)} → ${escapeHTML(chosenTxt || "未連")}（訂正後顯示正解）</span>`;
+        }
+        return `<span class="match-chip err">❌ ${escapeHTML(lTxt)} 誤連「${escapeHTML(chosenTxt || "未連")}」｜正解：${escapeHTML(expectedTxt)}</span>`;
+      }).join("") + `</div>`;
+    }
+
+    bodyHtml = `
+      <div class="match-helper-bar">
+        <span class="match-status-hint">${hintText}</span>
+        ${isBoardDisabled ? "" : `<button type="button" class="ctrl-btn" style="padding:8px 14px;font-size:0.98rem;" onclick="clearMatchCard('${ctx.scope}', '${card.cardId}', '${boardDomId}')">🔄 清除此題連線</button>`}
+      </div>
+      <div class="match-board" id="${boardDomId}" data-match-board="1" data-card-id="${card.cardId}" data-scope="${ctx.scope}" data-graded="${ctx.graded ? '1' : '0'}" data-hide-answers="${ctx.hideAnswers ? '1' : '0'}" data-revealed="${ctx.revealedOnly ? '1' : '0'}">
+        <svg class="match-svg" id="${boardDomId}-svg"></svg>
+        <div class="match-col">${leftHtml}</div>
+        <div class="match-spacer"></div>
+        <div class="match-col">${rightHtml}</div>
+      </div>
+      ${summaryChips}
+    `;
+  } else if (card.kind === "compare") {
+    bodyHtml = `<div class="cmp-list">` + card.items.map(item => {
+      const uid = item.id;
+      const val = ctx.revealedOnly ? item.expected : (ctx.values[uid] ?? "");
+      const isLocked = !!(ctx.lockedUnits && ctx.lockedUnits[uid]);
+      const isDisabled = !!(ctx.readOnly || isLocked);
+      const gRes = ctx.graded ? gradeScoringUnit(item, ctx.values[uid] ?? "") : null;
+
+      let rowCls = "cmp-row";
+      let boxCls = "cmp-box";
+      if (isLocked) { rowCls += " row-ok"; boxCls += " ok"; }
+      else if (gRes) {
+        rowCls += gRes.isCorrect ? " row-ok" : " row-err";
+        boxCls += gRes.isCorrect ? " ok" : " err";
+      } else if (val) {
+        boxCls += " filled";
+      }
+
+      const boxSymbol = val ? (CMP_DISPLAY[val] || val) : "□";
+
+      let fbHtml = "";
+      if (ctx.mode === "retry") {
+        if (isLocked) fbHtml = `<span class="inline-feedback ok">✅ 原已答對</span>`;
+        else {
+          const prev = ctx.prevWrongValues?.[uid];
+          fbHtml = `<span class="inline-feedback err">上次：${prev ? (CMP_DISPLAY[prev] || prev) : "未選"}</span>`;
+        }
+      } else if (ctx.graded) {
+        if (ctx.mode === "correction" && ctx.retryValues && ctx.retryValues[uid] !== undefined) {
+          const rVal = ctx.retryValues[uid];
+          const rRes = gradeScoringUnit(item, rVal);
+          if (rRes.isCorrect) fbHtml = `<span class="inline-feedback ok">💪 訂正答對：${CMP_DISPLAY[rVal]}</span>`;
+          else fbHtml = `<span class="inline-feedback err">❌ 訂正「${CMP_DISPLAY[rVal] || "未選"}」｜正解：${CMP_DISPLAY[item.expected]}</span>`;
+        } else if (gRes.isCorrect) {
+          fbHtml = `<span class="inline-feedback ok">✓ 答對</span>`;
+        } else if (ctx.hideAnswers) {
+          fbHtml = `<span class="inline-feedback locked-hint">🔒 訂正後顯示正解</span>`;
+        } else {
+          fbHtml = `<span class="inline-feedback err">正解：${CMP_DISPLAY[item.expected]}</span>`;
+        }
+      }
+
+      const btnsHtml = [">", "<", "="].map(sym => {
+        const active = (val === sym);
+        return `
+          <button type="button" class="cmp-btn ${active ? 'active' : ''}"
+            ${isDisabled ? "disabled" : ""}
+            onclick="selectCompareSymbol('${ctx.scope}', '${uid}', '${sym}')">
+            ${CMP_DISPLAY[sym]}
+          </button>
+        `;
+      }).join("");
+
+      return `
+        <div class="${rowCls}">
+          <div class="cmp-expr">
+            <span class="sub-num">${item.subLabel}</span>
+            <span>${escapeHTML(item.leftExpr)}</span>
+            <span class="${boxCls}">${boxSymbol}</span>
+            <span>${escapeHTML(item.rightExpr)}</span>
+          </div>
+          <div class="cmp-btns">
+            ${btnsHtml}
+            ${fbHtml}
+          </div>
+        </div>
+      `;
+    }).join("") + `</div>`;
+  }
+
+  // 解析區塊
+  let expHtml = "";
+  if (ctx.showExplanation) {
+    if (ctx.hideAnswers) {
+      expHtml = `
+        <div class="explanation-box show" style="background:#f8fafc;border-color:#94a3b8;">
+          <div class="exp-header" style="color:#475569;">🔒 完成「錯題訂正練習」後解鎖詳解</div>
+          <div class="exp-body" style="color:#64748b;">這題還有待訂正的小題喔！請先點擊上方「進行錯題訂正練習」挑戰加 10 分，完成後就會完整顯示解析。</div>
+        </div>
+      `;
+    } else {
+      expHtml = `
+        <div class="explanation-box show">
+          <div class="exp-header">💡 解題關鍵與詳解</div>
+          <div class="exp-body">${escapeHTML(card.explanation)}</div>
+        </div>
+      `;
+    }
+  }
+
+  return `
+    <div class="stage-card">
+      <div class="card-header-row">
+        <span class="section-pill ${secClass}">${escapeHTML(card.section)}</span>
+        ${cardBadgeHtml}
+      </div>
+      <div class="question-title-text">
+        <span class="question-num-pill">${escapeHTML(card.label)}</span>${escapeHTML(card.title)}
+      </div>
+      ${bodyHtml}
+      ${expHtml}
+    </div>
+  `;
+}
+
+// 取得某 scope 對應的 values 地圖
+function getScopeState(scope) {
+  if (scope === "practice") return { values: pracValues, locked: null };
+  if (scope === "exam") return { values: examValues, locked: null };
+  if (scope === "retry") {
+    const locked = {};
+    currentUnit.scoringUnits.forEach(u => {
+      if (!retryWrongIds.includes(u.id)) locked[u.id] = true;
+    });
+    return { values: retryValues, locked };
+  }
+  return { values: {}, locked: null };
+}
+
+function redrawScopeAfterChange(scope) {
+  if (scope === "practice") {
+    if (pracIsListMode) renderPracticeList();
+    else renderPracticeStage();
+  } else if (scope === "exam") {
+    renderExamStage();
+  } else if (scope === "retry") {
+    renderRetryCards();
+  }
+}
+
+// 填空輸入事件（不整卡重繪，維持游標焦點）
+function handleFillInput(scope, uid, el) {
+  const { values } = getScopeState(scope);
+  values[uid] = el.value;
+  if (scope === "exam") updateExamDotsAndProgressOnly();
+  if (scope === "retry") updateRetryProgressOnly();
+  if (scope === "practice") updatePracDotsOnly();
+}
+
+function handleFillBlur(scope, uid, el) {
+  const { values } = getScopeState(scope);
+  const norm = normalizeMathInput(el.value);
+  values[uid] = norm;
+  if (el.value !== norm) el.value = norm;
+  if (scope === "exam") updateExamDotsAndProgressOnly();
+  if (scope === "retry") updateRetryProgressOnly();
+  if (scope === "practice") updatePracDotsOnly();
+}
+
+function handleFillKeydown(e, el) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    const allInputs = Array.from(document.querySelectorAll(".view-panel.active input.math-input:not(:disabled)"));
+    const idx = allInputs.indexOf(el);
+    if (idx !== -1 && idx + 1 < allInputs.length) {
+      allInputs[idx + 1].focus();
+    } else {
+      el.blur();
+    }
+  }
+}
+
+// 比大小點選事件
+function selectCompareSymbol(scope, uid, sym) {
+  const { values, locked } = getScopeState(scope);
+  if (locked && locked[uid]) return;
+  values[uid] = (values[uid] === sym) ? "" : sym;
+  redrawScopeAfterChange(scope);
+}
+
+// 連連看點選事件
+function handleMatchTap(scope, cardId, boardDomId, side, idx) {
+  const card = currentUnit.cards.find(c => c.cardId === cardId);
+  if (!card) return;
+  const { values, locked } = getScopeState(scope);
+
+  // 檢查若點擊的項目屬於鎖定項目則不處理
+  if (side === "left") {
+    const p = card.pairs[idx];
+    if (locked && locked[p.id]) return;
+  }
+
+  const curSel = matchSelections[boardDomId];
+
+  // 1. 若尚未選任何項目，檢查是否點在已連線的項目上 -> 若已連線，直接取消該連線（或若無連線則選中它）
+  if (!curSel) {
+    if (side === "left") {
+      const pair = card.pairs[idx];
+      if (values[pair.id]) {
+        values[pair.id] = "";
+        redrawScopeAfterChange(scope);
+        return;
+      }
+    } else {
+      const rTxt = card.right[idx];
+      const existingPair = card.pairs.find(p => values[p.id] === rTxt && !(locked && locked[p.id]));
+      if (existingPair) {
+        values[existingPair.id] = "";
+        redrawScopeAfterChange(scope);
+        return;
+      }
+      // 若該右項已被鎖定配對佔用，不能選
+      const lockedPair = card.pairs.find(p => values[p.id] === rTxt && locked && locked[p.id]);
+      if (lockedPair) return;
+    }
+    matchSelections[boardDomId] = { side, idx };
+    redrawScopeAfterChange(scope);
+    return;
+  }
+
+  // 2. 點擊自己 -> 取消選取
+  if (curSel.side === side && curSel.idx === idx) {
+    delete matchSelections[boardDomId];
+    redrawScopeAfterChange(scope);
+    return;
+  }
+
+  // 3. 點擊同側另一項 -> 切換選取
+  if (curSel.side === side) {
+    if (side === "right") {
+      const rTxt = card.right[idx];
+      const lockedPair = card.pairs.find(p => values[p.id] === rTxt && locked && locked[p.id]);
+      if (lockedPair) return;
+    }
+    matchSelections[boardDomId] = { side, idx };
+    redrawScopeAfterChange(scope);
+    return;
+  }
+
+  // 4. 點擊異側 -> 完成配對（維持一對一，覆蓋目標舊連線）
+  const lIdx = (side === "left") ? idx : curSel.idx;
+  const rIdx = (side === "right") ? idx : curSel.idx;
+  const targetPair = card.pairs[lIdx];
+  const rText = card.right[rIdx];
+
+  if (locked && locked[targetPair.id]) {
+    delete matchSelections[boardDomId];
+    return;
+  }
+  const lockedOnRight = card.pairs.find(p => values[p.id] === rText && locked && locked[p.id]);
+  if (lockedOnRight) {
+    delete matchSelections[boardDomId];
+    redrawScopeAfterChange(scope);
+    return;
+  }
+
+  // 若右側項目原本已被其他未鎖定左側連過，先清除該舊連線
+  card.pairs.forEach(p => {
+    if (p.id !== targetPair.id && values[p.id] === rText && !(locked && locked[p.id])) {
+      values[p.id] = "";
+    }
+  });
+  values[targetPair.id] = rText;
+  delete matchSelections[boardDomId];
+  redrawScopeAfterChange(scope);
+}
+
+function clearMatchCard(scope, cardId, boardDomId) {
+  const card = currentUnit.cards.find(c => c.cardId === cardId);
+  if (!card) return;
+  const { values, locked } = getScopeState(scope);
+  card.pairs.forEach(p => {
+    if (!(locked && locked[p.id])) values[p.id] = "";
+  });
+  delete matchSelections[boardDomId];
+  redrawScopeAfterChange(scope);
+}
+
+// 繪製畫面上所有可見連連看看板的 SVG 線段
+function redrawAllMatchingSVGs() {
+  if (!currentUnit) return;
+  const boards = document.querySelectorAll('.match-board[data-match-board="1"]');
+  boards.forEach(board => {
+    if (board.offsetParent === null) return; // 隱藏中不畫
+    const svg = board.querySelector("svg.match-svg");
+    if (!svg) return;
+    const cardId = board.dataset.cardId;
+    const scope = board.dataset.scope;
+    const isGraded = board.dataset.graded === "1";
+    const hideAnswers = board.dataset.hideAnswers === "1";
+    const isRevealed = board.dataset.revealed === "1";
+    const card = currentUnit.cards.find(c => c.cardId === cardId);
+    if (!card) return;
+
+    let values = {};
+    if (scope === "correction" && currentSubmission) {
+      values = buildCorrectionValuesMap();
+    } else {
+      values = getScopeState(scope).values;
+    }
+
+    const boardRect = board.getBoundingClientRect();
+    if (boardRect.width === 0 || boardRect.height === 0) return;
+
+    let linesHtml = "";
+    card.pairs.forEach((pair, lIdx) => {
+      const chosenTxt = isRevealed ? card.right[pair.rightIdx] : (values[pair.id] || "");
+      const rIdx = chosenTxt ? card.right.indexOf(chosenTxt) : -1;
+      const leftAnchor = board.querySelector(`[data-anchor="${board.id}-L-${lIdx}"]`);
+      if (!leftAnchor) return;
+
+      const la = leftAnchor.getBoundingClientRect();
+      const x1 = la.left + la.width / 2 - boardRect.left;
+      const y1 = la.top + la.height / 2 - boardRect.top;
+
+      if (rIdx !== -1) {
+        const rightAnchor = board.querySelector(`[data-anchor="${board.id}-R-${rIdx}"]`);
+        if (rightAnchor) {
+          const ra = rightAnchor.getBoundingClientRect();
+          const x2 = ra.left + ra.width / 2 - boardRect.left;
+          const y2 = ra.top + ra.height / 2 - boardRect.top;
+          const isOk = (rIdx === pair.rightIdx);
+          const stroke = isGraded
+            ? (isOk ? "#16a34a" : "#dc2626")
+            : MATCH_COLORS[lIdx % MATCH_COLORS.length];
+
+          // 白色外框避免交叉線混淆 + 主線
+          linesHtml += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.85"/>`;
+          linesHtml += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${stroke}" stroke-width="4.5" stroke-linecap="round"/>`;
+          linesHtml += `<circle cx="${x1.toFixed(1)}" cy="${y1.toFixed(1)}" r="5" fill="${stroke}"/>`;
+          linesHtml += `<circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="5" fill="${stroke}"/>`;
+        }
+      }
+
+      // 批改錯誤時（且未鎖正解），額外用綠色虛線標註正確配對
+      if (isGraded && !hideAnswers && rIdx !== pair.rightIdx) {
+        const rightCorrectAnchor = board.querySelector(`[data-anchor="${board.id}-R-${pair.rightIdx}"]`);
+        if (rightCorrectAnchor) {
+          const rca = rightCorrectAnchor.getBoundingClientRect();
+          const cx2 = rca.left + rca.width / 2 - boardRect.left;
+          const cy2 = rca.top + rca.height / 2 - boardRect.top;
+          linesHtml += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${cx2.toFixed(1)}" y2="${cy2.toFixed(1)}" stroke="#16a34a" stroke-width="3.5" stroke-dasharray="8 6" stroke-linecap="round" opacity="0.9"/>`;
+        }
+      }
+    });
+
+    svg.setAttribute("viewBox", `0 0 ${boardRect.width.toFixed(1)} ${boardRect.height.toFixed(1)}`);
+    svg.innerHTML = linesHtml;
+  });
+}
+
+window.addEventListener("resize", () => requestAnimationFrame(redrawAllMatchingSVGs));
+if (typeof ResizeObserver !== "undefined") {
+  new ResizeObserver(() => requestAnimationFrame(redrawAllMatchingSVGs)).observe(document.querySelector("main"));
+}
+
+// ==================== 模式一：課堂互動練習模式 ====================
+function getPracFilteredCards() {
+  if (!currentUnit) return [];
+  if (pracSectionFilter === 0) return currentUnit.cards;
+  return currentUnit.cards.filter(c => c.sectionIdx === pracSectionFilter);
+}
+
+function openPracticeMode(unitId) {
+  currentUnit = UNITS.find(u => u.id === unitId);
+  if (!currentUnit || !currentUnit.ready) return;
+  currentMode = "practice";
+  pracSectionFilter = 0;
+  pracCardIndex = 0;
+  pracIsListMode = false;
+  pracValues = {};
+  pracCardState = {};
+  matchSelections = {};
+
+  document.getElementById("prac-unit-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》`;
+  document.getElementById("prac-single-container").style.display = "block";
+  document.getElementById("prac-list-container").style.display = "none";
+  document.getElementById("btn-prac-view-toggle").textContent = "📋 切換全大題一覽";
+
+  renderPracSectionTabs();
+  renderPracticeStage();
+  showView("view-practice");
+}
+
+function renderPracSectionTabs() {
+  const tabsEl = document.getElementById("prac-section-tabs");
+  const allBtn = `<button class="section-tab ${pracSectionFilter === 0 ? 'active' : ''}" onclick="setPracSectionFilter(0)">全部題目（${currentUnit.cards.length} 題組）</button>`;
+  const secBtns = currentUnit.sections.map(s => {
+    const cnt = currentUnit.cards.filter(c => c.sectionIdx === s.idx).length;
+    return `<button class="section-tab ${pracSectionFilter === s.idx ? 'active' : ''}" onclick="setPracSectionFilter(${s.idx})">${s.name}（${cnt}）</button>`;
+  }).join("");
+  tabsEl.innerHTML = allBtn + secBtns;
+}
+
+function setPracSectionFilter(secIdx) {
+  pracSectionFilter = secIdx;
+  pracCardIndex = 0;
+  renderPracSectionTabs();
+  if (pracIsListMode) renderPracticeList();
+  else renderPracticeStage();
+}
+
+function updatePracDotsOnly() {
+  const cards = getPracFilteredCards();
+  const dotsEl = document.getElementById("prac-q-dots");
+  dotsEl.innerHTML = cards.map((c, idx) => {
+    const ids = getCardUnitIds(c);
+    const items = ids.map(id => getUnitItemById(currentUnit, id));
+    const st = pracCardState[c.cardId] || {};
+    const filledCnt = ids.filter(id => normalizeMathInput(pracValues[id] || "") !== "").length;
+    let cls = "q-dot";
+    if (st.graded) {
+      const allOk = items.every(it => gradeScoringUnit(it, pracValues[it.id] || "").isCorrect);
+      cls += allOk ? " graded-ok" : " graded-err";
+    } else if (filledCnt === ids.length && ids.length > 0) {
+      cls += " answered";
+    } else if (filledCnt > 0) {
+      cls += " partial";
+    }
+    if (!pracIsListMode && idx === pracCardIndex) cls += " current";
+    const shortTag = `${["一", "二", "三"][c.sectionIdx - 1]}${c.label}`;
+    return `<button class="${cls}" onclick="jumpPracCard(${idx})">${shortTag}</button>`;
+  }).join("");
+}
+
+function renderPracticeStage() {
+  const cards = getPracFilteredCards();
+  if (pracCardIndex >= cards.length) pracCardIndex = 0;
+  const card = cards[pracCardIndex];
+  const st = pracCardState[card.cardId] || { graded: false, revealed: false };
+
+  updatePracDotsOnly();
+
+  const ctx = {
+    scope: "practice",
+    domPrefix: "prac",
+    mode: "practice",
+    values: pracValues,
+    graded: st.graded,
+    revealedOnly: st.revealed && !st.graded,
+    showExplanation: st.graded || st.revealed,
+    readOnly: false
+  };
+
+  document.getElementById("prac-stage-card-slot").innerHTML = renderCardHTML(card, ctx);
+  document.getElementById("btn-prac-prev").disabled = (pracCardIndex === 0);
+  document.getElementById("btn-prac-next").disabled = (pracCardIndex === cards.length - 1);
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+function checkPracCurrentCard() {
+  const card = getPracFilteredCards()[pracCardIndex];
+  if (!card) return;
+  pracCardState[card.cardId] = { graded: true, revealed: true };
+  renderPracticeStage();
+}
+
+function revealPracCurrentCard() {
+  const card = getPracFilteredCards()[pracCardIndex];
+  if (!card) return;
+  const prev = pracCardState[card.cardId] || { graded: false, revealed: false };
+  pracCardState[card.cardId] = { graded: false, revealed: !prev.revealed };
+  renderPracticeStage();
+}
+
+function resetPracCurrentCard() {
+  const card = getPracFilteredCards()[pracCardIndex];
+  if (!card) return;
+  getCardUnitIds(card).forEach(id => { delete pracValues[id]; });
+  delete pracCardState[card.cardId];
+  delete matchSelections[`prac-${card.cardId}`];
+  renderPracticeStage();
+}
+
+function prevPracCard() {
+  if (pracCardIndex > 0) { pracCardIndex--; renderPracticeStage(); }
+}
+function nextPracCard() {
+  const cards = getPracFilteredCards();
+  if (pracCardIndex < cards.length - 1) { pracCardIndex++; renderPracticeStage(); }
+}
+function jumpPracCard(idx) {
+  pracCardIndex = idx;
+  if (pracIsListMode) {
+    const card = getPracFilteredCards()[idx];
+    const targetEl = document.getElementById(`prac-list-anchor-${card.cardId}`);
+    if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    renderPracticeStage();
+  }
+}
+
+function togglePracticeViewMode() {
+  pracIsListMode = !pracIsListMode;
+  const single = document.getElementById("prac-single-container");
+  const list = document.getElementById("prac-list-container");
+  const btn = document.getElementById("btn-prac-view-toggle");
+  if (pracIsListMode) {
+    btn.textContent = "🖥 切換單題投影";
+    single.style.display = "none";
+    list.style.display = "flex";
+    renderPracticeList();
+  } else {
+    btn.textContent = "📋 切換全大題一覽";
+    single.style.display = "block";
+    list.style.display = "none";
+    renderPracticeStage();
+  }
+}
+
+function renderPracticeList() {
+  const cards = getPracFilteredCards();
+  updatePracDotsOnly();
+  const container = document.getElementById("prac-list-container");
+  container.innerHTML = cards.map(card => {
+    const st = pracCardState[card.cardId] || { graded: false, revealed: false };
+    const ctx = {
+      scope: "practice",
+      domPrefix: "prac-list",
+      mode: "practice",
+      values: pracValues,
+      graded: st.graded,
+      revealedOnly: st.revealed && !st.graded,
+      showExplanation: st.graded || st.revealed,
+      readOnly: false
+    };
+    return `
+      <div id="prac-list-anchor-${card.cardId}">
+        ${renderCardHTML(card, ctx)}
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:-12px;margin-bottom:10px;flex-wrap:wrap;">
+          <button class="ctrl-btn success" style="padding:10px 16px;font-size:1.05rem;" onclick="pracCardState['${card.cardId}']={graded:true,revealed:true};renderPracticeList();">✅ 批改此題</button>
+          <button class="ctrl-btn reveal" style="padding:10px 16px;font-size:1.05rem;" onclick="pracCardState['${card.cardId}']={graded:false,revealed:!(pracCardState['${card.cardId}']?.revealed)};renderPracticeList();">💡 顯示答案</button>
+          <button class="ctrl-btn" style="padding:10px 16px;font-size:1.05rem;" onclick="getCardUnitIds(currentUnit.cards.find(x=>x.cardId==='${card.cardId}')).forEach(id=>delete pracValues[id]);delete pracCardState['${card.cardId}'];renderPracticeList();">🔄 重置</button>
+        </div>
+      </div>
+    `;
+  }).join("") + `
+    <div style="text-align:center;margin-top:10px;">
+      <button class="ctrl-btn primary" onclick="goHome()">🏠 結束練習，返回首頁</button>
+    </div>
+  `;
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+// ==================== 模式二：隨堂線上測驗與錯題訂正 ====================
+function getTaipeiToday() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Taipei" }).format(new Date());
+}
+
+function getDailyStorageKey(examId, cls, seat) {
+  return `math_exam_daily_${getTaipeiToday()}_${examId}_${cls}_${seat}`;
+}
+
+function saveDailyLocalRecord(examId, cls, seat, record) {
+  try {
+    localStorage.setItem(getDailyStorageKey(examId, cls, seat), JSON.stringify(record));
+  } catch (e) { console.warn(e); }
+}
+
+function loadDailyLocalRecord(examId, cls, seat) {
+  try {
+    const raw = localStorage.getItem(getDailyStorageKey(examId, cls, seat));
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function clearDailyLocalRecord(examId, cls, seat) {
+  try { localStorage.removeItem(getDailyStorageKey(examId, cls, seat)); } catch {}
+}
+
+function parseRawAnswersFromName(nameStr, totalUnits) {
+  const map = {};
+  if (!nameStr || typeof nameStr !== "string") return map;
+  if (nameStr.startsWith("M1:")) {
+    try {
+      const arr = JSON.parse(nameStr.slice(3));
+      if (Array.isArray(arr) && currentUnit) {
+        currentUnit.scoringUnits.forEach((u, i) => {
+          if (arr[i] !== undefined) map[u.id] = String(arr[i]);
+        });
+      }
+    } catch {}
+  }
+  return map;
+}
+
+async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnswersFull, allCorrect, retryRawObj) {
+  // 1. 優先嘗試升級後的 RPC submit_exam_retry
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/submit_exam_retry`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        p_client_id: clientId,
+        p_retry_answers: retryAnswersFull,
+        p_retry_passed: allCorrect
+      })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && (data.ok || data.reason === "already_retried_or_not_found")) {
+        return true;
+      }
+    }
+  } catch (err) {
+    console.warn("submit_exam_retry RPC 無法使用，改走零 SQL 備援寫入:", err);
+  }
+
+  // 2. 零 SQL 備援：寫入 ${examId}__retry 紀錄至 public.submissions
+  try {
+    const packedName = retryRawObj
+      ? `M1R:${JSON.stringify({ c: clientId, v: retryRawObj })}`
+      : clientId;
+    const fallbackPayload = {
+      exam_id: `${examId}__retry`,
+      grade: 4,
+      subject: "math",
+      year: 114,
+      class: cls,
+      seat: seat,
+      name: packedName,
+      answers: retryAnswersFull,
+      score: allCorrect ? 10 : 0,
+      total: total,
+      is_deleted: false,
+      client_id: `${clientId}_retry`
+    };
+    const res2 = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/submissions`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify(fallbackPayload)
+    });
+    return res2.ok || res2.status === 409;
+  } catch (err) {
+    console.error("備援寫入錯題訂正失敗:", err);
+    return false;
+  }
+}
+
+async function syncPendingLocalRetries() {
+  try {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith("math_exam_daily_")) keys.push(k);
+    }
+    for (const key of keys) {
+      const rec = JSON.parse(localStorage.getItem(key) || "null");
+      if (!rec || rec.retry_passed === null || rec.retry_passed === undefined || rec._retry_synced) continue;
+      if (!rec.client_id || !rec.retry_answers) continue;
+      const ok = await sendRetryToSupabase(
+        rec.exam_id,
+        rec.class,
+        rec.seat,
+        rec.client_id,
+        rec.total,
+        rec.retry_answers,
+        rec.retry_passed === true,
+        rec.retry_raw || null
+      );
+      if (ok) {
+        rec._retry_synced = true;
+        localStorage.setItem(key, JSON.stringify(rec));
+      }
+    }
+  } catch {}
+}
+
+async function checkStudentDailyStatus(examId, cls, seat) {
+  const localRec = loadDailyLocalRecord(examId, cls, seat);
+  if (localRec && localRec.retry_passed !== null && localRec.retry_passed !== undefined && !localRec._retry_synced) {
+    const synced = await sendRetryToSupabase(
+      examId, cls, seat, localRec.client_id, localRec.total,
+      localRec.retry_answers || [], localRec.retry_passed === true, localRec.retry_raw || null
+    );
+    if (synced) {
+      localRec._retry_synced = true;
+      saveDailyLocalRecord(examId, cls, seat, localRec);
+    }
+  }
+
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/check_student_exam_status`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ p_exam_id: examId, p_class: cls, p_seat: seat })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.found) {
+        if (data.retry_passed === null && localRec && localRec.client_id === data.client_id && localRec.retry_passed !== null) {
+          data.retry_passed = localRec.retry_passed;
+          data.retry_answers = localRec.retry_answers;
+          data.bonus_points = localRec.bonus_points;
+          data.retry_raw = localRec.retry_raw;
+          data._retry_synced = localRec._retry_synced;
+        }
+        if (!data.rawValues && data.name) {
+          data.rawValues = parseRawAnswersFromName(data.name, data.total);
+        } else if (!data.rawValues && localRec && localRec.client_id === data.client_id) {
+          data.rawValues = localRec.rawValues;
+        }
+        saveDailyLocalRecord(examId, cls, seat, data);
+        return { status: "found", record: data };
+      } else {
+        clearDailyLocalRecord(examId, cls, seat);
+        return { status: "not_found" };
+      }
+    }
+  } catch (err) {
+    console.warn("查詢後端紀錄失敗，改用本機快取檢查:", err);
+  }
+  return localRec ? { status: "found", record: localRec } : { status: "not_found" };
+}
+
+function openExamLogin(unitId) {
+  currentUnit = UNITS.find(u => u.id === unitId);
+  if (!currentUnit || !currentUnit.ready) return;
+  document.getElementById("login-unit-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》線上測驗`;
+  document.getElementById("student-seat").value = "";
+  const loginBtn = document.querySelector("#student-login-form .btn-submit-login");
+  if (loginBtn) {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "🚀 開始線上測驗";
+  }
+  showView("view-exam-login");
+}
+
+async function startStudentExam(e) {
+  e.preventDefault();
+  const seatVal = document.getElementById("student-seat").value;
+  if (!seatVal) {
+    alert("請先選擇您的座號！");
+    return;
+  }
+  let cls = document.getElementById("student-class").value;
+  if (cls === "__custom__") {
+    cls = document.getElementById("student-class-custom").value.trim();
+    if (!cls) {
+      alert("請輸入您的班級名稱（例如：405）！");
+      return;
+    }
+  }
+  const seat = parseInt(seatVal, 10);
+  const examId = currentUnit.examId;
+
+  const loginBtn = document.querySelector("#student-login-form .btn-submit-login");
+  if (loginBtn) {
+    loginBtn.disabled = true;
+    loginBtn.textContent = "⏳ 檢查今日作答紀錄中...";
+  }
+
+  const check = await checkStudentDailyStatus(examId, cls, seat);
+
+  if (loginBtn) {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "🚀 開始線上測驗";
+  }
+
+  currentStudent = { class: cls, seat: seat };
+
+  if (check.status === "found") {
+    currentSubmission = check.record;
+    examValues = { ...(currentSubmission.rawValues || {}) };
+    answersRevealedWithoutRetry = false;
+    const rawPct = Math.round((currentSubmission.score / currentSubmission.total) * 100);
+    if (currentSubmission.score < currentSubmission.total && (currentSubmission.retry_passed === null || currentSubmission.retry_passed === undefined)) {
+      alert(`您今天已經完成過正式測驗囉！（原測驗成績：${rawPct} 分，每人每日限測驗一次）\n\n目前還有錯題尚未訂正，現在為您前往成績與訂正頁面！`);
+    } else {
+      alert(`您今天已經完成過本次測驗囉！（每人每日限測驗一次）\n\n即將為您顯示今日的測驗成績與詳解。`);
+    }
+    currentMode = "result";
+    renderExamResultView(true);
+    showView("view-exam-result");
+    return;
+  }
+
+  currentSubmission = null;
+  examSectionFilter = 0;
+  examCardIndex = 0;
+  examValues = {};
+  retryValues = {};
+  retryWrongIds = [];
+  answersRevealedWithoutRetry = false;
+  matchSelections = {};
+  currentMode = "exam";
+
+  const pad = seat < 10 ? `0${seat}` : `${seat}`;
+  document.getElementById("exam-badge-info").textContent = `${cls} 班 ${pad} 號`;
+  document.getElementById("exam-test-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》線上測驗`;
+
+  renderExamSectionTabs();
+  renderExamStage();
+  showView("view-exam-test");
+}
+
+function getExamFilteredCards() {
+  if (!currentUnit) return [];
+  if (examSectionFilter === 0) return currentUnit.cards;
+  return currentUnit.cards.filter(c => c.sectionIdx === examSectionFilter);
+}
+
+function renderExamSectionTabs() {
+  const tabsEl = document.getElementById("exam-section-tabs");
+  const allBtn = `<button class="section-tab ${examSectionFilter === 0 ? 'active' : ''}" onclick="setExamSectionFilter(0)">全部試題（${currentUnit.cards.length} 題組）</button>`;
+  const secBtns = currentUnit.sections.map(s => {
+    const cnt = currentUnit.cards.filter(c => c.sectionIdx === s.idx).length;
+    return `<button class="section-tab ${examSectionFilter === s.idx ? 'active' : ''}" onclick="setExamSectionFilter(${s.idx})">${s.name}（${cnt}）</button>`;
+  }).join("");
+  tabsEl.innerHTML = allBtn + secBtns;
+}
+
+function setExamSectionFilter(secIdx) {
+  examSectionFilter = secIdx;
+  examCardIndex = 0;
+  renderExamSectionTabs();
+  renderExamStage();
+}
+
+function updateExamDotsAndProgressOnly() {
+  const totalUnits = currentUnit.scoringUnits.length;
+  const filledUnits = currentUnit.scoringUnits.filter(u => normalizeMathInput(examValues[u.id] || "") !== "").length;
+  document.getElementById("exam-progress-text").textContent = `已填答 ${filledUnits} / ${totalUnits} 格`;
+
+  const cards = getExamFilteredCards();
+  const dotsEl = document.getElementById("exam-q-dots");
+  dotsEl.innerHTML = cards.map((c, idx) => {
+    const ids = getCardUnitIds(c);
+    const filledCnt = ids.filter(id => normalizeMathInput(examValues[id] || "") !== "").length;
+    let cls = "q-dot";
+    if (filledCnt === ids.length && ids.length > 0) cls += " answered";
+    else if (filledCnt > 0) cls += " partial";
+    if (idx === examCardIndex) cls += " current";
+    const shortTag = `${["一", "二", "三"][c.sectionIdx - 1]}${c.label}`;
+    return `<button class="${cls}" onclick="jumpExamCard(${idx})">${shortTag}</button>`;
+  }).join("");
+}
+
+function renderExamStage() {
+  const cards = getExamFilteredCards();
+  if (examCardIndex >= cards.length) examCardIndex = 0;
+  const card = cards[examCardIndex];
+
+  updateExamDotsAndProgressOnly();
+
+  const ctx = {
+    scope: "exam",
+    domPrefix: "exam",
+    mode: "exam",
+    values: examValues,
+    graded: false,
+    showExplanation: false,
+    readOnly: false
+  };
+
+  document.getElementById("exam-stage-card-slot").innerHTML = renderCardHTML(card, ctx);
+  document.getElementById("btn-exam-prev").disabled = (examCardIndex === 0);
+  document.getElementById("btn-exam-next").disabled = (examCardIndex === cards.length - 1);
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+function prevExamCard() {
+  if (examCardIndex > 0) { examCardIndex--; renderExamStage(); }
+}
+function nextExamCard() {
+  const cards = getExamFilteredCards();
+  if (examCardIndex < cards.length - 1) { examCardIndex++; renderExamStage(); }
+}
+function jumpExamCard(idx) {
+  examCardIndex = idx;
+  renderExamStage();
+}
+
+// 送出正式考卷
+async function confirmSubmitExam() {
+  const missingCards = [];
+  currentUnit.cards.forEach(c => {
+    const ids = getCardUnitIds(c);
+    const blankCount = ids.filter(id => normalizeMathInput(examValues[id] || "") === "").length;
+    if (blankCount > 0) {
+      missingCards.push(`${["第一大題", "第二大題", "第三大題"][c.sectionIdx - 1]}${c.label}(缺${blankCount}格)`);
+    }
+  });
+
+  if (missingCards.length > 0) {
+    const ok = confirm(`注意：您還有部分題目尚未填答完畢：\n${missingCards.join("、")}\n\n確定現在就要交卷嗎？`);
+    if (!ok) return;
+  } else {
+    if (!confirm("所有題目皆已作答！確定要交卷嗎？交卷後將立即批改計算分數。")) return;
+  }
+
+  const submitBtn = document.getElementById("btn-submit-exam");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "⏳ 批改並傳送成績中...";
+
+  let correctCount = 0;
+  const answersArr = [];
+  const rawArr = [];
+  const normalizedValuesMap = {};
+
+  currentUnit.scoringUnits.forEach(u => {
+    const raw = examValues[u.id] || "";
+    const g = gradeScoringUnit(u, raw);
+    answersArr.push(g.status); // 1=對, 2=錯, 0=未作答
+    rawArr.push(g.normalized);
+    normalizedValuesMap[u.id] = g.normalized;
+    if (g.isCorrect) correctCount++;
+  });
+
+  const total = currentUnit.scoringUnits.length;
+  const examId = currentUnit.examId;
+  const clientId = (crypto.randomUUID ? crypto.randomUUID() : `cid-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const serializedName = `M1:${JSON.stringify(rawArr)}`;
+
+  const payload = {
+    exam_id: examId,
+    grade: 4,
+    subject: "math",
+    year: 114,
+    class: currentStudent.class,
+    seat: currentStudent.seat,
+    name: serializedName,
+    answers: answersArr,
+    score: correctCount,
+    total: total,
+    is_deleted: false,
+    client_id: clientId
+  };
+
+  let duplicateBlocked = false;
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/submissions`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok && res.status !== 409) {
+      const errTxt = await res.text();
+      if (errTxt.includes("already_submitted_today")) {
+        duplicateBlocked = true;
+      } else {
+        console.warn("Supabase 寫入狀態碼:", res.status, errTxt);
+      }
+    }
+  } catch (err) {
+    console.error("傳送至 Supabase 錯誤:", err);
+  }
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = "📝 檢查並交卷";
+
+  if (duplicateBlocked) {
+    alert("您今天已經交過本次測驗的考卷了！每人每日限測驗一次，將為您載入今天的測驗結果。");
+    const check = await checkStudentDailyStatus(examId, currentStudent.class, currentStudent.seat);
+    if (check.status === "found") {
+      currentSubmission = check.record;
+      examValues = { ...(currentSubmission.rawValues || {}) };
+      currentMode = "result";
+      renderExamResultView(true);
+      showView("view-exam-result");
+      return;
+    }
+  }
+
+  currentSubmission = {
+    exam_id: examId,
+    class: currentStudent.class,
+    seat: currentStudent.seat,
+    client_id: clientId,
+    name: serializedName,
+    score: correctCount,
+    total: total,
+    answers: answersArr,
+    rawValues: normalizedValuesMap,
+    bonus_points: 0,
+    retry_passed: null,
+    retry_answers: null,
+    retry_raw: null,
+    created_at: new Date().toISOString()
+  };
+
+  saveDailyLocalRecord(examId, currentStudent.class, currentStudent.seat, currentSubmission);
+
+  currentMode = "result";
+  renderExamResultView(false);
+  showView("view-exam-result");
+}
+
+function getWrongUnitIds() {
+  if (!currentSubmission || !currentUnit) return [];
+  const wrongs = [];
+  currentUnit.scoringUnits.forEach((u, i) => {
+    const st = (currentSubmission.answers && currentSubmission.answers[i]) || 0;
+    if (st !== 1) wrongs.push(u.id);
+  });
+  return wrongs;
+}
+
+function buildCorrectionValuesMap() {
+  return { ...(currentSubmission?.rawValues || {}) };
+}
+
+function renderExamResultView(isReturning) {
+  const total = currentSubmission.total;
+  const correctCount = currentSubmission.score;
+  const wrongIds = getWrongUnitIds();
+  const rawPct = Math.round((correctCount / total) * 100);
+  const bonus = Number(currentSubmission.bonus_points || 0);
+  const finalPct = Math.min(100, rawPct + bonus);
+  const retryState = currentSubmission.retry_passed; // null | true | false
+
+  const resCard = document.getElementById("res-card");
+  const headerEl = document.getElementById("res-student-header");
+  const scoreEl = document.getElementById("res-score-num");
+  const descEl = document.getElementById("res-desc");
+  const calloutEl = document.getElementById("res-bonus-callout");
+  const btnRetry = document.getElementById("btn-start-retry");
+  const btnPeek = document.getElementById("btn-peek-answers");
+
+  const padSeat = currentStudent.seat < 10 ? `0${currentStudent.seat}` : `${currentStudent.seat}`;
+  const seatLabel = `${currentStudent.class} 班 ${padSeat} 號`;
+
+  if (wrongIds.length === 0) {
+    resCard.style.borderColor = "#059669";
+    scoreEl.style.color = "#059669";
+    headerEl.textContent = `🎉 ${seatLabel} ${isReturning ? '今日測驗成績（滿分）' : '太棒了！全部答對！'}`;
+    scoreEl.textContent = "100 分";
+    descEl.textContent = `共 ${total} 格，答對 ${correctCount} / ${total} 格（無需錯題訂正）`;
+    calloutEl.style.display = "none";
+    btnRetry.style.display = "none";
+    btnPeek.style.display = "none";
+  } else if (retryState === null || retryState === undefined) {
+    resCard.style.borderColor = "#2563eb";
+    scoreEl.style.color = "#1e40af";
+    headerEl.textContent = `📝 ${seatLabel} ${isReturning ? '今日測驗紀錄（尚未訂正）' : '線上測驗批改完成！'}`;
+    scoreEl.textContent = `${rawPct} 分`;
+    descEl.textContent = `共 ${total} 格，答對 ${correctCount} 格，待訂正 ${wrongIds.length} 格（成績已送至教師後台）`;
+
+    if (answersRevealedWithoutRetry) {
+      calloutEl.style.display = "block";
+      calloutEl.style.background = "#f8fafc";
+      calloutEl.style.borderColor = "#94a3b8";
+      calloutEl.style.color = "#475569";
+      calloutEl.innerHTML = `👁 您已選擇直接檢視完整正解與詳解，本次測驗維持原分數 <b>${rawPct} 分</b>。`;
+      btnRetry.style.display = "none";
+      btnPeek.style.display = "none";
+    } else {
+      calloutEl.style.display = "block";
+      calloutEl.style.background = "#fffbeb";
+      calloutEl.style.borderColor = "#f59e0b";
+      calloutEl.style.color = "#92400e";
+      calloutEl.innerHTML = `💪 <b>錯題訂正加分挑戰：</b>您共有 <b>${wrongIds.length} 格</b>答錯或未填。<br>現在針對錯題再訂正一次，全部訂正答對就能獲得 <b>+10 分</b>（最高 100 分）並留下完整訂正紀錄！`;
+      btnRetry.style.display = "inline-flex";
+      btnRetry.textContent = `💪 進行錯題訂正練習（${wrongIds.length} 格，全對 +10 分）`;
+      btnPeek.style.display = "inline-flex";
+    }
+  } else if (retryState === true) {
+    resCard.style.borderColor = "#059669";
+    scoreEl.style.color = "#059669";
+    headerEl.textContent = `🎊 ${seatLabel} 錯題訂正全部答對！`;
+    scoreEl.textContent = `${finalPct} 分`;
+    const capNote = (rawPct + bonus > 100) ? "（滿分上限 100 分）" : "";
+    descEl.textContent = `原卷答對 ${correctCount} / ${total} 格（${rawPct} 分）＋ 訂正全對加 ${bonus} 分 ＝ 最終 ${finalPct} 分${capNote}`;
+    calloutEl.style.display = "block";
+    calloutEl.style.background = "#dcfce7";
+    calloutEl.style.borderColor = "#16a34a";
+    calloutEl.style.color = "#14532d";
+    calloutEl.innerHTML = `✅ 已獲得 <b>+10 分</b>訂正加分，訂正紀錄與最終成績已更新傳送至教師後台！`;
+    btnRetry.style.display = "none";
+    btnPeek.style.display = "none";
+  } else {
+    resCard.style.borderColor = "#d97706";
+    scoreEl.style.color = "#b45309";
+    headerEl.textContent = `📋 ${seatLabel} 已完成測驗與錯題訂正`;
+    scoreEl.textContent = `${rawPct} 分`;
+    descEl.textContent = `原卷答對 ${correctCount} / ${total} 格（${rawPct} 分），訂正尚有部分未對，維持原分數 ${rawPct} 分`;
+    calloutEl.style.display = "block";
+    calloutEl.style.background = "#fffbeb";
+    calloutEl.style.borderColor = "#f59e0b";
+    calloutEl.style.color = "#92400e";
+    calloutEl.innerHTML = `💡 訂正加分機會限一次，請仔細閱讀下方逐題正解與詳解，把觀念弄懂喔！`;
+    btnRetry.style.display = "none";
+    btnPeek.style.display = "none";
+  }
+
+  renderCorrectionSheet();
+}
+
+function revealAllWithoutRetry() {
+  if (!confirm("直接查看全部正解與詳解後，將無法進行本次的「錯題訂正 +10 分」挑戰喔！確定要直接看解答嗎？")) return;
+  answersRevealedWithoutRetry = true;
+  renderExamResultView(false);
+}
+
+function renderCorrectionSheet() {
+  const container = document.getElementById("correction-sheet");
+  const valuesMap = buildCorrectionValuesMap();
+  const wrongIds = getWrongUnitIds();
+  const retryDone = (currentSubmission.retry_passed !== null && currentSubmission.retry_passed !== undefined);
+  const canRevealAll = (wrongIds.length === 0) || retryDone || answersRevealedWithoutRetry;
+
+  let html = `<h2 style="font-size:calc(1.7rem * var(--font-scale));font-weight:900;color:#1e3a8a;margin-bottom:4px;">📑 逐題批改結果與詳解</h2>`;
+
+  currentUnit.cards.forEach(card => {
+    const ids = getCardUnitIds(card);
+    const hasWrongInCard = ids.some(id => wrongIds.includes(id));
+    const hideAnsForThisCard = !canRevealAll && hasWrongInCard;
+
+    const ctx = {
+      scope: "correction",
+      domPrefix: "corr",
+      mode: "correction",
+      values: valuesMap,
+      retryValues: currentSubmission.retry_raw || null,
+      graded: true,
+      hideAnswers: hideAnsForThisCard,
+      showExplanation: true,
+      readOnly: true
+    };
+    html += renderCardHTML(card, ctx);
+  });
+
+  container.innerHTML = html;
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+// ==================== 錯題訂正練習流程 ====================
+function startWrongRetry() {
+  retryWrongIds = getWrongUnitIds();
+  if (retryWrongIds.length === 0) return;
+
+  retryValues = {};
+  // 先帶入原已答對的格子（鎖定顯示）
+  const origValues = buildCorrectionValuesMap();
+  currentUnit.scoringUnits.forEach(u => {
+    if (!retryWrongIds.includes(u.id)) {
+      retryValues[u.id] = origValues[u.id] ?? u.expected;
+    }
+  });
+
+  matchSelections = {};
+  currentMode = "retry";
+
+  const pad = currentStudent.seat < 10 ? `0${currentStudent.seat}` : `${currentStudent.seat}`;
+  document.getElementById("retry-badge-info").textContent = `${currentStudent.class} 班 ${pad} 號`;
+  document.getElementById("retry-unit-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》錯題訂正練習（全對 +10 分）`;
+
+  renderRetryCards();
+  showView("view-exam-retry");
+}
+
+function updateRetryProgressOnly() {
+  const filledCnt = retryWrongIds.filter(id => normalizeMathInput(retryValues[id] || "") !== "").length;
+  document.getElementById("retry-progress-text").textContent = `已訂正 ${filledCnt} / ${retryWrongIds.length} 格`;
+}
+
+function renderRetryCards() {
+  updateRetryProgressOnly();
+  const origValues = buildCorrectionValuesMap();
+  const locked = {};
+  currentUnit.scoringUnits.forEach(u => {
+    if (!retryWrongIds.includes(u.id)) locked[u.id] = true;
+  });
+
+  const retryCards = currentUnit.cards.filter(card => {
+    const ids = getCardUnitIds(card);
+    return ids.some(id => retryWrongIds.includes(id));
+  });
+
+  const container = document.getElementById("retry-cards-list");
+  container.innerHTML = retryCards.map(card => {
+    const ctx = {
+      scope: "retry",
+      domPrefix: "retry",
+      mode: "retry",
+      values: retryValues,
+      lockedUnits: locked,
+      prevWrongValues: origValues,
+      graded: false,
+      showExplanation: false,
+      readOnly: false
+    };
+    return renderCardHTML(card, ctx);
+  }).join("");
+
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+function cancelRetryBackToResult() {
+  currentMode = "result";
+  renderExamResultView(true);
+  showView("view-exam-result");
+}
+
+async function submitWrongRetry() {
+  const missing = retryWrongIds.filter(id => normalizeMathInput(retryValues[id] || "") === "");
+  if (missing.length > 0) {
+    alert(`您還有 ${missing.length} 格錯題尚未訂正填寫喔！請全部完成再送出。`);
+    return;
+  }
+
+  if (!confirm("確定要送出錯題訂正嗎？送出後將立即批改並計算最終成績（限一次加分機會）。")) return;
+
+  const btn = document.getElementById("btn-submit-retry");
+  btn.disabled = true;
+  btn.textContent = "⏳ 批改與更新紀錄中...";
+
+  const total = currentUnit.scoringUnits.length;
+  const retryAnswersFull = new Array(total).fill(0);
+  const retryRawObj = {};
+  let allCorrect = true;
+
+  currentUnit.scoringUnits.forEach((u, idx) => {
+    if (retryWrongIds.includes(u.id)) {
+      const raw = retryValues[u.id] || "";
+      const g = gradeScoringUnit(u, raw);
+      retryAnswersFull[idx] = g.status; // 1 or 2
+      retryRawObj[u.id] = g.normalized;
+      if (!g.isCorrect) allCorrect = false;
+    }
+  });
+
+  const synced = await sendRetryToSupabase(
+    currentUnit.examId,
+    currentStudent.class,
+    currentStudent.seat,
+    currentSubmission.client_id,
+    total,
+    retryAnswersFull,
+    allCorrect,
+    retryRawObj
+  );
+
+  btn.disabled = false;
+  btn.textContent = "✅ 送出錯題訂正（限一次加分機會）";
+
+  currentSubmission.retry_answers = retryAnswersFull;
+  currentSubmission.retry_raw = retryRawObj;
+  currentSubmission.retry_passed = allCorrect;
+  currentSubmission.bonus_points = allCorrect ? 10 : 0;
+  currentSubmission._retry_synced = synced;
+
+  saveDailyLocalRecord(currentUnit.examId, currentStudent.class, currentStudent.seat, currentSubmission);
+
+  if (!synced) {
+    alert("注意：目前網路連線不穩，訂正紀錄已先暫存於本機，待網路恢復後會自動同步至教師後台！");
+  }
+
+  currentMode = "result";
+  renderExamResultView(false);
+  showView("view-exam-result");
+}
+
+// ==================== 字級調整、全螢幕、快捷鍵 ====================
+function adjustFontSize(delta) {
+  if (delta === 0) fontScale = 1;
+  else fontScale = Math.min(1.4, Math.max(0.82, +(fontScale + delta).toFixed(2)));
+  document.documentElement.style.setProperty("--font-scale", fontScale);
+  requestAnimationFrame(redrawAllMatchingSVGs);
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+window.addEventListener("keydown", (e) => {
+  const tag = (document.activeElement && document.activeElement.tagName || "").toUpperCase();
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
+
+  if (currentMode === "practice" && !pracIsListMode) {
+    if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); nextPracCard(); }
+    else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prevPracCard(); }
+  } else if (currentMode === "exam") {
+    if (e.key === "ArrowRight") { e.preventDefault(); nextExamCard(); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); prevExamCard(); }
+  }
+});
+
+// 初始化
+initSeatSelect();
+renderHome();
+syncPendingLocalRetries();
+</script>
+</body>
+</html>

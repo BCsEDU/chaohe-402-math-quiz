@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+<title>教師後台｜康軒四上數學隨堂測驗成效管理系統</title>
+<style>
+  :root {
+    --bg: #f1f5f9;
+    --surface: #ffffff;
+    --primary: #1e40af;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #cbd5e1;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding-bottom: 64px;
+  }
+
+  header {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .badge { background: #fbbf24; color: #1e3a8a; font-weight: 900; padding: 4px 12px; border-radius: 999px; font-size: 1.05rem; }
+  .title { font-size: 1.4rem; font-weight: 900; }
+  .nav-link {
+    color: #dbeafe;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 1.05rem;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.35);
+  }
+  .nav-link:hover { background: rgba(255,255,255,0.16); color: #fff; }
+
+  main { max-width: 1440px; margin: 22px auto; padding: 0 18px; }
+
+  /* 登入卡片 */
+  .login-box {
+    max-width: 480px;
+    margin: 56px auto;
+    background: #fff;
+    border-radius: 22px;
+    padding: 36px 32px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.1);
+    border: 2.5px solid #cbd5e1;
+    text-align: center;
+  }
+  .login-box h2 { font-size: 1.9rem; color: #1e3a8a; margin-bottom: 8px; font-weight: 900; }
+  .login-box p { color: var(--text-muted); font-size: 1.05rem; margin-bottom: 22px; font-weight: 600; }
+  .input-pw {
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #cbd5e1;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 18px;
+    text-align: center;
+    outline: none;
+  }
+  .input-pw:focus { border-color: #2563eb; }
+  .btn-login {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    background: #1e40af;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 900;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-login:hover { background: #1d4ed8; }
+  .err-msg { color: #dc2626; font-size: 1.05rem; font-weight: 800; margin-top: 12px; min-height: 24px; }
+
+  /* 儀表板面板 */
+  .panel {
+    background: #fff;
+    border-radius: 20px;
+    padding: 22px 26px;
+    border: 2px solid #cbd5e1;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    margin-bottom: 22px;
+  }
+
+  .filters-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filter-select {
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+    font-size: 1.05rem;
+    font-weight: 800;
+    background: #f8fafc;
+    color: #0f172a;
+    outline: none;
+  }
+  .filter-select:focus { border-color: #2563eb; }
+
+  .action-btn {
+    padding: 9px 16px;
+    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+    font-size: 1.02rem;
+    font-weight: 800;
+    cursor: pointer;
+    background: #fff;
+    color: #0f172a;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .action-btn:hover { background: #eff6ff; border-color: #2563eb; }
+  .action-btn.export { background: #059669; color: #fff; border-color: #047857; }
+  .action-btn.export:hover { background: #047857; }
+
+  /* 統計總覽卡片 */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .stat-card {
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    padding: 16px 18px;
+    text-align: center;
+  }
+  .stat-val { font-size: 2.4rem; font-weight: 900; color: #1e40af; line-height: 1.15; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+  .stat-lbl { font-size: 1rem; color: #475569; font-weight: 800; }
+  .stat-sub { font-size: 0.88rem; color: #64748b; font-weight: 700; margin-top: 2px; }
+
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #1e3a8a;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* 1~29 座號點名盤點看板 */
+  .seats-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(122px, 1fr));
+    gap: 10px;
+  }
+  .seat-box {
+    border-radius: 14px;
+    padding: 11px 8px;
+    text-align: center;
+    border: 2px solid #cbd5e1;
+    background: #f8fafc;
+    transition: all 0.15s;
+  }
+  .seat-box.submitted {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #14532d;
+    cursor: pointer;
+  }
+  .seat-box.submitted:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.22);
+  }
+  .seat-box.unsubmitted {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #64748b;
+    border-style: dashed;
+  }
+  .seat-num { font-size: 1.25rem; font-weight: 900; }
+  .seat-score { font-size: 1.18rem; font-weight: 900; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .seat-name { font-size: 0.88rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* 資料表格 */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 1.04rem;
+  }
+  .data-table th, .data-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1.5px solid #e2e8f0;
+    vertical-align: middle;
+  }
+  .data-table th {
+    background: #f8fafc;
+    color: #334155;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .data-table tr:hover td { background: #f8fafc; }
+
+  .bar-container {
+    width: 100%;
+    min-width: 120px;
+    height: 16px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-inner { height: 100%; border-radius: 999px; transition: width 0.3s; }
+  .bar-high { background: #16a34a; }
+  .bar-mid { background: #eab308; }
+  .bar-low { background: #dc2626; }
+
+  .wrong-pattern-chip {
+    display: inline-block;
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    margin: 2px 4px 2px 0;
+  }
+
+  .btn-detail {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1.5px solid #93c5fd;
+    padding: 5px 11px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 0.92rem;
+    margin-right: 4px;
+  }
+  .btn-detail:hover { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+
+  .badge-del {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #f87171;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 0.92rem;
+  }
+  .badge-del:hover { background: #dc2626; color: #fff; }
+
+  .pill-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .pill-perfect { background: #dcfce7; color: #15803d; }
+  .pill-retry-ok { background: #dbeafe; color: #1d4ed8; }
+  .pill-retry-fail { background: #fee2e2; color: #b91c1c; }
+  .pill-retry-wait { background: #fef3c7; color: #92400e; }
+
+  /* ==================== 個人作答明細彈窗 (Modal) ==================== */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.62);
+    z-index: 120;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+  }
+  .modal-backdrop.open { display: flex; }
+
+  .modal-card {
+    background: #fff;
+    width: 100%;
+    max-width: 980px;
+    max-height: 90vh;
+    border-radius: 22px;
+    border: 3px solid #2563eb;
+    box-shadow: 0 24px 50px rgba(15, 23, 42, 0.35);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    background: #1e3a8a;
+    color: #fff;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .modal-title { font-size: 1.35rem; font-weight: 900; }
+  .modal-close {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.3); }
+
+  .modal-summary-strip {
+    background: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-weight: 800;
+    font-size: 1.02rem;
+  }
+
+  .modal-body {
+    padding: 18px 24px 26px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .modal-sec-block {
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .modal-sec-head {
+    background: #eff6ff;
+    color: #1e3a8a;
+    padding: 10px 16px;
+    font-weight: 900;
+    font-size: 1.12rem;
+    border-bottom: 1.5px solid #cbd5e1;
+  }
+
+  .modal-item-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.98rem;
+  }
+  .modal-item-table th, .modal-item-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+  }
+  .modal-item-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 900;
+  }
+  .ans-pill-ok {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-weight: 900;
+    display: inline-block;
+  }
+  .ans-pill-err {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-weight: 900;
+    display: inline-block;
+  }
+  .ans-pill-blank {
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-weight: 800;
+    display: inline-block;
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 12px 14px; }
+    .panel { padding: 16px 14px; }
+    .modal-header, .modal-summary-strip, .modal-body { padding-left: 14px; padding-right: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="badge">教師後台</span>
+    <span class="title">康軒四上數學｜隨堂測驗成效管理系統</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <a href="index.html" class="nav-link">← 前往學生測驗首頁</a>
+    <button id="btn-logout" class="action-btn" style="display:none;" onclick="logout()">登出</button>
+  </div>
+</header>
+
+<main>
+  <!-- 教師密碼登入 -->
+  <section id="sec-login" class="login-box">
+    <h2>👩‍🏫 教師身分驗證</h2>
+    <p>請輸入教師管理密碼以查看數學隨堂測驗數據</p>
+    <form onsubmit="handleLogin(event)">
+      <input type="password" id="input-pw" class="input-pw" placeholder="請輸入教師密碼" autofocus required autocomplete="current-password">
+      <button type="submit" class="btn-login" id="btn-login-submit">登入管理後台</button>
+      <div class="err-msg" id="login-err"></div>
+    </form>
+    <div style="margin-top:20px;padding-top:16px;border-top:1.5px solid #e2e8f0;">
+      <a href="index.html" style="display:inline-block;padding:11px 22px;background:#059669;color:#fff;border-radius:12px;text-decoration:none;font-weight:900;font-size:1.05rem;">✍️ 我是學生，前往測驗首頁</a>
+    </div>
+  </section>
+
+  <!-- 儀表板 -->
+  <section id="sec-dashboard" style="display:none;">
+    <!-- 篩選控制列 + 統計總覽 -->
+    <div class="panel">
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label style="font-weight:900;">單元：</label>
+          <select id="sel-exam" class="filter-select" onchange="renderDashboard()">
+            <option value="U7-math-decimal" selected>第七單元《小數》（45計分格）</option>
+            <option value="">全部數學單元</option>
+          </select>
+
+          <label style="font-weight:900;">班級：</label>
+          <select id="sel-class" class="filter-select" onchange="renderDashboard()">
+            <option value="">全部班級</option>
+            <option value="402">四年二班 (402)</option>
+            <option value="401">四年一班 (401)</option>
+            <option value="403">四年三班 (403)</option>
+            <option value="404">四年四班 (404)</option>
+          </select>
+
+          <label style="font-weight:900;">日期：</label>
+          <select id="sel-date" class="filter-select" onchange="renderDashboard()">
+            <option value="">全部日期</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <button class="action-btn" onclick="fetchData()">🔄 立即更新</button>
+          <label style="display:flex;align-items:center;gap:6px;font-weight:800;cursor:pointer;">
+            <input type="checkbox" id="chk-auto-refresh" checked> 自動更新 (5s)
+          </label>
+          <span id="txt-last-update" style="color:#64748b;font-size:0.92rem;"></span>
+          <button class="action-btn export" onclick="exportCSV()">📥 匯出成績 CSV</button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="stats-summary"></div>
+    </div>
+
+    <!-- 1~29 座號即時盤點看板 -->
+    <div class="panel">
+      <div class="section-title">
+        <span id="seat-board-title">📋 應考盤點看板（座號 1～29 號交卷狀況，點擊已交座號可看作答明細）</span>
+        <span id="seat-status-text" style="font-size:1.05rem;color:#059669;font-weight:800;"></span>
+      </div>
+      <div class="seats-board" id="seats-board"></div>
+    </div>
+
+    <!-- 各題答對率與常見錯誤分析 -->
+    <div class="panel">
+      <div class="section-title">
+        <span>📊 各題答對率與常見錯誤寫法分析</span>
+        <div class="filter-group">
+          <select id="sel-item-section" class="filter-select" style="font-size:0.96rem;padding:6px 12px;" onchange="renderDashboard()">
+            <option value="0">全部大題</option>
+            <option value="1">第一大題：認識二位小數</option>
+            <option value="2">第二大題：小數與長度換算</option>
+            <option value="3">第三大題：小數比大小</option>
+          </select>
+          <select id="sel-item-sort" class="filter-select" style="font-size:0.96rem;padding:6px 12px;" onchange="renderDashboard()">
+            <option value="rate-asc" selected>依答對率由低到高（找出盲點）</option>
+            <option value="order">依原卷題號順序</option>
+          </select>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:95px;">題次</th>
+              <th style="min-width:220px;">計分題目內容</th>
+              <th style="width:110px;">正確答案</th>
+              <th style="width:85px;">答對率</th>
+              <th style="width:160px;">長條圖</th>
+              <th style="width:95px;">答錯/未答</th>
+              <th style="min-width:220px;">常見錯誤寫法歸納</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-item-analysis"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 學生作答詳細名冊 -->
+    <div class="panel">
+      <div class="section-title">
+        <span>📝 學生成績總表與作答名冊</span>
+        <span id="table-count-label" style="font-size:1.05rem;color:#64748b;font-weight:800;"></span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>交卷時間</th>
+              <th>單元</th>
+              <th>班級</th>
+              <th>座號</th>
+              <th>原始分數</th>
+              <th>錯題訂正狀態</th>
+              <th>最終成績</th>
+              <th>原始錯題摘要</th>
+              <th style="min-width:170px;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-student-records"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 個人作答明細彈窗 (Modal) -->
+<div class="modal-backdrop" id="detail-modal" onclick="if(event.target===this) closeDetailModal()">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title-text">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title-text">學生個人作答明細</div>
+      <button class="modal-close" onclick="closeDetailModal()">✕ 關閉</button>
+    </div>
+    <div class="modal-summary-strip" id="modal-summary-strip"></div>
+    <div class="modal-body" id="modal-detail-body"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_CONFIG = {
+  URL: "https://ppdgubracsneozahujxl.supabase.co",
+  ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZGd1YnJhY3NuZW96YWh1anhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDY2ODAsImV4cCI6MjEwOTg4MjY4MH0.sqLIf_xBLNyJ4zG0twoBfnMkYA8-UE0DvyG-3gXn-RE"
+};
+
+const CMP_DISPLAY = { ">": "＞", "<": "＜", "=": "＝" };
+
+// 第七單元「小數」完整 45 個計分單元定義（與 index.html 100% 對齊）
+const UNIT7_ITEMS = [
+  { id: "u0",  sec: 1, secName: "第一大題：認識二位小數", code: "一(6)",   prompt: "0.06 是 ( ) 個 0.01", expected: "6", type: "integer" },
+  { id: "u1",  sec: 1, secName: "第一大題：認識二位小數", code: "一(7)①", prompt: "0.27 是 27 個 ( )", expected: "0.01", type: "decimal" },
+  { id: "u2",  sec: 1, secName: "第一大題：認識二位小數", code: "一(7)②", prompt: "也是 2 個 0.1 和 ( ) 個 0.01", expected: "7", type: "integer" },
+  { id: "u3",  sec: 1, secName: "第一大題：認識二位小數", code: "一(8)①", prompt: "6.49 的個位數字", expected: "6", type: "integer" },
+  { id: "u4",  sec: 1, secName: "第一大題：認識二位小數", code: "一(8)②", prompt: "6.49 的十分位數字", expected: "4", type: "integer" },
+  { id: "u5",  sec: 1, secName: "第一大題：認識二位小數", code: "一(8)③", prompt: "6.49 的百分位數字", expected: "9", type: "integer" },
+  { id: "u6",  sec: 1, secName: "第一大題：認識二位小數", code: "一(9)①", prompt: "4.28 的百分位數字（反序題）", expected: "8", type: "integer" },
+  { id: "u7",  sec: 1, secName: "第一大題：認識二位小數", code: "一(9)②", prompt: "4.28 的十分位數字", expected: "2", type: "integer" },
+  { id: "u8",  sec: 1, secName: "第一大題：認識二位小數", code: "一(9)③", prompt: "4.28 的個位數字", expected: "4", type: "integer" },
+  { id: "u9",  sec: 1, secName: "第一大題：認識二位小數", code: "一(10)",  prompt: "11個1、2個0.1、16個0.01 合起來", expected: "11.36", type: "decimal" },
+  { id: "u10", sec: 1, secName: "第一大題：認識二位小數", code: "一(11)",  prompt: "20個0.1 和 5個0.01 合起來", expected: "2.05", type: "decimal" },
+  { id: "u11", sec: 1, secName: "第一大題：認識二位小數", code: "一(12)①", prompt: "連連看：30.03 讀作", expected: "三十點零三", type: "match" },
+  { id: "u12", sec: 1, secName: "第一大題：認識二位小數", code: "一(12)②", prompt: "連連看：3.03 讀作", expected: "三點零三", type: "match" },
+  { id: "u13", sec: 1, secName: "第一大題：認識二位小數", code: "一(12)③", prompt: "連連看：33.3 讀作", expected: "三十三點三", type: "match" },
+  { id: "u14", sec: 1, secName: "第一大題：認識二位小數", code: "一(12)④", prompt: "連連看：3.3 讀作", expected: "三點三", type: "match" },
+
+  { id: "u15", sec: 2, secName: "第二大題：小數與長度換算", code: "二(1)①", prompt: "815 公分＝( ) 公尺", expected: "8.15", type: "decimal" },
+  { id: "u16", sec: 2, secName: "第二大題：小數與長度換算", code: "二(1)②", prompt: "6 公尺 52 公分＝( ) 公尺", expected: "6.52", type: "decimal" },
+  { id: "u17", sec: 2, secName: "第二大題：小數與長度換算", code: "二(1)③", prompt: "7 公尺 50 公分＝( ) 公尺", expected: "7.5（或 7.50）", type: "decimal" },
+  { id: "u18", sec: 2, secName: "第二大題：小數與長度換算", code: "二(1)④", prompt: "504 公分＝( ) 公尺", expected: "5.04", type: "decimal" },
+  { id: "u19", sec: 2, secName: "第二大題：小數與長度換算", code: "二(1)⑤", prompt: "8 公分＝( ) 公尺", expected: "0.08", type: "decimal" },
+  { id: "u20", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)①a", prompt: "4.86 公尺＝( ) 公尺", expected: "4", type: "integer" },
+  { id: "u21", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)①b", prompt: "4.86 公尺＝4公尺 ( ) 公分", expected: "86", type: "integer" },
+  { id: "u22", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)②a", prompt: "3.58 公尺＝( ) 公尺", expected: "3", type: "integer" },
+  { id: "u23", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)②b", prompt: "3.58 公尺＝3公尺 ( ) 公分", expected: "58", type: "integer" },
+  { id: "u24", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)③a", prompt: "8.07 公尺＝( ) 公尺", expected: "8", type: "integer" },
+  { id: "u25", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)③b", prompt: "8.07 公尺＝8公尺 ( ) 公分", expected: "7", type: "integer" },
+  { id: "u26", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)④a", prompt: "205.7 公尺＝( ) 公尺", expected: "205", type: "integer" },
+  { id: "u27", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)④b", prompt: "205.7 公尺＝205公尺 ( ) 公分", expected: "70", type: "integer" },
+  { id: "u28", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)⑤a", prompt: "40.08 公尺＝( ) 公尺", expected: "40", type: "integer" },
+  { id: "u29", sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)⑤b", prompt: "40.08 公尺＝40公尺 ( ) 公分", expected: "8", type: "integer" },
+  { id: "u30", sec: 2, secName: "第二大題：小數與長度換算", code: "二(3)①", prompt: "連連看：50 公尺 50 公分", expected: "50.5 公尺", type: "match" },
+  { id: "u31", sec: 2, secName: "第二大題：小數與長度換算", code: "二(3)②", prompt: "連連看：50.05 公尺", expected: "5005 公分", type: "match" },
+  { id: "u32", sec: 2, secName: "第二大題：小數與長度換算", code: "二(3)③", prompt: "連連看：55 公尺 50 公分", expected: "55.5 公尺", type: "match" },
+  { id: "u33", sec: 2, secName: "第二大題：小數與長度換算", code: "二(3)④", prompt: "連連看：5.5 公尺", expected: "5 公尺 50 公分", type: "match" },
+  { id: "u34", sec: 2, secName: "第二大題：小數與長度換算", code: "二(4)①", prompt: "連連看：12 m 34 cm", expected: "12.34 m", type: "match" },
+  { id: "u35", sec: 2, secName: "第二大題：小數與長度換算", code: "二(4)②", prompt: "連連看：12340 cm", expected: "123.4 m", type: "match" },
+  { id: "u36", sec: 2, secName: "第二大題：小數與長度換算", code: "二(4)③", prompt: "連連看：123 m 4 cm", expected: "123.04 m", type: "match" },
+
+  { id: "u37", sec: 3, secName: "第三大題：小數比大小", code: "三(5)①", prompt: "0.65 □ 0.56", expected: "＞", type: "compare" },
+  { id: "u38", sec: 3, secName: "第三大題：小數比大小", code: "三(5)②", prompt: "0.28 □ 0.3", expected: "＜", type: "compare" },
+  { id: "u39", sec: 3, secName: "第三大題：小數比大小", code: "三(6)①", prompt: "8.25 □ 8.52", expected: "＜", type: "compare" },
+  { id: "u40", sec: 3, secName: "第三大題：小數比大小", code: "三(6)②", prompt: "17.5 □ 16.92", expected: "＞", type: "compare" },
+  { id: "u41", sec: 3, secName: "第三大題：小數比大小", code: "三(7)①", prompt: "0.08 □ 0.6", expected: "＜", type: "compare" },
+  { id: "u42", sec: 3, secName: "第三大題：小數比大小", code: "三(7)②", prompt: "0.70 □ 0.7", expected: "＝", type: "compare" },
+  { id: "u43", sec: 3, secName: "第三大題：小數比大小", code: "三(8)①", prompt: "20.18 □ 20.2", expected: "＜", type: "compare" },
+  { id: "u44", sec: 3, secName: "第三大題：小數比大小", code: "三(8)②", prompt: "13.07 □ 14", expected: "＜", type: "compare" }
+];
+
+const EXAM_META = {
+  "U6-math-triangle": { name: "第六單元《三角形》", total: 0, items: [] },
+  "U7-math-decimal":  { name: "第七單元《小數》", total: UNIT7_ITEMS.length, items: UNIT7_ITEMS },
+  "U8-math-arithmetic": { name: "第八單元《整數四則計算》", total: 0, items: [] },
+  "U9-math-fraction": { name: "第九單元《分數》", total: 0, items: [] },
+  "U10-math-charts":  { name: "第十單元《統計圖》", total: 0, items: [] }
+};
+
+let currentPw = "";
+let allSubmissions = [];
+let autoRefreshTimer = null;
+
+function escapeHTML(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function formatAnswerDisplay(val, itemType) {
+  if (val === null || val === undefined || val === "") return "";
+  if (itemType === "compare") return CMP_DISPLAY[val] || val;
+  return String(val);
+}
+
+// 嚴格篩選數學隨堂測驗紀錄（排除國語 L%-chinese 與學力檢測 g3-/g4-math-*）
+function isMathQuizRow(r) {
+  if (!r) return false;
+  const eid = String(r.exam_id || "");
+  if (/^U(6|7|8|9|10)-.*-math/i.test(eid)) return true;
+  if (r.subject === "math" && !/^g\d+-/i.test(eid) && !/^L\d+-/i.test(eid)) return true;
+  return false;
+}
+
+function getTaipeiDay(isoStr) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Taipei" }).format(new Date(isoStr));
+}
+
+function parsePackedSubmissionName(nameStr) {
+  if (!nameStr || typeof nameStr !== "string") return null;
+  if (nameStr.startsWith("M1:")) {
+    try {
+      const arr = JSON.parse(nameStr.slice(3));
+      if (Array.isArray(arr)) return arr.map(v => String(v ?? ""));
+    } catch {}
+  }
+  return null;
+}
+
+function parsePackedRetryName(nameStr) {
+  if (!nameStr || typeof nameStr !== "string") return { cid: nameStr || "", rawObj: null };
+  if (nameStr.startsWith("M1R:")) {
+    try {
+      const parsed = JSON.parse(nameStr.slice(4));
+      return { cid: parsed.c || "", rawObj: parsed.v || null };
+    } catch {}
+  }
+  return { cid: nameStr, rawObj: null };
+}
+
+function mergeRetryRows(rawRows) {
+  const mathRows = (rawRows || []).filter(isMathQuizRow);
+  const mainRows = [];
+  const retryRows = [];
+
+  mathRows.forEach(r => {
+    if (r.exam_id && r.exam_id.endsWith("__retry")) {
+      retryRows.push(r);
+    } else {
+      const copy = { ...r };
+      copy._parsedRaw = parsePackedSubmissionName(r.name);
+      mainRows.push(copy);
+    }
+  });
+
+  const byClientId = {};
+  mainRows.forEach(m => { if (m.client_id) byClientId[m.client_id] = m; });
+
+  retryRows.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+  retryRows.forEach(rr => {
+    const baseExamId = rr.exam_id.replace(/__retry$/, "");
+    const rrDay = getTaipeiDay(rr.created_at);
+    const { cid, rawObj } = parsePackedRetryName(rr.name);
+
+    let target = (cid && byClientId[cid]) ? byClientId[cid] : null;
+    if (!target) {
+      target = mainRows.find(m =>
+        m.exam_id === baseExamId &&
+        m.class === rr.class &&
+        m.seat === rr.seat &&
+        getTaipeiDay(m.created_at) === rrDay
+      );
+    }
+    if (target && target.score < target.total && (target.retry_passed === null || target.retry_passed === undefined)) {
+      target._retry_id = rr.id;
+      target.bonus_points = Number(rr.score || 0);
+      target.retry_passed = (Number(rr.score || 0) === 10);
+      target.retry_answers = rr.answers;
+      target.retry_raw = rawObj;
+      target.retry_at = rr.created_at;
+    }
+  });
+
+  return mainRows;
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const pw = document.getElementById("input-pw").value;
+  const btn = document.getElementById("btn-login-submit");
+  const errEl = document.getElementById("login-err");
+  errEl.textContent = "";
+  btn.disabled = true;
+  btn.textContent = "驗證中...";
+
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/teacher_get_submissions`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ pw })
+    });
+
+    if (!res.ok) throw new Error("密碼錯誤或連線失敗，請重新輸入！");
+
+    const data = await res.json();
+    currentPw = pw;
+    allSubmissions = mergeRetryRows(data);
+
+    document.getElementById("sec-login").style.display = "none";
+    document.getElementById("sec-dashboard").style.display = "block";
+    document.getElementById("btn-logout").style.display = "inline-flex";
+
+    syncDynamicFilters();
+    renderDashboard();
+    startAutoRefresh();
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "登入管理後台";
+  }
+}
+
+function logout() {
+  currentPw = "";
+  allSubmissions = [];
+  clearInterval(autoRefreshTimer);
+  document.getElementById("input-pw").value = "";
+  document.getElementById("sec-login").style.display = "block";
+  document.getElementById("sec-dashboard").style.display = "none";
+  document.getElementById("btn-logout").style.display = "none";
+}
+
+async function fetchData() {
+  if (!currentPw) return;
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/teacher_get_submissions`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ pw: currentPw })
+    });
+    if (res.ok) {
+      allSubmissions = mergeRetryRows(await res.json());
+      syncDynamicFilters();
+      renderDashboard();
+      document.getElementById("txt-last-update").textContent =
+        `最後更新：${new Date().toLocaleTimeString("zh-TW", { hour12: false })}`;
+    }
+  } catch (err) {
+    console.error("更新失敗:", err);
+  }
+}
+
+function startAutoRefresh() {
+  clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(() => {
+    if (document.getElementById("chk-auto-refresh").checked && !document.hidden) {
+      fetchData();
+    }
+  }, 5000);
+}
+
+function syncDynamicFilters() {
+  // 動態補充班級選項
+  const clsSelect = document.getElementById("sel-class");
+  const prevCls = clsSelect.value;
+  const presetClasses = ["402", "401", "403", "404"];
+  const discoveredClasses = Array.from(new Set(allSubmissions.map(r => r.class).filter(Boolean))).sort();
+  const extraClasses = discoveredClasses.filter(c => !presetClasses.includes(c));
+  const classLabels = { "402": "四年二班 (402)", "401": "四年一班 (401)", "403": "四年三班 (403)", "404": "四年四班 (404)" };
+
+  clsSelect.innerHTML = `<option value="">全部班級</option>` +
+    [...presetClasses, ...extraClasses].map(c => `<option value="${escapeHTML(c)}">${escapeHTML(classLabels[c] || c)}</option>`).join("");
+  if ([...presetClasses, ...extraClasses].includes(prevCls)) clsSelect.value = prevCls;
+
+  // 動態更新日期選單
+  const dateSelect = document.getElementById("sel-date");
+  const prevDate = dateSelect.value;
+  const todayStr = getTaipeiDay(new Date().toISOString());
+  const dates = Array.from(new Set(allSubmissions.map(r => getTaipeiDay(r.created_at)))).sort().reverse();
+  dateSelect.innerHTML = `<option value="">全部日期</option>` +
+    dates.map(d => `<option value="${d}">${d}${d === todayStr ? "（今日）" : ""}</option>`).join("");
+  if (dates.includes(prevDate)) dateSelect.value = prevDate;
+}
+
+function getFilteredSubmissions() {
+  const selectedExam = document.getElementById("sel-exam").value;
+  const selectedClass = document.getElementById("sel-class").value;
+  const selectedDate = document.getElementById("sel-date").value;
+  return allSubmissions.filter(r => {
+    if (selectedExam && r.exam_id !== selectedExam) return false;
+    if (selectedClass && r.class !== selectedClass) return false;
+    if (selectedDate && getTaipeiDay(r.created_at) !== selectedDate) return false;
+    return true;
+  });
+}
+
+function computeScoreInfo(r) {
+  const rawPct = r.total ? Math.round((r.score / r.total) * 100) : 0;
+  const bonus = Number(r.bonus_points || 0);
+  const finalPct = Math.min(100, rawPct + bonus);
+
+  let statusText = "";
+  let statusClass = "";
+  let shortTag = "";
+
+  if (r.score >= r.total) {
+    statusText = "💯 原卷滿分";
+    statusClass = "pill-perfect";
+    shortTag = "原卷滿分";
+  } else if (r.retry_passed === true) {
+    statusText = "✅ 訂正全對 +10";
+    statusClass = "pill-retry-ok";
+    shortTag = `原${rawPct} +10`;
+  } else if (r.retry_passed === false) {
+    statusText = "❌ 訂正未全對";
+    statusClass = "pill-retry-fail";
+    shortTag = `原${rawPct} 已訂正`;
+  } else {
+    statusText = "⏳ 尚未訂正";
+    statusClass = "pill-retry-wait";
+    shortTag = `原${rawPct} 待訂正`;
+  }
+
+  return { rawPct, bonus, finalPct, statusText, statusClass, shortTag };
+}
+
+function renderDashboard() {
+  const selectedExam = document.getElementById("sel-exam").value;
+  const selectedClass = document.getElementById("sel-class").value;
+  const filtered = getFilteredSubmissions();
+
+  // 1. 統計總覽卡片
+  const totalCount = filtered.length;
+  const scoreInfos = filtered.map(computeScoreInfo);
+  const rawScores = scoreInfos.map(s => s.rawPct);
+  const finalScores = scoreInfos.map(s => s.finalPct);
+
+  const avgRaw = rawScores.length ? Math.round(rawScores.reduce((a, b) => a + b, 0) / rawScores.length) : 0;
+  const avgFinal = finalScores.length ? Math.round(finalScores.reduce((a, b) => a + b, 0) / finalScores.length) : 0;
+  const maxScore = finalScores.length ? Math.max(...finalScores) : 0;
+  const minScore = finalScores.length ? Math.min(...finalScores) : 0;
+  const origPerfectCount = filtered.filter(r => r.score >= r.total).length;
+  const finalPerfectCount = scoreInfos.filter(s => s.finalPct >= 100).length;
+
+  const needRetryRows = filtered.filter(r => r.score < r.total);
+  const completedRetryRows = needRetryRows.filter(r => r.retry_passed === true || r.retry_passed === false);
+  const retryRatePct = needRetryRows.length
+    ? Math.round((completedRetryRows.length / needRetryRows.length) * 100)
+    : (totalCount > 0 ? 100 : 0);
+  const retrySubText = needRetryRows.length
+    ? `${completedRetryRows.length} / ${needRetryRows.length} 人完成訂正`
+    : (totalCount > 0 ? "全員原卷滿分" : "尚無作答紀錄");
+
+  document.getElementById("stats-summary").innerHTML = `
+    <div class="stat-card">
+      <div class="stat-val">${totalCount}</div>
+      <div class="stat-lbl">繳交人數</div>
+      <div class="stat-sub">不重複 ${new Set(filtered.map(r => `${r.class}-${r.seat}`)).size} 人</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#15803d;">${avgFinal}<span style="font-size:1.3rem;">分</span></div>
+      <div class="stat-lbl">平均百分制分數</div>
+      <div class="stat-sub">原卷平均 ${avgRaw} 分</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#2563eb;">${maxScore} <span style="font-size:1.3rem;color:#64748b;">/ ${minScore}</span></div>
+      <div class="stat-lbl">最高分 / 最低分</div>
+      <div class="stat-sub">最終成績極值</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#0f766e;">${origPerfectCount}</div>
+      <div class="stat-lbl">滿分人數（原卷）</div>
+      <div class="stat-sub">含訂正加分滿分 ${finalPerfectCount} 人</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#d97706;">${retryRatePct}%</div>
+      <div class="stat-lbl">訂正完成率</div>
+      <div class="stat-sub">${retrySubText}</div>
+    </div>
+  `;
+
+  // 2. 1~29 座號點名看板
+  const boardClass = selectedClass || (filtered[0]?.class || "402");
+  document.getElementById("seat-board-title").textContent =
+    `📋 ${boardClass} 班應考盤點看板（座號 1～29 號，點選已交座號看作答明細）`;
+
+  const boardRows = filtered.filter(r => r.class === boardClass);
+  const seatMap = {};
+  boardRows.forEach(r => {
+    if (!seatMap[r.seat] || new Date(r.created_at) > new Date(seatMap[r.seat].created_at)) {
+      seatMap[r.seat] = r;
+    }
+  });
+
+  let submittedSeats = 0;
+  let seatsHtml = "";
+  for (let seat = 1; seat <= 29; seat++) {
+    const rec = seatMap[seat];
+    const pad = seat < 10 ? `0${seat}` : `${seat}`;
+    if (rec) {
+      submittedSeats++;
+      const info = computeScoreInfo(rec);
+      seatsHtml += `
+        <div class="seat-box submitted" onclick="openDetailModal(${rec.id})" title="點擊查看 ${boardClass} 班 ${pad} 號作答明細">
+          <div class="seat-num">${pad} 號 ✅</div>
+          <div class="seat-score">${info.finalPct} 分</div>
+          <div class="seat-name" style="color:${info.bonus > 0 ? '#1d4ed8' : '#15803d'};">${info.shortTag}</div>
+        </div>
+      `;
+    } else {
+      seatsHtml += `
+        <div class="seat-box unsubmitted">
+          <div class="seat-num">${pad} 號</div>
+          <div class="seat-score" style="color:#94a3b8;">未繳交</div>
+          <div class="seat-name">—</div>
+        </div>
+      `;
+    }
+  }
+  document.getElementById("seats-board").innerHTML = seatsHtml;
+  document.getElementById("seat-status-text").textContent =
+    `${boardClass} 班已繳交：${submittedSeats} / 29 人（${Math.round((submittedSeats / 29) * 100)}%）`;
+
+  // 3. 各題答對率與常見錯誤寫法分析
+  const examInfo = EXAM_META[selectedExam] || (filtered.length ? EXAM_META[filtered[0].exam_id] : null);
+  const tbodyItem = document.getElementById("tbody-item-analysis");
+  const itemSecFilter = parseInt(document.getElementById("sel-item-section").value, 10);
+  const itemSort = document.getElementById("sel-item-sort").value;
+
+  if (!examInfo || !examInfo.items.length) {
+    tbodyItem.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#64748b;padding:22px;">請於上方選單指定已建置題庫之單元</td></tr>`;
+  } else if (filtered.length === 0) {
+    tbodyItem.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#64748b;padding:22px;">目前篩選條件下尚無學生作答數據</td></tr>`;
+  } else {
+    let stats = examInfo.items.map((item, idx) => {
+      let correctCnt = 0;
+      let wrongCnt = 0;
+      let blankCnt = 0;
+      const wrongFreq = {};
+
+      filtered.forEach(r => {
+        const st = (r.answers && r.answers[idx] !== undefined) ? r.answers[idx] : 0;
+        if (st === 1) {
+          correctCnt++;
+        } else {
+          const rawVal = r._parsedRaw ? (r._parsedRaw[idx] ?? "") : "";
+          const dispVal = formatAnswerDisplay(rawVal, item.type);
+          if (st === 0 || dispVal === "") {
+            blankCnt++;
+          } else {
+            wrongCnt++;
+            wrongFreq[dispVal] = (wrongFreq[dispVal] || 0) + 1;
+          }
+        }
+      });
+
+      const rate = Math.round((correctCnt / filtered.length) * 100);
+      const topWrongs = Object.entries(wrongFreq)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3);
+
+      return { idx, item, rate, correctCnt, wrongCnt, blankCnt, topWrongs };
+    });
+
+    if (itemSecFilter > 0) stats = stats.filter(s => s.item.sec === itemSecFilter);
+    if (itemSort === "rate-asc") stats.sort((a, b) => a.rate - b.rate || a.idx - b.idx);
+
+    tbodyItem.innerHTML = stats.map(s => {
+      const barCls = s.rate >= 80 ? "bar-high" : s.rate >= 55 ? "bar-mid" : "bar-low";
+      const verb = s.item.type === "compare" ? "誤選" : s.item.type === "match" ? "誤連" : "寫成";
+      const wrongChips = s.topWrongs.map(([txt, cnt]) =>
+        `<span class="wrong-pattern-chip">${verb}「${escapeHTML(txt)}」(${cnt}人)</span>`
+      ).join("") + (s.blankCnt > 0 ? `<span class="ans-pill-blank">未作答 ${s.blankCnt}人</span>` : "");
+
+      return `
+        <tr>
+          <td><b style="color:#1e3a8a;">${escapeHTML(s.item.code)}</b></td>
+          <td style="font-weight:700;">${escapeHTML(s.item.prompt)}</td>
+          <td><b style="color:#15803d;">${escapeHTML(s.item.expected)}</b></td>
+          <td><b style="font-size:1.12rem;">${s.rate}%</b></td>
+          <td>
+            <div class="bar-container">
+              <div class="bar-inner ${barCls}" style="width:${s.rate}%;"></div>
+            </div>
+          </td>
+          <td><b style="color:${(s.wrongCnt + s.blankCnt) > 0 ? '#dc2626' : '#64748b'};">${s.wrongCnt + s.blankCnt} 人</b></td>
+          <td>${wrongChips || '<span style="color:#15803d;font-weight:800;">無人答錯 💯</span>'}</td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  // 4. 學生成績總表
+  document.getElementById("table-count-label").textContent = `共 ${filtered.length} 筆紀錄`;
+  const tbodyStudent = document.getElementById("tbody-student-records");
+  if (filtered.length === 0) {
+    tbodyStudent.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#64748b;padding:22px;">目前無符合條件的學生作答紀錄</td></tr>`;
+  } else {
+    tbodyStudent.innerHTML = filtered.map(r => {
+      const eInfo = EXAM_META[r.exam_id];
+      const info = computeScoreInfo(r);
+      const wrongCodes = [];
+      if (eInfo && eInfo.items.length && r.answers) {
+        eInfo.items.forEach((it, idx) => {
+          if (r.answers[idx] !== 1) wrongCodes.push(it.code);
+        });
+      }
+      const wrongSummary = wrongCodes.length === 0
+        ? '<span style="color:#15803d;font-weight:900;">全對 💯</span>'
+        : `<span style="color:#dc2626;font-weight:800;">共 ${wrongCodes.length} 格（${escapeHTML(wrongCodes.slice(0, 4).join("、"))}${wrongCodes.length > 4 ? "…" : ""}）</span>`;
+
+      const dateStr = new Date(r.created_at).toLocaleString("zh-TW", { hour12: false });
+      const padSeat = Number(r.seat) < 10 ? `0${r.seat}` : `${r.seat}`;
+      return `
+        <tr>
+          <td style="color:#64748b;font-size:0.95rem;">${dateStr}</td>
+          <td><b>${eInfo ? escapeHTML(eInfo.name) : escapeHTML(r.exam_id)}</b></td>
+          <td><b>${escapeHTML(r.class)}</b></td>
+          <td><b>${padSeat} 號</b></td>
+          <td><b>${info.rawPct} 分</b> <span style="color:#64748b;font-size:0.9rem;">(${r.score}/${r.total})</span></td>
+          <td><span class="pill-status ${info.statusClass}">${info.statusText}</span></td>
+          <td><b style="color:${info.finalPct >= 80 ? '#15803d' : info.finalPct >= 60 ? '#d97706' : '#dc2626'};font-size:1.18rem;">${info.finalPct} 分</b></td>
+          <td>${wrongSummary}</td>
+          <td style="white-space:nowrap;">
+            <button class="btn-detail" onclick="openDetailModal(${r.id})">🔍 作答明細</button>
+            <button class="badge-del" onclick="deleteRow(${r.id})">刪除</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+}
+
+// ==================== 個人作答明細彈窗 (Modal) ====================
+function openDetailModal(id) {
+  const r = allSubmissions.find(x => x.id === id);
+  if (!r) return;
+  const eInfo = EXAM_META[r.exam_id];
+  const info = computeScoreInfo(r);
+  const padSeat = Number(r.seat) < 10 ? `0${r.seat}` : `${r.seat}`;
+  const dateStr = new Date(r.created_at).toLocaleString("zh-TW", { hour12: false });
+
+  document.getElementById("modal-title-text").textContent =
+    `${r.class} 班 ${padSeat} 號｜${eInfo ? eInfo.name : r.exam_id} 個人作答明細`;
+
+  document.getElementById("modal-summary-strip").innerHTML = `
+    <span>🕒 交卷時間：${dateStr}</span>
+    <span>📝 原始成績：<b>${info.rawPct} 分</b>（答對 ${r.score} / ${r.total} 格）</span>
+    <span class="pill-status ${info.statusClass}">${info.statusText}</span>
+    <span style="color:#1e40af;">🏆 最終成績：<b style="font-size:1.25rem;">${info.finalPct} 分</b></span>
+  `;
+
+  const bodyEl = document.getElementById("modal-detail-body");
+  if (!eInfo || !eInfo.items.length) {
+    bodyEl.innerHTML = `<p style="color:#64748b;">此試卷尚未建立詳細題解對照表。</p>`;
+  } else {
+    const sections = [1, 2, 3];
+    bodyEl.innerHTML = sections.map(secNum => {
+      const itemsWithIdx = eInfo.items
+        .map((it, idx) => ({ it, idx }))
+        .filter(x => x.it.sec === secNum);
+      if (!itemsWithIdx.length) return "";
+
+      const rowsHtml = itemsWithIdx.map(({ it, idx }) => {
+        const st = (r.answers && r.answers[idx] !== undefined) ? r.answers[idx] : 0;
+        const rawAns = r._parsedRaw ? (r._parsedRaw[idx] ?? "") : "";
+        const studentDisp = formatAnswerDisplay(rawAns, it.type);
+
+        let studentCell = "";
+        if (st === 1) {
+          studentCell = `<span class="ans-pill-ok">${escapeHTML(studentDisp || "✓")}</span>`;
+        } else if (st === 0 || studentDisp === "") {
+          studentCell = `<span class="ans-pill-blank">未作答</span>`;
+        } else {
+          studentCell = `<span class="ans-pill-err">${escapeHTML(studentDisp)}</span>`;
+        }
+
+        // 訂正紀錄
+        const retrySt = (r.retry_answers && r.retry_answers[idx] !== undefined) ? r.retry_answers[idx] : 0;
+        const retryRaw = (r.retry_raw && r.retry_raw[it.id] !== undefined) ? r.retry_raw[it.id] : "";
+        const retryDisp = formatAnswerDisplay(retryRaw, it.type);
+
+        let statusCell = "";
+        if (st === 1) {
+          statusCell = `<span class="ans-pill-ok">✅ 答對</span>`;
+        } else if (retrySt === 1) {
+          statusCell = `<span class="ans-pill-ok" style="background:#dbeafe;color:#1d4ed8;">💪 訂正答對${retryDisp ? ` (${escapeHTML(retryDisp)})` : ""}</span>`;
+        } else if (retrySt === 2) {
+          statusCell = `<span class="ans-pill-err">❌ 訂正仍誤${retryDisp ? ` (${escapeHTML(retryDisp)})` : ""}</span>`;
+        } else if (st === 0) {
+          statusCell = `<span class="ans-pill-blank">⬜ 未填</span>`;
+        } else {
+          statusCell = `<span class="ans-pill-err">❌ 答錯</span>`;
+        }
+
+        return `
+          <tr>
+            <td><b>${escapeHTML(it.code)}</b></td>
+            <td>${escapeHTML(it.prompt)}</td>
+            <td>${studentCell}</td>
+            <td><b style="color:#15803d;">${escapeHTML(it.expected)}</b></td>
+            <td>${statusCell}</td>
+          </tr>
+        `;
+      }).join("");
+
+      return `
+        <div class="modal-sec-block">
+          <div class="modal-sec-head">${escapeHTML(itemsWithIdx[0].it.secName)}</div>
+          <div style="overflow-x:auto;">
+            <table class="modal-item-table">
+              <thead>
+                <tr>
+                  <th style="width:90px;">題號</th>
+                  <th>題目內容</th>
+                  <th style="width:150px;">學生作答</th>
+                  <th style="width:140px;">正確答案</th>
+                  <th style="width:185px;">批改與訂正狀態</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  document.getElementById("detail-modal").classList.add("open");
+}
+
+function closeDetailModal() {
+  document.getElementById("detail-modal").classList.remove("open");
+}
+
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeDetailModal();
+});
+
+// 刪除測試或錯誤紀錄（含關聯的 __retry）
+async function deleteRow(id) {
+  if (!confirm("確定要刪除這筆學生的作答紀錄嗎？（若有訂正紀錄也會一併刪除）")) return;
+  const rec = allSubmissions.find(x => x.id === id);
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/teacher_delete_submission`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ pw: currentPw, sid: id })
+    });
+    if (res.ok) {
+      if (rec && rec._retry_id) {
+        await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/teacher_delete_submission`, {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_CONFIG.ANON_KEY,
+            "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ pw: currentPw, sid: rec._retry_id })
+        }).catch(() => {});
+      }
+      allSubmissions = allSubmissions.filter(x => x.id !== id);
+      closeDetailModal();
+      syncDynamicFilters();
+      renderDashboard();
+    } else {
+      alert("刪除失敗！");
+    }
+  } catch (err) {
+    alert("刪除失敗：" + err.message);
+  }
+}
+
+// 匯出 CSV（含 UTF-8 BOM）
+function exportCSV() {
+  const filtered = getFilteredSubmissions();
+  if (filtered.length === 0) {
+    alert("目前沒有資料可匯出！");
+    return;
+  }
+
+  const rows = [
+    ["交卷時間", "單元代號", "單元名稱", "班級", "座號", "答對格數", "總格數", "原始分數", "錯題訂正狀態", "訂正加分", "最終成績", "錯題題號"]
+  ];
+
+  filtered.forEach(r => {
+    const eInfo = EXAM_META[r.exam_id];
+    const info = computeScoreInfo(r);
+    const wrongCodes = [];
+    if (eInfo && eInfo.items.length && r.answers) {
+      eInfo.items.forEach((it, idx) => {
+        if (r.answers[idx] !== 1) wrongCodes.push(it.code);
+      });
+    }
+    rows.push([
+      new Date(r.created_at).toLocaleString("zh-TW", { hour12: false }),
+      r.exam_id,
+      eInfo ? eInfo.name : r.exam_id,
+      r.class,
+      r.seat,
+      r.score,
+      r.total,
+      info.rawPct,
+      info.statusText,
+      info.bonus,
+      info.finalPct,
+      wrongCodes.join(" ")
+    ]);
+  });
+
+  const csvCell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const csvContent = "\ufeff" + rows.map(row => row.map(csvCell).join(",")).join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `康軒四上數學隨堂測驗成績_${getTaipeiDay(new Date().toISOString())}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+</script>
+</body>
+</html>
