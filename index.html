@@ -6,17 +6,17 @@
 <title>康軒四上數學｜隨堂練習與線上測驗互動網</title>
 <style>
   :root {
-    --bg: #eef4fa;
+    --bg: #edf5f0;
     --surface: #ffffff;
-    --surface-sub: #f8fafc;
-    --primary: #1e40af;
-    --primary-hover: #1d4ed8;
-    --primary-light: #dbeafe;
+    --surface-sub: #f5faf7;
+    --primary: #1f6351;
+    --primary-hover: #175243;
+    --primary-light: #d8f0e7;
     --accent: #d97706;
     --teal: #0f766e;
-    --text: #0f172a;
-    --text-muted: #475569;
-    --border: #cbd5e1;
+    --text: #162b24;
+    --text-muted: #48635a;
+    --border: #c4d6ce;
     --correct-bg: #dcfce7;
     --correct-border: #16a34a;
     --correct-text: #14532d;
@@ -47,14 +47,14 @@
     position: sticky;
     top: 0;
     z-index: 60;
-    background: #1e3a8a;
+    background: #1b4d3e;
     color: #fff;
     padding: 12px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+    box-shadow: 0 4px 12px rgba(22, 43, 36, 0.16);
     flex-wrap: wrap;
   }
 
@@ -67,7 +67,7 @@
 
   .brand-badge {
     background: #fbbf24;
-    color: #1e3a8a;
+    color: #1b4d3e;
     font-weight: 900;
     font-size: 1.15rem;
     padding: 4px 14px;
@@ -127,12 +127,12 @@
 
   /* 首頁 Hero Banner */
   .hero-banner {
-    background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 60%, #0284c7 100%);
+    background: linear-gradient(135deg, #1b4d3e 0%, #175243 60%, #2e8b72 100%);
     color: #fff;
     border-radius: 24px;
     padding: 30px 34px;
     margin-bottom: 26px;
-    box-shadow: 0 12px 28px rgba(30, 64, 175, 0.18);
+    box-shadow: 0 12px 28px rgba(27, 77, 62, 0.18);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -149,7 +149,7 @@
 
   .hero-banner p {
     font-size: calc(1.2rem * var(--font-scale));
-    color: #dbeafe;
+    color: #d8f0e7;
     font-weight: 600;
   }
 
@@ -176,7 +176,7 @@
 
   .lesson-card {
     background: var(--surface);
-    border: 3px solid #cbd5e1;
+    border: 3px solid #c4d6ce;
     border-radius: 22px;
     padding: 26px 24px;
     display: flex;
@@ -187,12 +187,12 @@
   }
 
   .lesson-card.ready {
-    border-color: #2563eb;
-    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.12);
+    border-color: #24745f;
+    box-shadow: 0 10px 24px rgba(31, 99, 81, 0.12);
   }
 
   .lesson-card.locked {
-    background: #f1f5f9;
+    background: #eef4f0;
     border-style: dashed;
     opacity: 0.78;
   }
@@ -210,12 +210,12 @@
     font-weight: 900;
     padding: 5px 14px;
     border-radius: 999px;
-    background: #dbeafe;
-    color: #1e40af;
+    background: #d8f0e7;
+    color: #1f6351;
   }
   .lesson-card.locked .lesson-tag {
-    background: #e2e8f0;
-    color: #475569;
+    background: #dce8e2;
+    color: #48635a;
   }
 
   .status-pill {
@@ -225,7 +225,7 @@
     border-radius: 999px;
   }
   .status-pill.ready { background: #dcfce7; color: #15803d; }
-  .status-pill.soon { background: #e2e8f0; color: #475569; }
+  .status-pill.soon { background: #dce8e2; color: #48635a; }
 
   .lesson-name {
     font-size: calc(1.95rem * var(--font-scale));
@@ -266,15 +266,15 @@
     white-space: nowrap;
   }
 
-  .action-btn.proj { background: #2563eb; color: #fff; }
-  .action-btn.proj:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-2px); }
+  .action-btn.proj { background: #24745f; color: #fff; }
+  .action-btn.proj:hover:not(:disabled) { background: #175243; transform: translateY(-2px); }
 
-  .action-btn.exam { background: #059669; color: #fff; }
-  .action-btn.exam:hover:not(:disabled) { background: #047857; transform: translateY(-2px); }
+  .action-btn.exam { background: #c96f16; color: #fff; }
+  .action-btn.exam:hover:not(:disabled) { background: #a85a0f; transform: translateY(-2px); }
 
   .action-btn:disabled {
-    background: #cbd5e1;
-    color: #64748b;
+    background: #c4d6ce;
+    color: #5d786f;
     cursor: not-allowed;
     transform: none;
   }
@@ -285,9 +285,9 @@
     margin: 34px auto;
     background: #fff;
     border-radius: 24px;
-    border: 3.5px solid #2563eb;
+    border: 3.5px solid #24745f;
     padding: 36px 32px;
-    box-shadow: 0 18px 40px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 18px 40px rgba(31, 99, 81, 0.12);
   }
 
   .login-header {
@@ -296,13 +296,13 @@
   }
   .login-header h2 {
     font-size: calc(2rem * var(--font-scale));
-    color: #1e3a8a;
+    color: #1b4d3e;
     font-weight: 900;
     margin-bottom: 6px;
   }
   .login-header p {
     font-size: calc(1.18rem * var(--font-scale));
-    color: #64748b;
+    color: #5d786f;
     font-weight: 600;
   }
 
@@ -318,15 +318,15 @@
     width: 100%;
     padding: 14px 18px;
     border-radius: 14px;
-    border: 2.5px solid #cbd5e1;
+    border: 2.5px solid #c4d6ce;
     font-size: calc(1.3rem * var(--font-scale));
     font-weight: 800;
-    color: #0f172a;
-    background: #f8fafc;
+    color: #162b24;
+    background: #f5faf7;
     outline: none;
     transition: border-color 0.15s;
   }
-  .form-control:focus { border-color: #2563eb; background: #fff; }
+  .form-control:focus { border-color: #24745f; background: #fff; }
 
   .btn-submit-login {
     width: 100%;
@@ -350,7 +350,7 @@
     border-radius: 18px;
     padding: 16px 22px;
     margin-bottom: 16px;
-    border: 2.5px solid #cbd5e1;
+    border: 2.5px solid #c4d6ce;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -359,7 +359,7 @@
   }
 
   .exam-bar {
-    background: #1e3a8a;
+    background: #1b4d3e;
     color: #fff;
     border-radius: 18px;
     padding: 16px 22px;
@@ -375,7 +375,7 @@
     font-size: calc(1.25rem * var(--font-scale));
     font-weight: 900;
     background: #fbbf24;
-    color: #1e3a8a;
+    color: #1b4d3e;
     padding: 5px 16px;
     border-radius: 999px;
   }
@@ -383,7 +383,7 @@
   .exam-progress-text {
     font-size: calc(1.18rem * var(--font-scale));
     font-weight: 800;
-    color: #dbeafe;
+    color: #d8f0e7;
   }
 
   /* 大題切換分頁列 */
@@ -397,7 +397,7 @@
   .section-tab {
     padding: 10px 18px;
     border-radius: 12px;
-    border: 2px solid #cbd5e1;
+    border: 2px solid #c4d6ce;
     background: #fff;
     color: #334155;
     font-size: calc(1.08rem * var(--font-scale));
@@ -405,12 +405,12 @@
     cursor: pointer;
     transition: all 0.15s;
   }
-  .section-tab:hover { border-color: #2563eb; background: #eff6ff; }
+  .section-tab:hover { border-color: #24745f; background: #ebf7f2; }
   .section-tab.active {
-    background: #1e40af;
+    background: #1f6351;
     color: #fff;
-    border-color: #1e3a8a;
-    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.22);
+    border-color: #1b4d3e;
+    box-shadow: 0 4px 10px rgba(27, 77, 62, 0.22);
   }
 
   /* 題組快選點點 */
@@ -425,8 +425,8 @@
     min-height: 46px;
     padding: 4px 6px;
     border-radius: 12px;
-    border: 2px solid #cbd5e1;
-    background: #f8fafc;
+    border: 2px solid #c4d6ce;
+    background: #f5faf7;
     color: #334155;
     font-size: calc(1.05rem * var(--font-scale));
     font-weight: 900;
@@ -442,9 +442,9 @@
     color: #92400e;
   }
   .q-dot.answered {
-    background: #dbeafe;
-    border-color: #3b82f6;
-    color: #1e40af;
+    background: #d8f0e7;
+    border-color: #2f8c74;
+    color: #1f6351;
   }
   .q-dot.graded-ok {
     background: #dcfce7;
@@ -457,11 +457,11 @@
     color: #b91c1c;
   }
   .q-dot.current {
-    background: #1e40af;
+    background: #1f6351;
     color: #fff;
-    border-color: #1e3a8a;
+    border-color: #1b4d3e;
     transform: scale(1.06);
-    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.32);
+    box-shadow: 0 4px 10px rgba(27, 77, 62, 0.32);
   }
 
   /* ==================== 題目舞台卡片 ==================== */
@@ -470,7 +470,7 @@
     border-radius: 24px;
     padding: 30px 32px;
     border: 3px solid #94a3b8;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 12px 28px rgba(22, 43, 36, 0.08);
     margin-bottom: 22px;
   }
 
@@ -490,13 +490,13 @@
     font-weight: 900;
     font-size: calc(1.05rem * var(--font-scale));
   }
-  .sec-1 { background: #dbeafe; color: #1e40af; }
-  .sec-2 { background: #ccfbf1; color: #0f766e; }
+  .sec-1 { background: #d8f0e7; color: #1f6351; }
+  .sec-2 { background: #fef3c7; color: #92400e; }
   .sec-3 { background: #ede9fe; color: #5b21b6; }
 
   .question-num-pill {
     display: inline-block;
-    background: #1e40af;
+    background: #1f6351;
     color: #fff;
     font-size: calc(1.45rem * var(--font-scale));
     font-weight: 900;
@@ -509,7 +509,7 @@
   .question-title-text {
     font-size: calc(1.85rem * var(--font-scale));
     font-weight: 900;
-    color: #0f172a;
+    color: #162b24;
     line-height: 1.5;
     margin-bottom: 16px;
   }
@@ -522,20 +522,20 @@
   }
 
   .fill-row {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    background: #f5faf7;
+    border: 2px solid #dce8e2;
     border-radius: 16px;
     padding: 18px 22px;
     font-size: calc(1.75rem * var(--font-scale));
     font-weight: 800;
-    color: #0f172a;
+    color: #162b24;
     line-height: 2.1;
     font-variant-numeric: tabular-nums;
   }
 
   .sub-num {
     display: inline-block;
-    color: #1e40af;
+    color: #1f6351;
     font-weight: 900;
     margin-right: 8px;
   }
@@ -557,18 +557,18 @@
     font-size: calc(1.65rem * var(--font-scale));
     font-weight: 900;
     text-align: center;
-    color: #1e3a8a;
+    color: #1b4d3e;
     background: #ffffff;
-    border: 3px solid #64748b;
+    border: 3px solid #5d786f;
     border-radius: 12px;
     outline: none;
     transition: all 0.15s;
     font-variant-numeric: tabular-nums;
   }
   .math-input:focus {
-    border-color: #2563eb;
-    background: #eff6ff;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    border-color: #24745f;
+    background: #ebf7f2;
+    box-shadow: 0 0 0 4px rgba(31, 99, 81, 0.2);
   }
   .math-input.input-correct {
     border-color: #16a34a;
@@ -612,9 +612,9 @@
   .match-status-hint {
     font-size: calc(1.1rem * var(--font-scale));
     font-weight: 800;
-    color: #1e40af;
-    background: #eff6ff;
-    border: 1.5px solid #93c5fd;
+    color: #1f6351;
+    background: #ebf7f2;
+    border: 1.5px solid #9bd1c0;
     padding: 6px 14px;
     border-radius: 10px;
   }
@@ -626,8 +626,8 @@
     align-items: stretch;
     gap: 14px 0;
     padding: 16px 12px;
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    background: #f5faf7;
+    border: 2px solid #dce8e2;
     border-radius: 18px;
     user-select: none;
   }
@@ -663,11 +663,11 @@
     min-height: 64px;
     padding: 12px 16px;
     background: #fff;
-    border: 3px solid #cbd5e1;
+    border: 3px solid #c4d6ce;
     border-radius: 14px;
     font-size: calc(1.45rem * var(--font-scale));
     font-weight: 900;
-    color: #0f172a;
+    color: #162b24;
     cursor: pointer;
     transition: all 0.15s ease;
     text-align: left;
@@ -678,8 +678,8 @@
     text-align: right;
   }
   .match-item:hover:not(:disabled) {
-    border-color: #2563eb;
-    background: #eff6ff;
+    border-color: #24745f;
+    background: #ebf7f2;
   }
   .match-item.selected {
     border-color: #f59e0b;
@@ -687,7 +687,7 @@
     box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.28);
   }
   .match-item.connected {
-    background: #eff6ff;
+    background: #ebf7f2;
   }
   .match-item.graded-ok {
     border-color: #16a34a !important;
@@ -708,9 +708,9 @@
     width: 18px;
     height: 18px;
     border-radius: 50%;
-    background: #64748b;
+    background: #5d786f;
     border: 3px solid #fff;
-    box-shadow: 0 0 0 2px #64748b;
+    box-shadow: 0 0 0 2px #5d786f;
   }
 
   .match-summary-list {
@@ -725,7 +725,7 @@
     font-weight: 800;
     padding: 6px 12px;
     border-radius: 10px;
-    border: 1.5px solid #cbd5e1;
+    border: 1.5px solid #c4d6ce;
     background: #fff;
   }
   .match-chip.ok { background: #dcfce7; border-color: #16a34a; color: #14532d; }
@@ -739,8 +739,8 @@
   }
 
   .cmp-row {
-    background: #f8fafc;
-    border: 2.5px solid #cbd5e1;
+    background: #f5faf7;
+    border: 2.5px solid #c4d6ce;
     border-radius: 18px;
     padding: 18px 22px;
     display: flex;
@@ -767,14 +767,14 @@
     justify-content: center;
     width: calc(64px * var(--font-scale));
     height: calc(58px * var(--font-scale));
-    border: 3.5px solid #1e40af;
+    border: 3.5px solid #1f6351;
     border-radius: 12px;
     background: #fff;
-    color: #1e40af;
+    color: #1f6351;
     font-size: calc(2.1rem * var(--font-scale));
     font-weight: 900;
   }
-  .cmp-box.filled { background: #dbeafe; }
+  .cmp-box.filled { background: #d8f0e7; }
   .cmp-box.ok { border-color: #16a34a; background: #dcfce7; color: #15803d; }
   .cmp-box.err { border-color: #dc2626; background: #fee2e2; color: #b91c1c; }
 
@@ -788,24 +788,24 @@
     min-width: calc(68px * var(--font-scale));
     height: calc(58px * var(--font-scale));
     border-radius: 14px;
-    border: 3px solid #cbd5e1;
+    border: 3px solid #c4d6ce;
     background: #fff;
-    color: #0f172a;
+    color: #162b24;
     font-size: calc(1.9rem * var(--font-scale));
     font-weight: 900;
     cursor: pointer;
     transition: all 0.15s;
   }
   .cmp-btn:hover:not(:disabled) {
-    border-color: #2563eb;
-    background: #eff6ff;
+    border-color: #24745f;
+    background: #ebf7f2;
     transform: translateY(-2px);
   }
   .cmp-btn.active {
-    background: #1e40af;
-    border-color: #1e3a8a;
+    background: #1f6351;
+    border-color: #1b4d3e;
     color: #fff;
-    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.28);
+    box-shadow: 0 4px 12px rgba(27, 77, 62, 0.28);
   }
   .cmp-btn:disabled { cursor: default; opacity: 0.7; }
 
@@ -854,7 +854,7 @@
     border-radius: 14px;
     font-size: calc(1.22rem * var(--font-scale));
     font-weight: 900;
-    border: 2.5px solid #cbd5e1;
+    border: 2.5px solid #c4d6ce;
     background: #fff;
     color: #1e293b;
     cursor: pointer;
@@ -863,10 +863,10 @@
     align-items: center;
     gap: 8px;
   }
-  .ctrl-btn:hover:not(:disabled) { border-color: #1e40af; background: #eff6ff; }
+  .ctrl-btn:hover:not(:disabled) { border-color: #1f6351; background: #ebf7f2; }
   .ctrl-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-  .ctrl-btn.primary { background: #1e40af; color: #fff; border-color: #1e3a8a; }
-  .ctrl-btn.primary:hover:not(:disabled) { background: #1d4ed8; }
+  .ctrl-btn.primary { background: #1f6351; color: #fff; border-color: #1b4d3e; }
+  .ctrl-btn.primary:hover:not(:disabled) { background: #175243; }
   .ctrl-btn.success { background: #059669; color: #fff; border-color: #047857; }
   .ctrl-btn.success:hover:not(:disabled) { background: #047857; }
   .ctrl-btn.reveal { background: #f59e0b; color: #fff; border-color: #d97706; }
@@ -898,7 +898,7 @@
   }
   .result-desc {
     font-size: calc(1.3rem * var(--font-scale));
-    color: #475569;
+    color: #48635a;
     font-weight: 700;
     margin-bottom: 22px;
   }
@@ -947,7 +947,7 @@
   .keyboard-hint {
     text-align: center;
     margin-top: 18px;
-    color: #64748b;
+    color: #5d786f;
     font-size: 1.05rem;
     font-weight: 700;
   }
@@ -1001,8 +1001,8 @@
 
     <div class="lesson-grid" id="unit-grid"></div>
 
-    <div style="text-align:center;margin-top:44px;padding-top:16px;border-top:1px solid #cbd5e1;">
-      <a href="teacher.html" style="color:#475569;font-size:1rem;text-decoration:none;font-weight:800;">👩‍🏫 前往教師成績管理後台</a>
+    <div style="text-align:center;margin-top:44px;padding-top:16px;border-top:1px solid #c4d6ce;">
+      <a href="teacher.html" style="color:#48635a;font-size:1rem;text-decoration:none;font-weight:800;">👩‍🏫 前往教師成績管理後台</a>
     </div>
   </section>
 
@@ -1041,7 +1041,7 @@
   <section id="view-practice" class="view-panel">
     <div class="mode-topbar">
       <div>
-        <span style="font-size:calc(1.6rem * var(--font-scale));font-weight:900;color:#1e3a8a;" id="prac-unit-title"></span>
+        <span style="font-size:calc(1.6rem * var(--font-scale));font-weight:900;color:#1b4d3e;" id="prac-unit-title"></span>
         <span style="background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:999px;font-weight:800;font-size:1rem;margin-left:8px;">課堂互動練習</span>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -1153,7 +1153,7 @@ const SUPABASE_CONFIG = {
   ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBwZGd1YnJhY3NuZW96YWh1anhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQzMDY2ODAsImV4cCI6MjEwOTg4MjY4MH0.sqLIf_xBLNyJ4zG0twoBfnMkYA8-UE0DvyG-3gXn-RE"
 };
 
-const MATCH_COLORS = ["#2563eb", "#d97706", "#7c3aed", "#0891b2"];
+const MATCH_COLORS = ["#1f6351", "#d97706", "#7c3aed", "#0284c7"];
 const CMP_DISPLAY = { ">": "＞", "<": "＜", "=": "＝" };
 
 // ==================== 單元與題庫定義 ====================
@@ -1844,7 +1844,7 @@ function renderCardHTML(card, ctx) {
 
       const color = MATCH_COLORS[lIdx % MATCH_COLORS.length];
       const borderStyle = (!gRes && !isLocked && hasConn && !isSel) ? `style="border-color:${color};"` : "";
-      const dotStyle = `style="background:${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (isLocked ? '#16a34a' : (hasConn ? color : '#64748b'))};box-shadow:0 0 0 2px ${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (hasConn ? color : '#64748b')};"`;
+      const dotStyle = `style="background:${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (isLocked ? '#16a34a' : (hasConn ? color : '#5d786f'))};box-shadow:0 0 0 2px ${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (hasConn ? color : '#5d786f')};"`;
 
       return `
         <button type="button" class="${cls}" ${borderStyle}
@@ -1877,7 +1877,7 @@ function renderCardHTML(card, ctx) {
       if (isLocked) cls += " graded-ok";
       else if (gRes) cls += gRes.isCorrect ? " graded-ok" : " graded-err";
 
-      const color = hasConn ? MATCH_COLORS[connectedL % MATCH_COLORS.length] : "#64748b";
+      const color = hasConn ? MATCH_COLORS[connectedL % MATCH_COLORS.length] : "#5d786f";
       const borderStyle = (!gRes && !isLocked && hasConn && !isSel) ? `style="border-color:${color};"` : "";
       const dotStyle = `style="background:${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : (isLocked ? '#16a34a' : color)};box-shadow:0 0 0 2px ${gRes ? (gRes.isCorrect ? '#16a34a' : '#dc2626') : color};"`;
 
@@ -2013,9 +2013,9 @@ function renderCardHTML(card, ctx) {
   if (ctx.showExplanation) {
     if (ctx.hideAnswers) {
       expHtml = `
-        <div class="explanation-box show" style="background:#f8fafc;border-color:#94a3b8;">
-          <div class="exp-header" style="color:#475569;">🔒 完成「錯題訂正練習」後解鎖詳解</div>
-          <div class="exp-body" style="color:#64748b;">這題還有待訂正的小題喔！請先點擊上方「進行錯題訂正練習」挑戰加 10 分，完成後就會完整顯示解析。</div>
+        <div class="explanation-box show" style="background:#f5faf7;border-color:#94a3b8;">
+          <div class="exp-header" style="color:#48635a;">🔒 完成「錯題訂正練習」後解鎖詳解</div>
+          <div class="exp-body" style="color:#5d786f;">這題還有待訂正的小題喔！請先點擊上方「進行錯題訂正練習」挑戰加 10 分，完成後就會完整顯示解析。</div>
         </div>
       `;
     } else {
@@ -2978,17 +2978,17 @@ function renderExamResultView(isReturning) {
     btnRetry.style.display = "none";
     btnPeek.style.display = "none";
   } else if (retryState === null || retryState === undefined) {
-    resCard.style.borderColor = "#2563eb";
-    scoreEl.style.color = "#1e40af";
+    resCard.style.borderColor = "#24745f";
+    scoreEl.style.color = "#1f6351";
     headerEl.textContent = `📝 ${seatLabel} ${isReturning ? '今日測驗紀錄（尚未訂正）' : '線上測驗批改完成！'}`;
     scoreEl.textContent = `${rawPct} 分`;
     descEl.textContent = `共 ${total} 格，答對 ${correctCount} 格，待訂正 ${wrongIds.length} 格（成績已送至教師後台）`;
 
     if (answersRevealedWithoutRetry) {
       calloutEl.style.display = "block";
-      calloutEl.style.background = "#f8fafc";
+      calloutEl.style.background = "#f5faf7";
       calloutEl.style.borderColor = "#94a3b8";
-      calloutEl.style.color = "#475569";
+      calloutEl.style.color = "#48635a";
       calloutEl.innerHTML = `👁 您已選擇直接檢視完整正解與詳解，本次測驗維持原分數 <b>${rawPct} 分</b>。`;
       btnRetry.style.display = "none";
       btnPeek.style.display = "none";
@@ -3047,7 +3047,7 @@ function renderCorrectionSheet() {
   const retryDone = (currentSubmission.retry_passed !== null && currentSubmission.retry_passed !== undefined);
   const canRevealAll = (wrongIds.length === 0) || retryDone || answersRevealedWithoutRetry;
 
-  let html = `<h2 style="font-size:calc(1.7rem * var(--font-scale));font-weight:900;color:#1e3a8a;margin-bottom:4px;">📑 逐題批改結果與詳解</h2>`;
+  let html = `<h2 style="font-size:calc(1.7rem * var(--font-scale));font-weight:900;color:#1b4d3e;margin-bottom:4px;">📑 逐題批改結果與詳解</h2>`;
 
   currentUnit.cards.forEach(card => {
     const ids = getCardUnitIds(card);
