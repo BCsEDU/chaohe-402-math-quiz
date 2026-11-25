@@ -1031,12 +1031,6 @@
     box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.3);
   }
 
-  .auto-tts-btn.active {
-    background: #fbbf24 !important;
-    color: #1b4d3e !important;
-    border-color: #f59e0b !important;
-  }
-
   .hint-banner {
     background: #eff6ff;
     border: 2.5px solid #93c5fd;
@@ -1048,6 +1042,37 @@
     font-weight: 800;
     color: #1e3a8a;
     line-height: 1.6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hint-banner-text {
+    flex: 1;
+  }
+  .hint-speak-btn {
+    flex-shrink: 0;
+    min-width: 48px;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    border: 2px solid #60a5fa;
+    background: #fff;
+    color: #1d4ed8;
+    font-size: 1.25rem;
+    font-weight: 900;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .hint-speak-btn:hover,
+  .hint-speak-btn.speaking {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
   }
 
   .visual-aid-box {
@@ -1327,10 +1352,12 @@
     justify-content: center;
     transition: all 0.15s;
   }
-  .choice-speak-mini:hover {
+  .choice-speak-mini:hover,
+  .choice-speak-mini.speaking {
     background: #0284c7;
     color: #fff;
     border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.28);
   }
 
   .math-input.slot-ones { border-color: #2563eb; background: #eff6ff; color: #1e3a8a; }
@@ -1448,7 +1475,6 @@
         <span style="background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:999px;font-weight:800;font-size:1rem;margin-left:8px;">課堂互動練習</span>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button type="button" class="ctrl-btn auto-tts-btn" id="btn-prac-auto-tts" style="display:none;" onclick="toggleAutoTTS()">🔊 自動朗讀：關</button>
         <button class="ctrl-btn" onclick="togglePracticeViewMode()" id="btn-prac-view-toggle">📋 切換全大題一覽</button>
       </div>
     </div>
@@ -1486,7 +1512,6 @@
         <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="exam-test-title">第七單元《小數》線上測驗</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <button type="button" class="tool-btn auto-tts-btn" id="btn-exam-auto-tts" style="display:none;" onclick="toggleAutoTTS()">🔊 自動朗讀：關</button>
         <div class="exam-progress-text" id="exam-progress-text">已填答 0 / 45 格</div>
       </div>
     </div>
@@ -1538,7 +1563,6 @@
         <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="retry-unit-title">錯題訂正練習（訂正答對即依比例加分，最高 +10 分）</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <button type="button" class="tool-btn auto-tts-btn" id="btn-retry-auto-tts" style="display:none;" onclick="toggleAutoTTS()">🔊 自動朗讀：關</button>
         <div class="exam-progress-text" id="retry-progress-text" style="color:#ffedd5;">待訂正 0 格</div>
       </div>
     </div>
@@ -1662,9 +1686,11 @@ function checkSeatUsesAssist(cls, seat) {
   return getEffectiveSupportTokenSet().has(tok);
 }
 
-// ==================== 語音報讀引擎（Web Speech API zh-TW） ====================
-let autoTTSEnabled = false;
+// ==================== 自然人聲 MP3 語音報讀引擎（靜態 MP3 優先，異常時靜默備援） ====================
+let supportAudioEl = null;
 let activeTTSBtn = null;
+let activeAudioId = null;
+let audioPlaySeq = 0;
 let cachedZhVoice = null;
 
 function pickZhTwVoice() {
@@ -1683,14 +1709,28 @@ if ("speechSynthesis" in window) {
   window.speechSynthesis.onvoiceschanged = () => { pickZhTwVoice(); };
 }
 
-function stopSpeech() {
-  if ("speechSynthesis" in window) {
-    try { window.speechSynthesis.cancel(); } catch {}
-  }
+function clearActiveAudioUI() {
   if (activeTTSBtn) {
     activeTTSBtn.classList.remove("speaking");
     activeTTSBtn = null;
   }
+  activeAudioId = null;
+}
+
+function stopSpeech() {
+  audioPlaySeq++;
+  if (supportAudioEl) {
+    try {
+      supportAudioEl.onended = null;
+      supportAudioEl.onerror = null;
+      supportAudioEl.pause();
+      supportAudioEl.currentTime = 0;
+    } catch {}
+  }
+  if ("speechSynthesis" in window) {
+    try { window.speechSynthesis.cancel(); } catch {}
+  }
+  clearActiveAudioUI();
 }
 
 function formatMathForSpeech(str) {
@@ -1708,13 +1748,18 @@ function formatMathForSpeech(str) {
     .trim();
 }
 
-function speakText(text, btnEl) {
-  if (!("speechSynthesis" in window)) return;
+function speakFallbackTTS(text, btnEl, seq) {
+  if (seq !== audioPlaySeq) return;
+  if (!("speechSynthesis" in window)) {
+    clearActiveAudioUI();
+    return;
+  }
   const cleaned = formatMathForSpeech(text);
-  if (!cleaned) return;
-  const wasSameBtn = !!(btnEl && activeTTSBtn === btnEl && window.speechSynthesis.speaking);
-  stopSpeech();
-  if (wasSameBtn) return;
+  if (!cleaned) {
+    clearActiveAudioUI();
+    return;
+  }
+  try { window.speechSynthesis.cancel(); } catch {}
 
   const utt = new SpeechSynthesisUtterance(cleaned);
   utt.lang = "zh-TW";
@@ -1723,25 +1768,67 @@ function speakText(text, btnEl) {
   const v = pickZhTwVoice();
   if (v) utt.voice = v;
 
+  utt.onend = () => {
+    if (seq === audioPlaySeq) clearActiveAudioUI();
+  };
+  utt.onerror = () => {
+    if (seq === audioPlaySeq) clearActiveAudioUI();
+  };
+  try {
+    window.speechSynthesis.speak(utt);
+  } catch {
+    if (seq === audioPlaySeq) clearActiveAudioUI();
+  }
+}
+
+function playSupportAudio(audioId, fallbackText, btnEl) {
+  const isPlayingCurrent = !!(
+    (btnEl && activeTTSBtn === btnEl) ||
+    (!btnEl && audioId && activeAudioId === audioId)
+  );
+  stopSpeech();
+  if (isPlayingCurrent) return;
+
+  const seq = audioPlaySeq;
   if (btnEl) {
     activeTTSBtn = btnEl;
     btnEl.classList.add("speaking");
   }
-  utt.onend = () => {
-    if (activeTTSBtn === btnEl) {
-      btnEl.classList.remove("speaking");
-      activeTTSBtn = null;
-    }
+  activeAudioId = audioId || null;
+
+  if (!audioId) {
+    speakFallbackTTS(fallbackText, btnEl, seq);
+    return;
+  }
+
+  if (!supportAudioEl) {
+    supportAudioEl = new Audio();
+    supportAudioEl.preload = "auto";
+  }
+
+  let fellBack = false;
+  const triggerFallback = () => {
+    if (fellBack || seq !== audioPlaySeq) return;
+    fellBack = true;
+    supportAudioEl.onended = null;
+    supportAudioEl.onerror = null;
+    speakFallbackTTS(fallbackText, btnEl, seq);
   };
-  utt.onerror = () => {
-    if (activeTTSBtn === btnEl) {
-      btnEl.classList.remove("speaking");
-      activeTTSBtn = null;
-    }
+
+  supportAudioEl.onended = () => {
+    if (seq === audioPlaySeq) clearActiveAudioUI();
   };
+  supportAudioEl.onerror = triggerFallback;
+  supportAudioEl.src = `./assets/audio/${encodeURIComponent(audioId)}.mp3`;
+
   try {
-    window.speechSynthesis.speak(utt);
-  } catch {}
+    const playPromise = supportAudioEl.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(triggerFallback);
+    }
+  } catch {
+    triggerFallback();
+  }
 }
 
 function buildCardSpeechText(card) {
@@ -1768,9 +1855,6 @@ function buildCardSpeechText(card) {
       parts.push(`選項 ${i + 1}，${opt}`);
     });
   }
-  if (card.hintText) {
-    parts.push("小提示：" + card.hintText);
-  }
   return parts.join("。");
 }
 
@@ -1778,47 +1862,19 @@ function speakCardById(cardId, btnEl) {
   if (!currentUnit) return;
   const card = currentUnit.cards.find(c => c.cardId === cardId);
   if (!card) return;
-  speakText(buildCardSpeechText(card), btnEl);
+  playSupportAudio(card.audioId || "", buildCardSpeechText(card), btnEl);
 }
 
-function speakOptionText(text, ev) {
+function speakHintAudio(cardId, btnEl) {
+  if (!currentUnit) return;
+  const card = currentUnit.cards.find(c => c.cardId === cardId);
+  if (!card || !card.hintText) return;
+  playSupportAudio(card.hintAudioId || "", `小提示，${card.hintText}`, btnEl);
+}
+
+function speakOptionAudio(audioId, fallbackText, btnEl, ev) {
   if (ev) ev.stopPropagation();
-  speakText(text, null);
-}
-
-function updateAutoTTSButtons() {
-  const show = !!(currentUnit && currentUnit.hasAudioAssist);
-  ["btn-prac-auto-tts", "btn-exam-auto-tts", "btn-retry-auto-tts"].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.style.display = show ? "inline-flex" : "none";
-    el.classList.toggle("active", autoTTSEnabled);
-    el.textContent = autoTTSEnabled ? "🔊 自動朗讀：開" : "🔊 自動朗讀：關";
-  });
-}
-
-function toggleAutoTTS() {
-  autoTTSEnabled = !autoTTSEnabled;
-  updateAutoTTSButtons();
-  if (!autoTTSEnabled) {
-    stopSpeech();
-  } else if (currentMode === "exam") {
-    const card = getExamFilteredCards()[examCardIndex];
-    if (card) speakText(buildCardSpeechText(card), null);
-  } else if (currentMode === "practice" && !pracIsListMode) {
-    const card = getPracFilteredCards()[pracCardIndex];
-    if (card) speakText(buildCardSpeechText(card), null);
-  }
-}
-
-function maybeAutoSpeakCard(card) {
-  stopSpeech();
-  if (!autoTTSEnabled || !currentUnit || !currentUnit.hasAudioAssist || !card) return;
-  setTimeout(() => {
-    if (autoTTSEnabled && currentUnit && currentUnit.hasAudioAssist) {
-      speakText(buildCardSpeechText(card), null);
-    }
-  }, 180);
+  playSupportAudio(audioId, fallbackText, btnEl);
 }
 
 // ==================== 視覺提示鷹架元件建構函式 ====================
@@ -2255,6 +2311,8 @@ const UNITS = [
     supportCards: [
       {
         cardId: "su6-s1-q1",
+        audioId: "su6_s1_q1_q",
+        hintAudioId: "su6_s1_q1_hint",
         sectionIdx: 1,
         section: "第一大題：認識等腰與正三角形",
         label: "(1)",
@@ -2272,6 +2330,7 @@ const UNITS = [
               "甲（兩條邊都是 4 公分）",
               "乙（三條邊都不一樣長）"
             ],
+            optionAudioIds: ["su6_s1_q1_opt0", "su6_s1_q1_opt1"],
             label: "一(1) 辨識等腰三角形"
           }
         ],
@@ -2279,6 +2338,8 @@ const UNITS = [
       },
       {
         cardId: "su6-s1-q2",
+        audioId: "su6_s1_q2_q",
+        hintAudioId: "su6_s1_q2_hint",
         sectionIdx: 1,
         section: "第一大題：認識等腰與正三角形",
         label: "(2)",
@@ -2293,6 +2354,7 @@ const UNITS = [
             id: "su6_1",
             expected: "等腰三角形",
             options: ["等腰三角形", "直角三角形"],
+            optionAudioIds: ["su6_s1_q2_opt0", "su6_s1_q2_opt1"],
             label: "一(2) 看角度認等腰三角形"
           }
         ],
@@ -2300,6 +2362,8 @@ const UNITS = [
       },
       {
         cardId: "su6-s1-q3",
+        audioId: "su6_s1_q3_q",
+        hintAudioId: "su6_s1_q3_hint",
         sectionIdx: 1,
         section: "第一大題：認識等腰與正三角形",
         label: "(3)",
@@ -2314,6 +2378,7 @@ const UNITS = [
             id: "su6_2",
             expected: "44 公分",
             options: ["44 公分", "32 公分"],
+            optionAudioIds: ["su6_s1_q3_opt0", "su6_s1_q3_opt1"],
             label: "一(3) 找等腰三角形腰長"
           }
         ],
@@ -2321,6 +2386,8 @@ const UNITS = [
       },
       {
         cardId: "su6-s1-q4",
+        audioId: "su6_s1_q4_q",
+        hintAudioId: "su6_s1_q4_hint",
         sectionIdx: 1,
         section: "第一大題：認識等腰與正三角形",
         label: "(4)",
@@ -2335,6 +2402,7 @@ const UNITS = [
             id: "su6_3",
             expected: "正三角形",
             options: ["正三角形", "直角三角形", "鈍角三角形"],
+            optionAudioIds: ["su6_s1_q4_opt0", "su6_s1_q4_opt1", "su6_s1_q4_opt2"],
             label: "一(4) 認識正三角形"
           }
         ],
@@ -2342,6 +2410,8 @@ const UNITS = [
       },
       {
         cardId: "su6-s2-q1",
+        audioId: "su6_s2_q1_q",
+        hintAudioId: "su6_s2_q1_hint",
         sectionIdx: 2,
         section: "第二大題：認識直角與正三角形",
         label: "(1)",
@@ -2356,6 +2426,7 @@ const UNITS = [
             id: "su6_4",
             expected: "直角三角形",
             options: ["直角三角形", "正三角形"],
+            optionAudioIds: ["su6_s2_q1_opt0", "su6_s2_q1_opt1"],
             label: "二(1) 認識直角三角形"
           }
         ],
@@ -2363,6 +2434,8 @@ const UNITS = [
       },
       {
         cardId: "su6-s2-q2",
+        audioId: "su6_s2_q2_q",
+        hintAudioId: "su6_s2_q2_hint",
         sectionIdx: 2,
         section: "第二大題：認識直角與正三角形",
         label: "(2)",
@@ -2380,6 +2453,7 @@ const UNITS = [
               "甲（三條邊都是 5 公分）",
               "乙（只有兩條邊是 5 公分）"
             ],
+            optionAudioIds: ["su6_s2_q2_opt0", "su6_s2_q2_opt1"],
             label: "二(2) 辨識正三角形"
           }
         ],
@@ -2701,6 +2775,8 @@ const UNITS = [
     supportCards: [
       {
         cardId: "su7-s1-q1",
+        audioId: "su7_s1_q1_q",
+        hintAudioId: "su7_s1_q1_hint",
         sectionIdx: 1,
         section: "第一大題：認識二位小數",
         label: "(1)",
@@ -2715,6 +2791,7 @@ const UNITS = [
             id: "su7_0",
             expected: "6 個",
             options: ["6 個", "60 個", "1 個"],
+            optionAudioIds: ["su7_s1_q1_opt0", "su7_s1_q1_opt1", "su7_s1_q1_opt2"],
             label: "一(1) 0.06是幾個0.01"
           }
         ],
@@ -2722,6 +2799,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s1-q2",
+        audioId: "su7_s1_q2_q",
+        hintAudioId: "su7_s1_q2_hint",
         sectionIdx: 1,
         section: "第一大題：認識二位小數",
         label: "(2)",
@@ -2755,6 +2834,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s1-q3",
+        audioId: "su7_s1_q3_q",
+        hintAudioId: "su7_s1_q3_hint",
         sectionIdx: 1,
         section: "第一大題：認識二位小數",
         label: "(3)",
@@ -2769,6 +2850,7 @@ const UNITS = [
             id: "su7_4",
             expected: "0.25",
             options: ["0.25", "2.5", "0.52"],
+            optionAudioIds: ["su7_s1_q3_opt0", "su7_s1_q3_opt1", "su7_s1_q3_opt2"],
             label: "一(3) 2個0.1和5個0.01合起來"
           }
         ],
@@ -2776,12 +2858,14 @@ const UNITS = [
       },
       {
         cardId: "su7-s1-q4",
+        audioId: "su7_s1_q4_q",
+        hintAudioId: "su7_s1_q4_hint",
         sectionIdx: 1,
         section: "第一大題：認識二位小數",
         label: "(4)",
         title: "3.05 要怎麼讀？",
         stemHtml: `小數 <span class="kw">3.05</span> 要怎麼讀？`,
-        speechText: "小數 3.05 要怎麼讀？",
+        speechText: "請看畫面上的小數，這個數字要怎麼讀？",
         hintText: "照順序一個字一個字念：3 念三、小數點念點、0 念零、5 念五！",
         kind: "choice",
         visualHtml: renderReadChips([["3", "三"], [".", "點"], ["0", "零"], ["5", "五"]]),
@@ -2790,6 +2874,7 @@ const UNITS = [
             id: "su7_5",
             expected: "三點零五",
             options: ["三點零五", "三點五", "三十五"],
+            optionAudioIds: ["su7_s1_q4_opt0", "su7_s1_q4_opt1", "su7_s1_q4_opt2"],
             label: "一(4) 3.05讀法"
           }
         ],
@@ -2797,6 +2882,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s2-q1",
+        audioId: "su7_s2_q1_q",
+        hintAudioId: "su7_s2_q1_hint",
         sectionIdx: 2,
         section: "第二大題：小數與長度換算",
         label: "(1)",
@@ -2812,6 +2899,7 @@ const UNITS = [
             id: "su7_6",
             expected: "6.52 公尺",
             options: ["6.52 公尺", "65.2 公尺", "0.65 公尺"],
+            optionAudioIds: ["su7_s2_q1_opt0", "su7_s2_q1_opt1", "su7_s2_q1_opt2"],
             label: "二(1) 6公尺52公分＝幾公尺"
           }
         ],
@@ -2819,6 +2907,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s2-q2",
+        audioId: "su7_s2_q2_q",
+        hintAudioId: "su7_s2_q2_hint",
         sectionIdx: 2,
         section: "第二大題：小數與長度換算",
         label: "(2)",
@@ -2841,6 +2931,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s2-q3",
+        audioId: "su7_s2_q3_q",
+        hintAudioId: "su7_s2_q3_hint",
         sectionIdx: 2,
         section: "第二大題：小數與長度換算",
         label: "(3)",
@@ -2866,6 +2958,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s3-q1",
+        audioId: "su7_s3_q1_q",
+        hintAudioId: "su7_s3_q1_hint",
         sectionIdx: 3,
         section: "第三大題：小數比大小",
         label: "(1)",
@@ -2891,6 +2985,8 @@ const UNITS = [
       },
       {
         cardId: "su7-s3-q2",
+        audioId: "su7_s3_q2_q",
+        hintAudioId: "su7_s3_q2_hint",
         sectionIdx: 3,
         section: "第三大題：小數比大小",
         label: "(2)",
@@ -3020,10 +3116,8 @@ function getActiveUnitView(baseUnit, useAssist) {
 function setComfortUI(enabled) {
   document.body.classList.toggle("comfort-ui", !!enabled);
   if (!enabled) {
-    autoTTSEnabled = false;
     stopSpeech();
   }
-  updateAutoTTSButtons();
 }
 
 // ==================== 輸入正規化與精準判分 ====================
@@ -3133,6 +3227,7 @@ let matchSelections = {};
 
 // ==================== 頁面切換與首頁 ====================
 function showView(viewId) {
+  stopSpeech();
   document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
   document.getElementById(viewId).classList.add("active");
   const btnHome = document.getElementById("btn-home");
@@ -3581,8 +3676,9 @@ function renderCardHTML(card, ctx) {
           btnCls += " selected";
         }
         const safeOptArg = escapeHTML(opt).replace(/'/g, "&#39;");
+        const optAudioId = (item.optionAudioIds && item.optionAudioIds[oIdx]) ? item.optionAudioIds[oIdx] : "";
         const speakMiniBtn = ctx.audioAssist
-          ? `<button type="button" class="choice-speak-mini" title="朗讀選項" onclick="speakOptionText('${safeOptArg}', event)">🔊</button>`
+          ? `<button type="button" class="choice-speak-mini" title="朗讀選項" aria-label="朗讀選項 ${oIdx + 1}" onclick="speakOptionAudio('${optAudioId}', '${safeOptArg}', this, event)">🔊</button>`
           : "";
         return `
           <div class="choice-row-wrap">
@@ -3625,8 +3721,11 @@ function renderCardHTML(card, ctx) {
   const ttsBtnHtml = ctx.audioAssist
     ? `<button type="button" class="card-tts-btn" onclick="speakCardById('${card.cardId}', this)">🔊 念題目</button>`
     : "";
+  const hintSpeakBtnHtml = (ctx.audioAssist && card.hintText)
+    ? `<button type="button" class="hint-speak-btn" title="朗讀小提示" aria-label="朗讀小提示" onclick="speakHintAudio('${card.cardId}', this)">🔊</button>`
+    : "";
   const hintBoxHtml = card.hintText
-    ? `<div class="hint-banner">💡 小提示：${escapeHTML(card.hintText)}</div>`
+    ? `<div class="hint-banner"><span class="hint-banner-text">💡 小提示：${escapeHTML(card.hintText)}</span>${hintSpeakBtnHtml}</div>`
     : "";
   const visualBoxHtml = card.visualHtml
     ? `<div class="visual-aid-box">${card.visualHtml}</div>`
@@ -3934,7 +4033,6 @@ function openPracticeMode(unitId) {
 
   renderPracSectionTabs();
   renderPracticeStage();
-  maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   showView("view-practice");
 }
 
@@ -3949,13 +4047,13 @@ function renderPracSectionTabs() {
 }
 
 function setPracSectionFilter(secIdx) {
+  stopSpeech();
   pracSectionFilter = secIdx;
   pracCardIndex = 0;
   renderPracSectionTabs();
   if (pracIsListMode) renderPracticeList();
   else {
     renderPracticeStage();
-    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   }
 }
 
@@ -4034,20 +4132,21 @@ function resetPracCurrentCard() {
 
 function prevPracCard() {
   if (pracCardIndex > 0) {
+    stopSpeech();
     pracCardIndex--;
     renderPracticeStage();
-    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   }
 }
 function nextPracCard() {
   const cards = getPracFilteredCards();
   if (pracCardIndex < cards.length - 1) {
+    stopSpeech();
     pracCardIndex++;
     renderPracticeStage();
-    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   }
 }
 function jumpPracCard(idx) {
+  stopSpeech();
   pracCardIndex = idx;
   if (pracIsListMode) {
     const card = getPracFilteredCards()[idx];
@@ -4055,11 +4154,11 @@ function jumpPracCard(idx) {
     if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
   } else {
     renderPracticeStage();
-    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   }
 }
 
 function togglePracticeViewMode() {
+  stopSpeech();
   pracIsListMode = !pracIsListMode;
   const single = document.getElementById("prac-single-container");
   const list = document.getElementById("prac-list-container");
@@ -4452,7 +4551,6 @@ async function startStudentExam(e) {
 
   renderExamSectionTabs();
   renderExamStage();
-  maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
   showView("view-exam-test");
 }
 
@@ -4473,11 +4571,11 @@ function renderExamSectionTabs() {
 }
 
 function setExamSectionFilter(secIdx) {
+  stopSpeech();
   examSectionFilter = secIdx;
   examCardIndex = 0;
   renderExamSectionTabs();
   renderExamStage();
-  maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
 }
 
 function updateExamDotsAndProgressOnly() {
@@ -4525,23 +4623,23 @@ function renderExamStage() {
 
 function prevExamCard() {
   if (examCardIndex > 0) {
+    stopSpeech();
     examCardIndex--;
     renderExamStage();
-    maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
   }
 }
 function nextExamCard() {
   const cards = getExamFilteredCards();
   if (examCardIndex < cards.length - 1) {
+    stopSpeech();
     examCardIndex++;
     renderExamStage();
-    maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
   }
 }
 function jumpExamCard(idx) {
+  stopSpeech();
   examCardIndex = idx;
   renderExamStage();
-  maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
 }
 
 // 送出正式考卷
