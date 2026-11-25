@@ -139,6 +139,16 @@
   .action-btn:hover { background: #ebf7f2; border-color: #24745f; }
   .action-btn.export { background: #059669; color: #fff; border-color: #047857; }
   .action-btn.export:hover { background: #047857; }
+  .action-btn.sync-grades { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+  .action-btn.sync-grades:hover { background: #1d4ed8; }
+  .action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .grades-link {
+    text-decoration: none;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+  }
+  .grades-link:hover { background: #dbeafe; border-color: #2563eb; }
 
   /* 統計總覽卡片 */
   .stats-grid {
@@ -480,6 +490,8 @@
             <input type="checkbox" id="chk-auto-refresh" checked> 自動更新 (5s)
           </label>
           <span id="txt-last-update" style="color:#5d786f;font-size:0.92rem;"></span>
+          <button class="action-btn sync-grades" id="btn-sync-grades" onclick="syncToGradeManager()">☁️ 同步至成績管理</button>
+          <a href="https://bcsedu.github.io/chaohe-402-grades/" target="_blank" rel="noopener" class="action-btn grades-link">📊 402 成績管理</a>
           <button class="action-btn export" onclick="exportCSV()">📥 匯出成績 CSV</button>
         </div>
       </div>
@@ -822,6 +834,23 @@ function startAutoRefresh() {
 }
 
 function syncDynamicFilters() {
+  // 動態補充數學單元選項（支援未來新增 U8/U9/U10 等單元）
+  const examSelect = document.getElementById("sel-exam");
+  if (examSelect) {
+    const existingExamIds = new Set(Array.from(examSelect.options).map(o => o.value));
+    const discoveredExams = Array.from(new Set(allSubmissions.map(r => r.exam_id).filter(Boolean))).sort();
+    const allOpt = Array.from(examSelect.options).find(o => o.value === "");
+    discoveredExams.forEach(eid => {
+      if (!existingExamIds.has(eid)) {
+        const opt = document.createElement("option");
+        opt.value = eid;
+        opt.textContent = getMathExamDisplayName(eid);
+        if (allOpt) examSelect.insertBefore(opt, allOpt);
+        else examSelect.appendChild(opt);
+      }
+    });
+  }
+
   // 動態補充班級選項
   const clsSelect = document.getElementById("sel-class");
   const prevCls = clsSelect.value;
@@ -1285,6 +1314,152 @@ function exportCSV() {
   a.click();
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function getMathExamDisplayName(examId) {
+  if (EXAM_META[examId]?.name) return EXAM_META[examId].name;
+  const matched = allSubmissions.find(r => r.exam_id === examId && r.exam_title);
+  if (matched?.exam_title) return matched.exam_title;
+  return examId;
+}
+
+function isClass402(cls) {
+  return String(cls || "").replace(/[^0-9]/g, "") === "402";
+}
+
+function buildAutoSyncNote(r, info) {
+  if (r.score >= r.total && r.total > 0) return "[線上測驗] 原卷滿分";
+  if (info.bonus > 0) return `[線上測驗] 原${info.rawPct}分 +${info.bonus}訂正`;
+  if (r.retry_passed === false) return `[線上測驗] 原${info.rawPct}分（已訂正未全對）`;
+  return `[線上測驗] 原${info.rawPct}分（待訂正）`;
+}
+
+// 同步至「402 成績管理系統 (chaohe-402-grades)」：優先走 DB RPC，尚未執行 migration 時自動改走 grade-sync Edge Function
+async function syncToGradeManager() {
+  if (!currentPw) {
+    alert("請先登入教師管理後台！");
+    return;
+  }
+
+  const selectedExam = document.getElementById("sel-exam").value;
+  const examTitle = selectedExam ? getMathExamDisplayName(selectedExam) : null;
+  const targetLabel = selectedExam ? `「${examTitle}」` : "「全部數學單元測驗」";
+
+  const btn = document.getElementById("btn-sync-grades");
+  const prevText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "⏳ 同步中...";
+
+  try {
+    // 1. 優先呼叫伺服器端 RPC（若已安裝自動同步 SQL）
+    const rpcRes = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/teacher_sync_exam_to_grades`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        pw: currentPw,
+        p_exam_id: selectedExam || null,
+        p_exam_title: examTitle || null,
+        p_subject: "math"
+      })
+    });
+
+    if (rpcRes.ok) {
+      const data = await rpcRes.json();
+      const assessSummary = (data.assessments || [])
+        .map(a => `・數學｜${a.title}${a.locked ? "（🔒 已鎖定略過）" : ""}`)
+        .join("\n");
+      alert(
+        `✅ 已同步 402 班 ${targetLabel} 至成績管理系統！\n\n` +
+        `・成功寫入／更新：${data.synced_count ?? 0} 位學生\n` +
+        (data.locked_count ? `・因欄位已鎖定略過：${data.locked_count} 位\n` : "") +
+        (assessSummary ? `\n對應評量欄位：\n${assessSummary}` : "")
+      );
+      return;
+    }
+
+    if (rpcRes.status !== 404) {
+      const errTxt = await rpcRes.text();
+      throw new Error(`同步 RPC 失敗 (${rpcRes.status})：${errTxt}`);
+    }
+
+    // 2. 備援：尚未套用 DB Trigger SQL 時，直接呼叫已部署的 grade-sync Edge Function（僅同步 402 班）
+    const sourceRows = allSubmissions.filter(r => {
+      if (!isClass402(r.class)) return false;
+      if (selectedExam && r.exam_id !== selectedExam) return false;
+      return true;
+    });
+
+    if (sourceRows.length === 0) {
+      alert(`目前沒有 402 班的 ${targetLabel} 作答紀錄可同步。`);
+      return;
+    }
+
+    const latestMap = new Map();
+    const examLatestDate = {};
+    sourceRows.forEach(r => {
+      const key = `${r.exam_id}|${r.seat}`;
+      const prev = latestMap.get(key);
+      if (!prev || new Date(r.created_at) > new Date(prev.created_at)) {
+        latestMap.set(key, r);
+      }
+      const d = getTaipeiDay(r.created_at);
+      if (!examLatestDate[r.exam_id] || d > examLatestDate[r.exam_id]) {
+        examLatestDate[r.exam_id] = d;
+      }
+    });
+
+    const operations = Array.from(latestMap.values()).map(r => {
+      const info = computeScoreInfo(r);
+      return {
+        seat: Number(r.seat),
+        subjectId: "math",
+        category: "quiz",
+        title: getMathExamDisplayName(r.exam_id),
+        date: examLatestDate[r.exam_id] || getTaipeiDay(r.created_at),
+        maxScore: 100,
+        value: info.finalPct,
+        note: buildAutoSyncNote(r, info)
+      };
+    });
+
+    const fnRes = await fetch(`${SUPABASE_CONFIG.URL}/functions/v1/grade-sync`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "import_operations",
+        pw: currentPw,
+        overwriteExisting: true,
+        includeTestSeats: true,
+        operations
+      })
+    });
+
+    const fnData = await fnRes.json().catch(() => ({}));
+    if (!fnRes.ok || !fnData.ok) {
+      throw new Error(fnData.error || `grade-sync 失敗 (${fnRes.status})`);
+    }
+
+    alert(
+      `✅ 已同步 402 班 ${targetLabel} 至成績管理系統！\n\n` +
+      `・新增成績：${fnData.addedCount ?? 0} 筆\n` +
+      `・更新成績：${fnData.updatedCount ?? 0} 筆\n` +
+      (fnData.createdAssessments ? `・自動新建小考欄位：${fnData.createdAssessments} 欄\n` : "") +
+      (fnData.skippedCount ? `・略過（含已鎖定欄位）：${fnData.skippedCount} 筆\n` : "")
+    );
+  } catch (err) {
+    alert(`同步失敗：${err.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = prevText;
+  }
 }
 </script>
 </body>

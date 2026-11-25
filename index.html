@@ -2514,6 +2514,42 @@ function parseRawAnswersFromName(nameStr, totalUnits) {
   return map;
 }
 
+function getMathExamTitleById(examId) {
+  const unit = UNITS.find(u => u.examId === examId);
+  return unit ? `${unit.unitNum}《${unit.title}》` : null;
+}
+
+async function postSubmissionWithFallback(payload) {
+  const headers = {
+    "apikey": SUPABASE_CONFIG.ANON_KEY,
+    "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+    "Content-Type": "application/json",
+    "Prefer": "return=minimal"
+  };
+  let res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/submissions`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload)
+  });
+  let errTxt = "";
+  if (!res.ok && res.status === 400 && Object.prototype.hasOwnProperty.call(payload, "exam_title")) {
+    errTxt = await res.text();
+    if (errTxt.includes("exam_title")) {
+      const legacyPayload = { ...payload };
+      delete legacyPayload.exam_title;
+      res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/submissions`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(legacyPayload)
+      });
+      errTxt = res.ok ? "" : await res.text();
+    }
+  } else if (!res.ok && res.status !== 409) {
+    errTxt = await res.text();
+  }
+  return { res, errTxt };
+}
+
 async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnswersFull, allCorrect, retryRawObj) {
   // 1. 優先嘗試升級後的 RPC submit_exam_retry
   try {
@@ -2542,11 +2578,13 @@ async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnsw
 
   // 2. 零 SQL 備援：寫入 ${examId}__retry 紀錄至 public.submissions
   try {
+    const examTitle = getMathExamTitleById(examId);
     const packedName = retryRawObj
       ? `M1R:${JSON.stringify({ c: clientId, v: retryRawObj })}`
       : clientId;
     const fallbackPayload = {
       exam_id: `${examId}__retry`,
+      ...(examTitle ? { exam_title: examTitle } : {}),
       grade: 4,
       subject: "math",
       year: 114,
@@ -2559,16 +2597,7 @@ async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnsw
       is_deleted: false,
       client_id: `${clientId}_retry`
     };
-    const res2 = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/submissions`, {
-      method: "POST",
-      headers: {
-        "apikey": SUPABASE_CONFIG.ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify(fallbackPayload)
-    });
+    const { res: res2 } = await postSubmissionWithFallback(fallbackPayload);
     return res2.ok || res2.status === 409;
   } catch (err) {
     console.error("備援寫入錯題訂正失敗:", err);
@@ -2852,11 +2881,13 @@ async function confirmSubmitExam() {
 
   const total = currentUnit.scoringUnits.length;
   const examId = currentUnit.examId;
+  const examTitle = `${currentUnit.unitNum}《${currentUnit.title}》`;
   const clientId = (crypto.randomUUID ? crypto.randomUUID() : `cid-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const serializedName = `M1:${JSON.stringify(rawArr)}`;
 
   const payload = {
     exam_id: examId,
+    exam_title: examTitle,
     grade: 4,
     subject: "math",
     year: 114,
@@ -2872,18 +2903,8 @@ async function confirmSubmitExam() {
 
   let duplicateBlocked = false;
   try {
-    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/submissions`, {
-      method: "POST",
-      headers: {
-        "apikey": SUPABASE_CONFIG.ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify(payload)
-    });
+    const { res, errTxt } = await postSubmissionWithFallback(payload);
     if (!res.ok && res.status !== 409) {
-      const errTxt = await res.text();
       if (errTxt.includes("already_submitted_today")) {
         duplicateBlocked = true;
       } else {
