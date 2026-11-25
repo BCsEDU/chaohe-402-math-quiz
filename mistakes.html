@@ -1,0 +1,2589 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>康軒四上數學｜學生錯題紀錄與類題練習網</title>
+<style>
+  :root {
+    --bg: #edf5f0;
+    --surface: #ffffff;
+    --surface-sub: #f5faf7;
+    --primary: #1f6351;
+    --primary-hover: #175243;
+    --primary-mid: #24745f;
+    --primary-light: #d8f0e7;
+    --primary-soft: #ebf7f2;
+    --accent: #c96f16;
+    --teal: #0f766e;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --text: #162b24;
+    --text-muted: #48635a;
+    --text-subtle: #5d786f;
+    --border: #c4d6ce;
+    --border-soft: #dce8e2;
+    --font-scale: 1;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* 頂部導覽列（與 index.html 統一風格） */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1b4d3e;
+    color: #fff;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    box-shadow: 0 4px 12px rgba(22, 43, 36, 0.16);
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .brand-badge {
+    background: #fbbf24;
+    color: #1b4d3e;
+    font-weight: 900;
+    font-size: 1.15rem;
+    padding: 4px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .brand-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tool-btn {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .tool-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+
+  .tool-btn.active {
+    background: #fbbf24;
+    color: #1b4d3e;
+    border-color: #fbbf24;
+  }
+
+  .tool-btn.teacher-link {
+    background: rgba(251, 191, 36, 0.18);
+    border-color: rgba(251, 191, 36, 0.65);
+    color: #fef3c7;
+  }
+
+  /* 主容器 */
+  main {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 24px 24px 64px;
+  }
+
+  /* 首頁：康軒四上數學目次畫面 */
+  .hero-banner {
+    background: linear-gradient(135deg, #1b4d3e 0%, #175243 60%, #2e8b72 100%);
+    color: #fff;
+    border-radius: 24px;
+    padding: 28px 36px;
+    margin-bottom: 28px;
+    box-shadow: 0 12px 28px rgba(27, 77, 62, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .hero-banner h1 {
+    font-size: calc(2.15rem * var(--font-scale));
+    font-weight: 900;
+    margin-bottom: 6px;
+    line-height: 1.25;
+  }
+
+  .hero-banner p {
+    font-size: calc(1.22rem * var(--font-scale));
+    color: #d8f0e7;
+    font-weight: 600;
+  }
+
+  .stats-summary {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 130px;
+  }
+
+  .stat-num {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #fbbf24;
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #d8f0e7;
+    margin-top: 4px;
+  }
+
+  /* 康軒目次紅十字手風琴列表（還原截圖目次風格＋護眼深松青綠主題） */
+  .toc-container {
+    background: var(--surface);
+    border-radius: 24px;
+    border: 3px solid var(--border);
+    box-shadow: 0 10px 26px rgba(22, 43, 36, 0.06);
+    overflow: hidden;
+  }
+
+  .toc-header-bar {
+    background: var(--surface-sub);
+    padding: 18px 28px;
+    border-bottom: 2px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .toc-header-title {
+    font-size: calc(1.45rem * var(--font-scale));
+    font-weight: 900;
+    color: #1b4d3e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .unit-item {
+    border-bottom: 2px dotted #9bb5aa;
+  }
+
+  .unit-item:last-child {
+    border-bottom: none;
+  }
+
+  .unit-row {
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    user-select: none;
+  }
+
+  .unit-row:hover {
+    background: var(--primary-soft);
+  }
+
+  .unit-row.active-unit {
+    background: var(--primary-light);
+  }
+
+  .unit-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+  }
+
+  /* 還原圖片中的紅框十字按鈕 */
+  .red-plus-box {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #ef4444;
+    border-radius: 6px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .red-plus-box::before,
+  .red-plus-box::after {
+    content: "";
+    position: absolute;
+    background: #ef4444;
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .red-plus-box::before {
+    width: 22px;
+    height: 6px;
+  }
+
+  .red-plus-box::after {
+    width: 6px;
+    height: 22px;
+  }
+
+  .unit-item.expanded .red-plus-box {
+    background: #fef2f2;
+  }
+
+  .unit-item.expanded .red-plus-box::after {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  .unit-title-text {
+    font-size: calc(1.95rem * var(--font-scale));
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: 0.5px;
+  }
+
+  .unit-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .badge-pill {
+    font-size: calc(1.05rem * var(--font-scale));
+    font-weight: 800;
+    padding: 6px 16px;
+    border-radius: 999px;
+  }
+
+  .badge-pill.has-error {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 2px solid #fca5a5;
+  }
+
+  .badge-pill.quiz-ready {
+    background: #dcfce7;
+    color: #15803d;
+    border: 2px solid #86efac;
+  }
+
+  .badge-pill.empty {
+    background: #eef4f0;
+    color: var(--text-muted);
+  }
+
+  /* 小節展開清單 */
+  .subsections-panel {
+    display: none;
+    background: var(--surface-sub);
+    padding: 12px 28px 24px 86px;
+    border-top: 1.5px solid var(--border-soft);
+  }
+
+  @media (max-width: 768px) {
+    .subsections-panel {
+      padding: 12px 16px 20px 16px;
+    }
+  }
+
+  .unit-item.expanded .subsections-panel {
+    display: block;
+  }
+
+  /* 第七單元雙向整合快捷卡 */
+  .u7-quiz-callout {
+    background: linear-gradient(135deg, #ffffff 0%, #ebf7f2 100%);
+    border: 2.5px solid var(--primary-mid);
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: 0 6px 16px rgba(31, 99, 81, 0.08);
+  }
+
+  .u7-quiz-title {
+    font-size: calc(1.22rem * var(--font-scale));
+    font-weight: 900;
+    color: #1b4d3e;
+  }
+
+  .u7-quiz-desc {
+    font-size: calc(1rem * var(--font-scale));
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+
+  .u7-quiz-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .u7-link-btn {
+    padding: 11px 18px;
+    border-radius: 12px;
+    font-size: calc(1.06rem * var(--font-scale));
+    font-weight: 900;
+    text-decoration: none;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .u7-link-btn.prac {
+    background: #24745f;
+  }
+  .u7-link-btn.prac:hover {
+    background: #175243;
+    transform: translateY(-2px);
+  }
+
+  .u7-link-btn.exam {
+    background: #c96f16;
+  }
+  .u7-link-btn.exam:hover {
+    background: #a85a0f;
+    transform: translateY(-2px);
+  }
+
+  .sub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .sub-card {
+    background: #ffffff;
+    border: 2.5px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+    transition: all 0.18s ease;
+  }
+
+  .sub-card.ready {
+    border-color: var(--primary-mid);
+    background: linear-gradient(180deg, #ffffff 0%, #ebf7f2 100%);
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(31, 99, 81, 0.12);
+  }
+
+  .sub-card.ready:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px rgba(31, 99, 81, 0.2);
+    border-color: var(--primary-hover);
+  }
+
+  .sub-card.locked {
+    opacity: 0.74;
+    border-style: dashed;
+  }
+
+  .sub-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .sub-code {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 900;
+    font-size: calc(1.1rem * var(--font-scale));
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  .sub-card.locked .sub-code {
+    background: #7c968c;
+  }
+
+  .sub-count {
+    font-size: 0.98rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  .sub-count.active {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1.5px solid #f59e0b;
+  }
+
+  .sub-count.zero {
+    background: #eef4f0;
+    color: var(--text-subtle);
+  }
+
+  .sub-name {
+    font-size: calc(1.5rem * var(--font-scale));
+    font-weight: 900;
+    color: var(--text);
+  }
+
+  .sub-desc {
+    font-size: calc(1.05rem * var(--font-scale));
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .sub-action-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-size: calc(1.15rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.15s;
+  }
+
+  .sub-card.ready:hover .sub-action-btn {
+    background: var(--primary-hover);
+  }
+
+  .sub-card.locked .sub-action-btn {
+    background: #dce8e2;
+    color: var(--text-subtle);
+    cursor: not-allowed;
+  }
+
+  /* 錯題檢討與類題練習視圖 */
+  #practice-view {
+    display: none;
+  }
+
+  .nav-panel {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 16px 24px;
+    margin-bottom: 20px;
+    border: 2.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 14px rgba(22, 43, 36, 0.05);
+  }
+
+  .nav-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .breadcrumb-title {
+    font-size: calc(1.55rem * var(--font-scale));
+    font-weight: 900;
+    color: #1b4d3e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .section-pill {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: 2px solid #8ec9b4;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: calc(1.15rem * var(--font-scale));
+    font-weight: 900;
+  }
+
+  /* 錯題 ➔ 類題 配對進度列 */
+  .pair-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .pair-nav-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pair-group {
+    background: var(--surface-sub);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .pair-group.active-group {
+    background: var(--primary-soft);
+    border-color: var(--primary-mid);
+  }
+
+  .step-tab {
+    flex: 1;
+    min-width: 0;
+    min-height: 46px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: #ffffff;
+    color: #2b453c;
+    font-size: calc(1.08rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 8px;
+    transition: all 0.15s;
+  }
+
+  .step-tab:hover {
+    border-color: var(--primary-mid);
+    background: var(--primary-soft);
+  }
+
+  .step-tab.current {
+    background: var(--primary);
+    color: #fff;
+    border-color: #1b4d3e;
+    box-shadow: 0 4px 10px rgba(27, 77, 62, 0.28);
+  }
+
+  .step-tab.type-mistake.current {
+    background: #dc2626;
+    border-color: #991b1b;
+    box-shadow: 0 4px 10px rgba(220, 38, 38, 0.28);
+  }
+
+  .step-tab.type-practice.current {
+    background: #0f766e;
+    border-color: #115e59;
+    box-shadow: 0 4px 10px rgba(15, 118, 110, 0.28);
+  }
+
+  .step-tab.done-ok {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #14532d;
+  }
+
+  .step-tab.done-wrong {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #7f1d1d;
+  }
+
+  .pair-arrow {
+    font-weight: 900;
+    color: var(--text-subtle);
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  /* 舞台卡片：專為 iPad 橫向與教室投影最佳化之雙欄設計 */
+  .stage-card {
+    background: var(--surface);
+    border-radius: 26px;
+    padding: 28px 32px;
+    border: 3px solid #9db8ad;
+    box-shadow: 0 14px 32px rgba(22, 43, 36, 0.08);
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .stage-card.mode-mistake {
+    border-top: 8px solid #dc2626;
+  }
+
+  .stage-card.mode-practice {
+    border-top: 8px solid #0f766e;
+  }
+
+  .stage-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border-soft);
+  }
+
+  .q-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: calc(1.35rem * var(--font-scale));
+    font-weight: 900;
+    padding: 6px 18px;
+    border-radius: 999px;
+  }
+
+  .q-type-badge.mistake {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 2px solid #f87171;
+  }
+
+  .q-type-badge.practice {
+    background: var(--primary-light);
+    color: #0f766e;
+    border: 2px solid #5eead4;
+  }
+
+  .stage-helper-btns {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .helper-btn {
+    background: var(--surface-sub);
+    color: var(--text);
+    border: 2px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 12px;
+    font-size: calc(1.05rem * var(--font-scale));
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .helper-btn:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary-mid);
+  }
+
+  .helper-btn.active {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #f59e0b;
+  }
+
+  /* 題目主體雙欄網格（左圖右題，或上下排版） */
+  .stage-body-grid {
+    display: grid;
+    grid-template-columns: minmax(320px, 46%) 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .stage-body-grid.full-width-layout {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 980px) {
+    .stage-body-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* 幾何圖形展示盒（含手寫畫布疊層） */
+  .diagram-panel {
+    position: relative;
+    background: #ffffff;
+    border: 3px solid var(--border);
+    border-radius: 22px;
+    padding: 18px;
+    min-height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 8px rgba(22, 43, 36, 0.04);
+    overflow: hidden;
+  }
+
+  .diagram-svg-wrap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .diagram-svg-wrap svg {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    max-height: 350px;
+    display: block;
+  }
+
+  .orig-img-wrap {
+    display: none;
+    width: 100%;
+    text-align: center;
+  }
+
+  .orig-img-wrap.show {
+    display: block;
+  }
+
+  .orig-img-wrap img {
+    max-width: 100%;
+    max-height: 360px;
+    border-radius: 12px;
+    border: 2px solid var(--border-soft);
+    object-fit: contain;
+  }
+
+  /* 手寫塗鴉 Canvas 疊層 */
+  #draw-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+    touch-action: none;
+  }
+
+  #draw-canvas.drawing-active {
+    pointer-events: auto;
+    cursor: crosshair;
+  }
+
+  .draw-toolbar {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 30;
+    background: rgba(22, 43, 36, 0.9);
+    padding: 6px 10px;
+    border-radius: 12px;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .draw-toolbar.show {
+    display: flex;
+  }
+
+  .color-dot {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2.5px solid #fff;
+    cursor: pointer;
+    transition: transform 0.12s;
+  }
+
+  .color-dot.active {
+    transform: scale(1.22);
+    box-shadow: 0 0 0 2px #fde047;
+  }
+
+  .clear-draw-btn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  /* 右側題幹與選項區 */
+  .question-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  .question-stem {
+    font-size: calc(1.95rem * var(--font-scale));
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* 還原第一題的下拉選單填空互動框 */
+  .inline-select-wrap {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin: 4px 6px;
+    position: relative;
+    max-width: 100%;
+  }
+
+  .inline-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--primary-soft);
+    border: 3px solid var(--primary-mid);
+    border-radius: 12px;
+    padding: 6px 40px 6px 16px;
+    font-size: calc(1.65rem * var(--font-scale));
+    font-weight: 900;
+    color: #1b4d3e;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 3px 0 #bfe2d5;
+    transition: all 0.15s;
+    max-width: 100%;
+  }
+
+  .inline-select:focus {
+    outline: none;
+    border-color: var(--primary-hover);
+    background: var(--primary-light);
+  }
+
+  .inline-select.correct-slot {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #14532d;
+  }
+
+  .inline-select.wrong-slot {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #7f1d1d;
+  }
+
+  .inline-select-arrow {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 900;
+  }
+
+  /* 選項按鈕網格 */
+  .options-label-hint {
+    font-size: calc(1.1rem * var(--font-scale));
+    font-weight: 800;
+    color: var(--text-muted);
+    margin-bottom: -8px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .options-grid.single-col {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 720px) {
+    .options-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .option-btn {
+    background: var(--surface-sub);
+    border: 3.5px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 22px;
+    font-size: calc(1.65rem * var(--font-scale));
+    font-weight: 800;
+    color: var(--text);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.15s ease;
+    line-height: 1.35;
+  }
+
+  .option-btn:hover {
+    border-color: var(--primary-mid);
+    background: var(--primary-soft);
+    transform: translateY(-2px);
+  }
+
+  .opt-index {
+    flex-shrink: 0;
+    width: calc(2.8rem * var(--font-scale));
+    height: calc(2.8rem * var(--font-scale));
+    border-radius: 50%;
+    background: var(--border-soft);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(1.45rem * var(--font-scale));
+    font-weight: 900;
+  }
+
+  .option-btn.correct {
+    background: var(--success-light);
+    border-color: var(--success);
+    color: #14532d;
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+  }
+
+  .option-btn.correct .opt-index {
+    background: var(--success);
+    color: #fff;
+  }
+
+  .option-btn.wrong {
+    background: var(--danger-light);
+    border-color: var(--danger);
+    color: #7f1d1d;
+    animation: shake 0.35s ease;
+  }
+
+  .option-btn.wrong .opt-index {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  /* 圖形二選一巨型卡片（專為錯題 3 與類題 3 設計） */
+  .visual-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  @media (max-width: 820px) {
+    .visual-choice-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .visual-card-btn {
+    background: #ffffff;
+    border: 4px solid var(--border);
+    border-radius: 22px;
+    padding: 20px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.18s ease;
+    position: relative;
+  }
+
+  .visual-card-btn:hover {
+    border-color: var(--primary-mid);
+    background: var(--surface-sub);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(31, 99, 81, 0.14);
+  }
+
+  .visual-card-btn.correct {
+    background: #f0fdf4;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.2);
+  }
+
+  .visual-card-btn.wrong {
+    background: #fef2f2;
+    border-color: #dc2626;
+    animation: shake 0.35s ease;
+  }
+
+  .visual-card-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .visual-card-label {
+    font-size: calc(1.55rem * var(--font-scale));
+    font-weight: 900;
+    color: var(--text);
+    background: #eef4f0;
+    padding: 6px 18px;
+    border-radius: 999px;
+    border: 2px solid var(--border);
+  }
+
+  .visual-card-btn.correct .visual-card-label {
+    background: #16a34a;
+    color: #fff;
+    border-color: #16a34a;
+  }
+
+  .visual-card-btn.wrong .visual-card-label {
+    background: #dc2626;
+    color: #fff;
+    border-color: #dc2626;
+  }
+
+  .visual-card-svg {
+    width: 100%;
+    max-width: 380px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .visual-card-svg svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes shake {
+    25% { transform: translateX(-7px); }
+    75% { transform: translateX(7px); }
+  }
+
+  /* 診斷詳解與「挑戰類題」行動呼籲盒 */
+  .explanation-box {
+    margin-top: 24px;
+    background: #fffbeb;
+    border: 3px solid #f59e0b;
+    border-radius: 22px;
+    padding: 22px 28px;
+    display: none;
+    animation: fadeIn 0.22s ease;
+  }
+
+  .explanation-box.show {
+    display: block;
+  }
+
+  .exp-header {
+    font-size: calc(1.5rem * var(--font-scale));
+    font-weight: 900;
+    color: #b45309;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .exp-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pitfall-callout {
+    background: #fef2f2;
+    border-left: 6px solid #ef4444;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: calc(1.25rem * var(--font-scale));
+    font-weight: 700;
+    color: #7f1d1d;
+  }
+
+  .concept-callout {
+    background: #ffffff;
+    border-left: 6px solid #16a34a;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: calc(1.4rem * var(--font-scale));
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .exp-next-action {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .go-similar-btn {
+    background: linear-gradient(135deg, #1f6351 0%, #0f766e 100%);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 14px 28px;
+    font-size: calc(1.45rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(31, 99, 81, 0.32);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    animation: pulseGlow 1.5s infinite;
+  }
+
+  .go-similar-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 底部控制列 */
+  .stage-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    padding: 14px 24px;
+    border-radius: 16px;
+    font-size: calc(1.35rem * var(--font-scale));
+    font-weight: 900;
+    border: 2.5px solid var(--border);
+    background: #fff;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ctrl-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  .ctrl-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .ctrl-btn.primary {
+    background: var(--primary);
+    color: #fff;
+    border-color: #1b4d3e;
+  }
+
+  .ctrl-btn.primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  .ctrl-btn.reveal {
+    background: #f59e0b;
+    color: #fff;
+    border-color: #d97706;
+  }
+
+  .ctrl-btn.reveal:hover:not(:disabled) {
+    background: #d97706;
+  }
+
+  .ctrl-btn.random-gen {
+    background: #0f766e;
+    color: #fff;
+    border-color: #115e59;
+  }
+
+  .ctrl-btn.random-gen:hover:not(:disabled) {
+    background: #115e59;
+    border-color: #134e4a;
+  }
+
+  .keyboard-hint {
+    text-align: center;
+    margin-top: 18px;
+    color: var(--text-subtle);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  /* SVG 重點動畫樣式 */
+  .hl-pulse {
+    animation: svgPulse 1.1s infinite alternate;
+  }
+
+  @keyframes svgPulse {
+    from { opacity: 0.65; stroke-width: 5px; }
+    to { opacity: 1; stroke-width: 8px; }
+  }
+
+  @media (max-width: 640px) {
+    header { padding: 10px 14px; }
+    .brand-title { font-size: 1.18rem; }
+    .tool-btn { padding: 7px 11px; font-size: 0.95rem; }
+    main { padding: 16px 12px 56px; }
+    .hero-banner { padding: 20px 18px; border-radius: 18px; }
+    .hero-banner h1 { font-size: calc(1.55rem * var(--font-scale)); }
+    .hero-banner p { font-size: calc(1.05rem * var(--font-scale)); }
+    .stat-card { flex: 1; min-width: 120px; padding: 10px 12px; }
+    .toc-header-bar { padding: 14px 16px; }
+    .unit-row { padding: 16px 14px; flex-wrap: wrap; }
+    .unit-title-text { font-size: calc(1.42rem * var(--font-scale)); }
+    .sub-grid { grid-template-columns: 1fr; }
+    .nav-panel { padding: 14px 14px; }
+    .stage-card { padding: 18px 14px; border-radius: 18px; }
+    .diagram-panel { min-height: 240px; padding: 12px; }
+    .question-stem { font-size: calc(1.38rem * var(--font-scale)); }
+    .inline-select { font-size: calc(1.22rem * var(--font-scale)); padding: 6px 34px 6px 12px; }
+    .option-btn { font-size: calc(1.2rem * var(--font-scale)); padding: 14px 14px; }
+    .explanation-box { padding: 16px 14px; }
+    .ctrl-btn { padding: 11px 15px; font-size: calc(1.08rem * var(--font-scale)); }
+    .go-similar-btn { padding: 12px 18px; font-size: calc(1.12rem * var(--font-scale)); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="index.html" title="返回單元首頁">
+    <span class="brand-badge">康軒四上數學</span>
+    <span class="brand-title">隨堂練習・錯題・線上測驗網</span>
+  </a>
+  <div class="toolbar">
+    <a class="tool-btn" href="index.html">🏠 單元首頁</a>
+    <button class="tool-btn active" id="btn-mistakes-toc" onclick="goHome()">📖 錯題與類題</button>
+    <button class="tool-btn" onclick="adjustFontSize(-0.08)" title="縮小字體">A-</button>
+    <button class="tool-btn" onclick="adjustFontSize(0)" title="標準字體">標準</button>
+    <button class="tool-btn" onclick="adjustFontSize(0.1)" title="放大字體">A+</button>
+    <button class="tool-btn" onclick="toggleFullscreen()">⛶ 全螢幕</button>
+    <a class="tool-btn teacher-link" href="teacher.html">👩‍🏫 教師後台</a>
+  </div>
+</header>
+
+<main>
+  <!-- 畫面一：康軒四上數學 單元與小節目次 -->
+  <section id="home-view">
+    <div class="hero-banner">
+      <div>
+        <h1>國小四年級上學期（康軒版）數學錯題紀錄簿</h1>
+        <p>先檢討原題迷思 ➔ 再做一題對應類題鞏固・專為 iPad 平板觸控與課堂投影設計</p>
+      </div>
+      <div class="stats-summary">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-mistakes-count">3 題</div>
+          <div class="stat-label">目前已收錄錯題</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-mastered-count">0 / 6</div>
+          <div class="stat-label">錯題＋類題完成度</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toc-container">
+      <div class="toc-header-bar">
+        <div class="toc-header-title">
+          <span>📚 數學課程單元目次（點擊單元展開小節）</span>
+        </div>
+        <button class="helper-btn" onclick="clearSavedProgress()">🧹 重置所有練習紀錄</button>
+      </div>
+      <div id="toc-list"></div>
+    </div>
+  </section>
+
+  <!-- 畫面二：錯題檢討與類題練習舞台 -->
+  <section id="practice-view">
+    <div class="nav-panel">
+      <div class="nav-top-row">
+        <div class="breadcrumb-title">
+          <span id="nav-unit-title">第六單元：三角形</span>
+          <span>›</span>
+          <span class="section-pill" id="nav-sub-title">5-2 以邊來分類三角形</span>
+        </div>
+        <div class="stage-helper-btns">
+          <button class="helper-btn" onclick="goHome()">📚 返回錯題目次</button>
+          <button class="helper-btn" id="btn-toggle-draw" onclick="toggleDrawMode()">🖍️ 畫筆標記</button>
+          <button class="helper-btn" id="btn-toggle-orig" onclick="toggleOriginalImage()" style="display:none;">🖼️ 對照原題截圖</button>
+        </div>
+      </div>
+
+      <!-- 3 組「錯題 ➔ 類題」配對導覽列 -->
+      <div class="pair-nav-grid" id="pair-nav-grid"></div>
+    </div>
+
+    <!-- 單題互動舞台 -->
+    <div class="stage-card" id="stage-card">
+      <div class="draw-toolbar" id="draw-toolbar">
+        <span style="color:#fff;font-size:0.9rem;font-weight:800;">畫筆：</span>
+        <div class="color-dot active" style="background:#ef4444;" onclick="setPenColor('#ef4444', this)" title="紅筆"></div>
+        <div class="color-dot" style="background:#0284c7;" onclick="setPenColor('#0284c7', this)" title="藍筆"></div>
+        <div class="color-dot" style="background:#16a34a;" onclick="setPenColor('#16a34a', this)" title="綠筆"></div>
+        <button class="clear-draw-btn" onclick="clearCanvas()">清除筆跡</button>
+      </div>
+      <canvas id="draw-canvas"></canvas>
+
+      <div class="stage-top-bar">
+        <div id="stage-badge-wrap"></div>
+        <div class="stage-helper-btns" id="stage-extra-tools"></div>
+      </div>
+
+      <div class="stage-body-grid" id="stage-body-grid">
+        <!-- 左欄：高畫質幾何 SVG 舞台 + 原圖切換 -->
+        <div class="diagram-panel" id="diagram-panel">
+          <div class="diagram-svg-wrap" id="diagram-svg-wrap"></div>
+          <div class="orig-img-wrap" id="orig-img-wrap">
+            <img id="orig-img-el" src="" alt="原題截圖">
+            <div style="font-size:0.95rem;color:#5d786f;font-weight:700;margin-top:6px;">▲ 學生作答原題截圖對照</div>
+          </div>
+        </div>
+
+        <!-- 右欄：題目與互動選項 -->
+        <div class="question-panel" id="question-panel">
+          <div class="question-stem" id="stage-stem"></div>
+          <div class="options-label-hint" id="options-hint"></div>
+          <div id="stage-options-wrap"></div>
+        </div>
+      </div>
+
+      <!-- 診斷詳解與「立即挑戰類題」區塊 -->
+      <div class="explanation-box" id="stage-exp">
+        <div class="exp-header">
+          <span id="stage-exp-title">💡 錯題診斷與觀念解析</span>
+        </div>
+        <div class="exp-grid">
+          <div class="pitfall-callout" id="stage-pitfall"></div>
+          <div class="concept-callout" id="stage-concept"></div>
+        </div>
+        <div class="exp-next-action" id="stage-exp-actions"></div>
+      </div>
+    </div>
+
+    <!-- 底部控制列 -->
+    <div class="stage-controls">
+      <div class="ctrl-group">
+        <button class="ctrl-btn" id="btn-prev" onclick="prevStep()">⬅ 上一題</button>
+        <button class="ctrl-btn primary" id="btn-next" onclick="nextStep()">下一題 ➡</button>
+      </div>
+      <div class="ctrl-group">
+        <button class="ctrl-btn random-gen" id="btn-random-practice" onclick="generateNewNumbersForPractice()" style="display:none;">🎲 換一組數字再練一次</button>
+        <button class="ctrl-btn reveal" onclick="revealCurrentAnswer()">💡 公佈答案與圖解</button>
+        <button class="ctrl-btn" onclick="resetCurrentStep()">🔄 重作本題</button>
+      </div>
+    </div>
+
+    <div class="keyboard-hint">
+      ⌨️ 課堂快捷鍵：按 <b>← / →</b> 切換題目 ｜ 按數字鍵 <b>1～4</b> 快速選答 ｜ 按 <b>空白鍵</b> 顯示圖解與詳解
+    </div>
+  </section>
+</main>
+
+<script>
+// ============================================================================
+// 1. 康軒版四年級上學期 數學目次與題庫結構
+// ============================================================================
+const CURRICULUM = [
+  {
+    unitId: "U6",
+    unitTitle: "第六單元：三角形",
+    expandedByDefault: true,
+    subsections: [
+      {
+        code: "5-1",
+        altCode: "6-1",
+        title: "認識三角形",
+        desc: "三角形的構成要素：頂點、邊、角",
+        ready: false,
+        mistakeCount: 0
+      },
+      {
+        code: "5-2",
+        altCode: "6-2",
+        title: "以邊來分類三角形",
+        desc: "認識等腰三角形、正三角形與等腰底角性質（已收錄 3 題錯題＋3 題類題）",
+        ready: true,
+        mistakeCount: 3
+      },
+      {
+        code: "5-3",
+        altCode: "6-3",
+        title: "以角來分類三角形",
+        desc: "認識直角三角形、銳角三角形、鈍角三角形與等腰直角三角形",
+        ready: false,
+        mistakeCount: 0
+      },
+      {
+        code: "5-4",
+        altCode: "6-4",
+        title: "繪製三角形",
+        desc: "使用直尺、量角器畫出指定的三角形",
+        ready: false,
+        mistakeCount: 0
+      },
+      {
+        code: "5-5",
+        altCode: "6-5",
+        title: "全等圖形與全等三角形",
+        desc: "認識全等圖形的對應頂點、對應邊與對應角",
+        ready: false,
+        mistakeCount: 0
+      }
+    ]
+  },
+  {
+    unitId: "U7",
+    unitTitle: "第七單元：小數",
+    expandedByDefault: false,
+    hasInteractiveQuiz: true,
+    subsections: [
+      { code: "7-1", title: "認識二位小數", desc: "二位小數的讀法、寫法與位值", ready: false, mistakeCount: 0 },
+      { code: "7-2", title: "小數與長度", desc: "公分、公尺與小數的換算", ready: false, mistakeCount: 0 },
+      { code: "7-3", title: "小數的大小比較", desc: "比較二位小數的大小", ready: false, mistakeCount: 0 },
+      { code: "7-4", title: "小數的加減", desc: "二位小數的直式加法與減法", ready: false, mistakeCount: 0 }
+    ]
+  },
+  {
+    unitId: "U8",
+    unitTitle: "第八單元：整數四則計算",
+    expandedByDefault: false,
+    subsections: [
+      { code: "8-1", title: "兩步驟的併式與有括號先算", desc: "由左而右計算與括號先算規則", ready: false, mistakeCount: 0 },
+      { code: "8-2", title: "加減混合與乘除混合", desc: "同級運算的併式紀錄", ready: false, mistakeCount: 0 },
+      { code: "8-3", title: "四則混合計算（先乘除後加減）", desc: "四則運算的先後順序約定", ready: false, mistakeCount: 0 },
+      { code: "8-4", title: "簡化計算", desc: "連加、連減、連乘的巧算", ready: false, mistakeCount: 0 }
+    ]
+  },
+  {
+    unitId: "U9",
+    unitTitle: "第九單元：分數",
+    expandedByDefault: false,
+    subsections: [
+      { code: "9-1", title: "認識真分數、假分數與帶分數", desc: "分數的分類與意義", ready: false, mistakeCount: 0 },
+      { code: "9-2", title: "假分數與帶分數的互換", desc: "整數、帶分數與假分數的轉換及大小比較", ready: false, mistakeCount: 0 },
+      { code: "9-3", title: "同分母分數的加減", desc: "帶分數與假分數的加減計算", ready: false, mistakeCount: 0 },
+      { code: "9-4", title: "分數的整數倍", desc: "單位分數與真分數的整數倍", ready: false, mistakeCount: 0 }
+    ]
+  },
+  {
+    unitId: "U10",
+    unitTitle: "第十單元：統計圖",
+    expandedByDefault: false,
+    subsections: [
+      { code: "10-1", title: "認識長條圖", desc: "報讀生活中的長條圖與省略符號", ready: false, mistakeCount: 0 },
+      { code: "10-2", title: "認識折線圖", desc: "報讀呈現變化趨勢的折線圖", ready: false, mistakeCount: 0 },
+      { code: "10-3", title: "複雜統計圖的判讀", desc: "雙長條圖與雙折線圖的比較分析", ready: false, mistakeCount: 0 }
+    ]
+  }
+];
+
+// ============================================================================
+// 2. 5-2「以邊來分類三角形」錯題與對應類題資料（共 3 組 = 6 題）
+// ============================================================================
+const QUESTIONS_5_2 = [
+  // -------------------- 第 1 組：錯題 1 & 類題 1 --------------------
+  {
+    id: "M1",
+    pairIndex: 1,
+    type: "mistake",
+    badgeText: "⚠️ 錯題 1（原題檢討）",
+    origImg: "assets/q1_orig.png",
+    layoutType: "dual-select",
+    stemPrefix: "看圖回答問題：<br>三角形 ABC 中，",
+    stemMiddle: " 一樣大，所以它是一個 ",
+    stemSuffix: "。",
+    slot1Options: ["請選擇角", "∠B 和 ∠C", "∠A 和 ∠B", "∠A 和 ∠C", "三個角"],
+    slot2Options: ["請選擇三角形", "等腰三角形", "正三角形", "直角三角形", "鈍角三角形"],
+    correctSlot1: "∠B 和 ∠C",
+    correctSlot2: "等腰三角形",
+    options: [
+      "∠B 和 ∠C ／ 等腰三角形",
+      "∠A 和 ∠B ／ 等腰三角形",
+      "∠B 和 ∠C ／ 正三角形",
+      "三個角 ／ 正三角形"
+    ],
+    answer: 0,
+    pitfall: "常見錯誤原因：沒有仔細對照 50° 標在哪兩個頂點旁，或誤以為「有兩個角一樣大」就是正三角形（正三角形必須三個角都是 60°）。",
+    concept: "1. 觀察圖形：頂點 <b>B</b> 和頂點 <b>C</b> 的角都標示 <b>50°</b>，所以是 <b>∠B 和 ∠C</b> 一樣大。<br>2. 在三角形中，<b>有兩個角一樣大（底角相等）</b>，它們對面的兩條邊（邊 AB 與邊 AC）也會一樣長，所以它是一個<b>等腰三角形</b>！",
+    diagramData: {
+      kind: "q1_iso_angles",
+      vTop: { label: "C", angle: "50°", x: 350, y: 48 },
+      vLeft: { label: "B", angle: "50°", x: 85, y: 205 },
+      vBottom: { label: "A", angle: "", x: 295, y: 295 },
+      fillColor: "#f7d08a"
+    }
+  },
+  {
+    id: "P1",
+    pairIndex: 1,
+    type: "practice",
+    badgeText: "🎯 類題 1（鞏固練習）",
+    origImg: null,
+    layoutType: "dual-select",
+    stemPrefix: "【類題練習】看圖回答問題：<br>三角形 DEF 中，",
+    stemMiddle: " 一樣大，所以它是一個 ",
+    stemSuffix: "。",
+    slot1Options: ["請選擇角", "∠D 和 ∠F", "∠D 和 ∠E", "∠E 和 ∠F", "三個角"],
+    slot2Options: ["請選擇三角形", "等腰三角形", "正三角形", "直角三角形", "不等邊三角形"],
+    correctSlot1: "∠D 和 ∠F",
+    correctSlot2: "等腰三角形",
+    options: [
+      "∠D 和 ∠E ／ 等腰三角形",
+      "∠D 和 ∠F ／ 等腰三角形",
+      "∠D 和 ∠F ／ 正三角形",
+      "∠E 和 ∠F ／ 直角三角形"
+    ],
+    answer: 1,
+    pitfall: "解題提醒：別被三角形旋轉的方向騙了！先找出標有相同角度（65°）的兩個頂點字母。",
+    concept: "1. 圖中頂點 <b>D</b> 和頂點 <b>F</b> 都是 <b>65°</b>，因此 <b>∠D 和 ∠F</b> 一樣大。<br>2. 有兩個角一樣大的三角形，對面的兩條腰（邊 ED 與邊 EF）等長，所以它是<b>等腰三角形</b>！",
+    diagramData: {
+      kind: "p1_iso_angles",
+      angleVal: 65,
+      equalPair: "∠D 和 ∠F",
+      triType: "等腰三角形"
+    }
+  },
+
+  // -------------------- 第 2 組：錯題 2 & 類題 2 --------------------
+  {
+    id: "M2",
+    pairIndex: 2,
+    type: "mistake",
+    badgeText: "⚠️ 錯題 2（原題檢討）",
+    origImg: "assets/q2_orig.png",
+    layoutType: "standard",
+    stem: "請問邊 AB 的長度是多少？",
+    options: [
+      "32 公分",
+      "55 公分",
+      "38 公分",
+      "44 公分"
+    ],
+    answer: 3,
+    pitfall: "常見錯誤原因：直接看底邊選了「32 公分」，或是把底角的角度「55°」當成邊長選了「55 公分」！",
+    concept: "1. <b>先看角度判斷形狀</b>：底下的 ∠B = 55°、∠C = 55°，兩個底角一樣大，代表它是左右對稱的<b>等腰三角形</b>！<br>2. <b>找出相等的兩條腰</b>：底角上方的左右兩邊（<b>邊 AB</b> 和 <b>邊 AC</b>）是兩條一樣長的「腰」。因為邊 AC 是 44 公分，所以<b>邊 AB 也是 44 公分</b>！",
+    diagramData: {
+      kind: "q2_find_side",
+      topLabel: "A",
+      leftLabel: "B",
+      rightLabel: "C",
+      baseAngle: 55,
+      legLen: 44,
+      baseLen: 32,
+      knownSide: "right"
+    }
+  },
+  {
+    id: "P2",
+    pairIndex: 2,
+    type: "practice",
+    badgeText: "🎯 類題 2（鞏固練習）",
+    origImg: null,
+    layoutType: "standard",
+    stem: "【類題練習】請問邊 PQ 的長度是多少？",
+    options: [
+      "35 公分",
+      "56 公分",
+      "62 公分",
+      "45 公分"
+    ],
+    answer: 1,
+    pitfall: "解題提醒：先確認哪兩個角一樣大（62° 和 62°），再找出哪兩條邊是對稱的「腰」喔！",
+    concept: "1. 圖中 ∠Q = 62°、∠R = 62°，兩個底角相等，因此三角形 PQR 是<b>等腰三角形</b>。<br>2. 左右兩側的<b>邊 PQ</b> 和<b>邊 PR</b> 是等長的兩腰。已知邊 PR = 56 公分，所以<b>邊 PQ = 56 公分</b>！（35 公分是底邊 QR，62° 是角度，千萬別選錯囉！）",
+    diagramData: {
+      kind: "q2_find_side",
+      topLabel: "P",
+      leftLabel: "Q",
+      rightLabel: "R",
+      baseAngle: 62,
+      legLen: 56,
+      baseLen: 35,
+      knownSide: "right"
+    }
+  },
+
+  // -------------------- 第 3 組：錯題 3 & 類題 3 --------------------
+  {
+    id: "M3",
+    pairIndex: 3,
+    type: "mistake",
+    badgeText: "⚠️ 錯題 3（原題檢討）",
+    origImg: "assets/q3_orig.jpg",
+    layoutType: "visual-cards",
+    stem: "觀察下圖，選出正確的答案：<br>下面哪一個三角形是<span style='color:#1f6351;border-bottom:4px solid #24745f;'>等腰三角形</span>？",
+    options: [
+      "甲（邊長 5 公分、4 公分、4 公分）",
+      "乙（邊長 3 公分、4 公分、5 公分）"
+    ],
+    answer: 0,
+    pitfall: "常見錯誤原因：因為「甲」倒過來放（尖端朝下）就認不出來，或者看到「乙」的 3、4、5 公分數字很順就誤選了乙！",
+    concept: "1. <b>等腰三角形的定義</b>：只要有<b>「兩條邊一樣長」</b>就是等腰三角形，跟它正著放、倒著放沒有關係！<br>2. <b>(1) 甲三角形</b>：三條邊是 5 公分、<b>4 公分、4 公分</b>，有兩條邊都是 4 公分（一樣長），所以<b>甲才是等腰三角形</b>！<br>3. <b>(2) 乙三角形</b>：3 公分、4 公分、5 公分三邊都不一樣長，是不等邊三角形。",
+    visualCards: [
+      {
+        num: "(1)",
+        name: "甲",
+        svgType: "inverted_iso",
+        topLen: 5,
+        leftLen: 4,
+        rightLen: 4,
+        fill: "#bce3fa"
+      },
+      {
+        num: "(2)",
+        name: "乙",
+        svgType: "right_scalene",
+        leftLen: 3,
+        bottomLen: 4,
+        hypLen: 5,
+        fill: "#f9c6d9"
+      }
+    ]
+  },
+  {
+    id: "P3",
+    pairIndex: 3,
+    type: "practice",
+    badgeText: "🎯 類題 3（鞏固練習）",
+    origImg: null,
+    layoutType: "visual-cards",
+    stem: "【類題練習】觀察下圖，選出正確的答案：<br>下面哪一個三角形是<span style='color:#0f766e;border-bottom:4px solid #14b8a6;'>等腰三角形</span>？",
+    options: [
+      "甲（邊長 6 公分、7 公分、8 公分）",
+      "乙（邊長 9 公分、6 公分、6 公分）"
+    ],
+    answer: 1,
+    pitfall: "解題提醒：不要被「6、7、8 公分」連續數字騙了！仔細找哪一個三角形有「兩個一樣的邊長數字」。",
+    concept: "1. <b>(1) 甲三角形</b>：三邊長為 6 公分、7 公分、8 公分，三條邊都不一樣長。<br>2. <b>(2) 乙三角形</b>：三邊長為 9 公分、<b>6 公分、6 公分</b>，有兩條邊都是 <b>6 公分（一樣長）</b>，雖然倒過來放，它依然是標準的<b>等腰三角形</b>！",
+    visualCards: [
+      {
+        num: "(1)",
+        name: "甲",
+        svgType: "right_scalene",
+        leftLen: 6,
+        bottomLen: 8,
+        hypLen: 7,
+        fill: "#d9f99d"
+      },
+      {
+        num: "(2)",
+        name: "乙",
+        svgType: "inverted_iso",
+        topLen: 9,
+        leftLen: 6,
+        rightLen: 6,
+        fill: "#fde68a"
+      }
+    ]
+  }
+];
+
+// ============================================================================
+// 3. 狀態管理與 LocalStorage 儲存
+// ============================================================================
+const CIRCLED_NUMS = ["(1)", "(2)", "(3)", "(4)"];
+const STORAGE_KEY = "kanghsuan_4a_math_mistakes_v1";
+
+let currentStepIndex = 0;
+let userState = {}; // { [qId]: { selected: number|null, slot1: string, slot2: string, revealed: boolean } }
+let fontScale = 1;
+let showOrigImage = false;
+let isDrawingMode = false;
+let penColor = "#ef4444";
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) userState = JSON.parse(raw);
+  } catch (e) {
+    userState = {};
+  }
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userState));
+  } catch (e) {}
+  updateHomeStats();
+}
+
+function clearSavedProgress() {
+  userState = {};
+  saveProgress();
+  renderTOC();
+}
+
+function updateHomeStats() {
+  let doneCount = 0;
+  QUESTIONS_5_2.forEach(q => {
+    const st = userState[q.id];
+    if (st && (st.selected === q.answer || st.revealed)) {
+      doneCount++;
+    }
+  });
+  const el = document.getElementById("stat-mastered-count");
+  if (el) el.textContent = `${doneCount} / ${QUESTIONS_5_2.length}`;
+}
+
+// ============================================================================
+// 4. 首頁目次渲染（還原康軒紅十字目次＋各小節卡片＋第七單元雙向整合）
+// ============================================================================
+function renderTOC() {
+  updateHomeStats();
+  const listEl = document.getElementById("toc-list");
+
+  listEl.innerHTML = CURRICULUM.map(unit => {
+    const totalMistakes = unit.subsections.reduce((acc, s) => acc + s.mistakeCount, 0);
+    const expandedClass = unit.expandedByDefault ? "expanded" : "";
+
+    const u7QuizBanner = unit.hasInteractiveQuiz ? `
+      <div class="u7-quiz-callout">
+        <div>
+          <div class="u7-quiz-title">✨ 第七單元《小數》課堂互動練習與隨堂線上測驗已開放！</div>
+          <div class="u7-quiz-desc">含認識二位小數、長度換算、小數比大小（三大題 15 題組，共 45 格）</div>
+        </div>
+        <div class="u7-quiz-actions">
+          <a href="index.html?unit=U7&mode=practice" class="u7-link-btn prac">🖥 課堂互動練習</a>
+          <a href="index.html?unit=U7&mode=exam" class="u7-link-btn exam">✍️ 隨堂線上測驗</a>
+        </div>
+      </div>
+    ` : "";
+
+    const subsHtml = unit.subsections.map(sub => {
+      const isReady = sub.ready;
+      return `
+        <div class="sub-card ${isReady ? 'ready' : 'locked'}"
+             onclick="${isReady ? `openPracticeUnit('${sub.code}')` : ''}">
+          <div>
+            <div class="sub-top">
+              <span class="sub-code">${sub.code} 小節</span>
+              <span class="sub-count ${sub.mistakeCount > 0 ? 'active' : 'zero'}">
+                ${sub.mistakeCount > 0 ? `📌 ${sub.mistakeCount} 題錯題＋${sub.mistakeCount} 題類題` : '尚無錯題紀錄'}
+              </span>
+            </div>
+            <div class="sub-name" style="margin-top:12px;">${sub.title}</div>
+            <div class="sub-desc" style="margin-top:6px;">${sub.desc}</div>
+          </div>
+          <button class="sub-action-btn" ${isReady ? '' : 'disabled'}>
+            ${isReady ? '▶ 進入錯題檢討與類題練習' : '⏳ 尚無錯題'}
+          </button>
+        </div>
+      `;
+    }).join("");
+
+    return `
+      <div class="unit-item ${expandedClass}" id="unit-${unit.unitId}">
+        <div class="unit-row" onclick="toggleUnitExpand('${unit.unitId}')">
+          <div class="unit-left">
+            <div class="red-plus-box"></div>
+            <span class="unit-title-text">${unit.unitTitle}</span>
+          </div>
+          <div class="unit-badges">
+            ${unit.hasInteractiveQuiz ? `<span class="badge-pill quiz-ready">✨ 隨堂練習／測驗已開放</span>` : ""}
+            <span class="badge-pill ${totalMistakes > 0 ? 'has-error' : 'empty'}">
+              ${totalMistakes > 0 ? `🔥 待複習錯題：${totalMistakes} 題（含類題共 ${totalMistakes * 2} 題）` : `共 ${unit.subsections.length} 個小節`}
+            </span>
+          </div>
+        </div>
+        <div class="subsections-panel">
+          ${u7QuizBanner}
+          <div style="font-size:1.05rem;font-weight:800;color:#48635a;">
+            請選擇小節（共分為 ${unit.subsections.length} 個小節）：
+          </div>
+          <div class="sub-grid">
+            ${subsHtml}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleUnitExpand(unitId) {
+  const el = document.getElementById(`unit-${unitId}`);
+  if (el) el.classList.toggle("expanded");
+}
+
+function openPracticeUnit(subCode) {
+  if (subCode !== "5-2") return;
+  currentStepIndex = 0;
+  showOrigImage = false;
+  document.getElementById("home-view").style.display = "none";
+  document.getElementById("practice-view").style.display = "block";
+  renderPracticeStage();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function goHome() {
+  document.getElementById("home-view").style.display = "block";
+  document.getElementById("practice-view").style.display = "none";
+  renderTOC();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ============================================================================
+// 5. 高精準幾何 SVG 繪圖引擎（支援答對/詳解時動態高亮相等邊與角！）
+// ============================================================================
+function renderDiagramSVG(q, highlightAnswer) {
+  const d = q.diagramData;
+  if (!d) return "";
+
+  if (d.kind === "q1_iso_angles") {
+    return `
+      <svg viewBox="0 0 450 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- 三角形底色 -->
+        <polygon points="85,205 350,48 295,295" fill="${d.fillColor}" stroke="#292524" stroke-width="3" stroke-linejoin="round"/>
+        ${highlightAnswer ? `
+          <!-- 詳解時高亮兩條等長的腰 AB 與 AC -->
+          <line x1="85" y1="205" x2="295" y2="295" stroke="#dc2626" stroke-width="6" class="hl-pulse"/>
+          <line x1="350" y1="48" x2="295" y2="295" stroke="#dc2626" stroke-width="6" class="hl-pulse"/>
+          <circle cx="132" cy="198" r="26" fill="rgba(220,38,38,0.16)" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4 3"/>
+          <circle cx="318" cy="100" r="26" fill="rgba(220,38,38,0.16)" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="4 3"/>
+          <text x="172" y="275" font-size="18" font-weight="900" fill="#dc2626" transform="rotate(23, 172, 275)">腰（一樣長）</text>
+          <text x="336" y="185" font-size="18" font-weight="900" fill="#dc2626" transform="rotate(-77, 336, 185)">腰（一樣長）</text>
+        ` : ""}
+        <!-- 頂點字母 -->
+        <text x="52" y="213" font-size="28" font-family="Georgia, serif" font-weight="bold" fill="#162b24">B</text>
+        <text x="358" y="45" font-size="28" font-family="Georgia, serif" font-weight="bold" fill="#162b24">C</text>
+        <text x="288" y="328" font-size="28" font-family="Georgia, serif" font-weight="bold" fill="#162b24">A</text>
+        <!-- 角度數字 -->
+        <text x="115" y="206" font-size="24" font-weight="800" fill="${highlightAnswer ? '#dc2626' : '#162b24'}">50°</text>
+        <text x="302" y="106" font-size="24" font-weight="800" fill="${highlightAnswer ? '#dc2626' : '#162b24'}">50°</text>
+      </svg>
+    `;
+  }
+
+  if (d.kind === "p1_iso_angles") {
+    const ang = d.angleVal || 65;
+    return `
+      <svg viewBox="0 0 450 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- 旋轉不同方向的三角形 DEF：E 在左下頂角，D 在上方，F 在右下 -->
+        <polygon points="105,275 215,45 360,235" fill="#bae6fd" stroke="#162b24" stroke-width="3.2" stroke-linejoin="round"/>
+        ${highlightAnswer ? `
+          <line x1="105" y1="275" x2="215" y2="45" stroke="#0f766e" stroke-width="6" class="hl-pulse"/>
+          <line x1="105" y1="275" x2="360" y2="235" stroke="#0f766e" stroke-width="6" class="hl-pulse"/>
+          <circle cx="215" cy="96" r="26" fill="rgba(15,118,110,0.18)" stroke="#0f766e" stroke-width="2.5" stroke-dasharray="4 3"/>
+          <circle cx="312" cy="222" r="26" fill="rgba(15,118,110,0.18)" stroke="#0f766e" stroke-width="2.5" stroke-dasharray="4 3"/>
+          <text x="122" y="150" font-size="18" font-weight="900" fill="#0f766e" transform="rotate(-64, 122, 150)">等腰</text>
+          <text x="235" y="280" font-size="18" font-weight="900" fill="#0f766e" transform="rotate(-9, 235, 280)">等腰</text>
+        ` : ""}
+        <!-- 頂點字母 -->
+        <text x="206" y="34" font-size="28" font-family="Georgia, serif" font-weight="bold" fill="#162b24">D</text>
+        <text x="72" y="290" font-size="28" font-family="Georgia, serif" font-weight="bold" fill="#162b24">E</text>
+        <text x="372" y="246" font-size="28" font-family="Georgia, serif" font-weight="bold" fill="#162b24">F</text>
+        <!-- 角度標示 -->
+        <text x="196" y="104" font-size="24" font-weight="800" fill="${highlightAnswer ? '#0f766e' : '#162b24'}">${ang}°</text>
+        <text x="292" y="228" font-size="24" font-weight="800" fill="${highlightAnswer ? '#0f766e' : '#162b24'}">${ang}°</text>
+      </svg>
+    `;
+  }
+
+  if (d.kind === "q2_find_side") {
+    return `
+      <svg viewBox="0 0 460 350" xmlns="http://www.w3.org/2000/svg">
+        <!-- 右側邊長虛線弧線（完全還原原題樣式） -->
+        <path d="M 225,52 Q 262,55 275,85" fill="none" stroke="#48635a" stroke-width="2.2" stroke-dasharray="6 4"/>
+        <path d="M 342,262 Q 368,232 355,195" fill="none" stroke="#48635a" stroke-width="2.2" stroke-dasharray="6 4"/>
+        <!-- 底部邊長虛線弧線 -->
+        <path d="M 108,262 Q 125,292 162,296" fill="none" stroke="#48635a" stroke-width="2.2" stroke-dasharray="6 4"/>
+        <path d="M 342,262 Q 325,292 288,296" fill="none" stroke="#48635a" stroke-width="2.2" stroke-dasharray="6 4"/>
+
+        <!-- 三角形主體 -->
+        <polygon points="225,52 108,262 342,262" fill="#ffffff" stroke="#162b24" stroke-width="3.5" stroke-linejoin="round"/>
+
+        ${highlightAnswer ? `
+          <!-- 詳解開啟時：高亮左右兩條相等的腰！ -->
+          <line x1="225" y1="52" x2="108" y2="262" stroke="#dc2626" stroke-width="6" class="hl-pulse"/>
+          <line x1="225" y1="52" x2="342" y2="262" stroke="#dc2626" stroke-width="6" class="hl-pulse"/>
+          <rect x="34" y="132" width="122" height="36" rx="10" fill="#fee2e2" stroke="#dc2626" stroke-width="2.5"/>
+          <text x="95" y="157" text-anchor="middle" font-size="21" font-weight="900" fill="#b91c1c">= ${d.legLen} 公分</text>
+        ` : `
+          <!-- 作答前：左側標示問號 -->
+          <rect x="52" y="134" width="96" height="34" rx="10" fill="#ebf7f2" stroke="#24745f" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="100" y="158" text-anchor="middle" font-size="20" font-weight="900" fill="#1f6351">？ 公分</text>
+        `}
+
+        <!-- 頂點字母 -->
+        <text x="225" y="38" text-anchor="middle" font-size="32" font-family="Georgia, serif" font-weight="bold" fill="#162b24">${d.topLabel}</text>
+        <text x="80" y="272" text-anchor="middle" font-size="32" font-family="Georgia, serif" font-weight="bold" fill="#162b24">${d.leftLabel}</text>
+        <text x="370" y="272" text-anchor="middle" font-size="32" font-family="Georgia, serif" font-weight="bold" fill="#162b24">${d.rightLabel}</text>
+
+        <!-- 底角角度 -->
+        <text x="158" y="250" text-anchor="middle" font-size="24" font-weight="800" fill="${highlightAnswer ? '#dc2626' : '#162b24'}">${d.baseAngle}°</text>
+        <text x="292" y="250" text-anchor="middle" font-size="24" font-weight="800" fill="${highlightAnswer ? '#dc2626' : '#162b24'}">${d.baseAngle}°</text>
+
+        <!-- 邊長標示 -->
+        <text x="348" y="162" text-anchor="middle" font-size="24" font-weight="800" fill="${highlightAnswer ? '#dc2626' : '#162b24'}">${d.legLen} 公分</text>
+        <text x="225" y="302" text-anchor="middle" font-size="24" font-weight="800" fill="#162b24">${d.baseLen} 公分</text>
+      </svg>
+    `;
+  }
+
+  return "";
+}
+
+// 渲染錯題 3 與 類題 3 的單張視覺選項卡片 SVG
+function renderVisualCardSVG(card, highlightAnswer) {
+  if (card.svgType === "inverted_iso") {
+    return `
+      <svg viewBox="0 0 380 230" xmlns="http://www.w3.org/2000/svg">
+        <!-- 虛線弧標示（還原原題） -->
+        <path d="M 70,48 Q 92,28 128,28" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+        <path d="M 310,48 Q 288,28 252,28" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+        <path d="M 70,48 Q 58,76 72,102" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+        <path d="M 310,48 Q 322,76 308,102" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+        <path d="M 155,192 Q 190,214 225,192" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+
+        <polygon points="70,48 310,48 190,196" fill="${card.fill}" stroke="#162b24" stroke-width="2.8" stroke-linejoin="round"/>
+        ${highlightAnswer ? `
+          <line x1="70" y1="48" x2="190" y2="196" stroke="#16a34a" stroke-width="6" class="hl-pulse"/>
+          <line x1="310" y1="48" x2="190" y2="196" stroke="#16a34a" stroke-width="6" class="hl-pulse"/>
+        ` : ""}
+        <text x="190" y="112" text-anchor="middle" font-size="28" font-weight="900" fill="#162b24">${card.name}</text>
+        <text x="190" y="34" text-anchor="middle" font-size="25" font-weight="800" fill="#162b24">${card.topLen} 公分</text>
+        <text x="86" y="148" text-anchor="middle" font-size="25" font-weight="800" fill="${highlightAnswer ? '#15803d' : '#162b24'}">${card.leftLen} 公分</text>
+        <text x="294" y="148" text-anchor="middle" font-size="25" font-weight="800" fill="${highlightAnswer ? '#15803d' : '#162b24'}">${card.rightLen} 公分</text>
+      </svg>
+    `;
+  }
+
+  return `
+    <svg viewBox="0 0 380 230" xmlns="http://www.w3.org/2000/svg">
+      <!-- 虛線弧標示 -->
+      <path d="M 110,32 Q 86,52 86,82" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+      <path d="M 110,32 Q 138,24 162,40" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+      <path d="M 88,155 Q 88,188 115,198" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+      <path d="M 320,192 Q 298,212 268,206" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+      <path d="M 320,192 Q 312,162 292,148" fill="none" stroke="#48635a" stroke-width="2" stroke-dasharray="3 3"/>
+
+      <polygon points="110,34 110,192 320,192" fill="${card.fill}" stroke="#162b24" stroke-width="2.8" stroke-linejoin="round"/>
+      <text x="178" y="148" text-anchor="middle" font-size="28" font-weight="900" fill="#162b24">${card.name}</text>
+      <text x="58" y="124" text-anchor="middle" font-size="25" font-weight="800" fill="#162b24">${card.leftLen} 公分</text>
+      <text x="215" y="220" text-anchor="middle" font-size="25" font-weight="800" fill="#162b24">${card.bottomLen} 公分</text>
+      <text x="255" y="96" text-anchor="middle" font-size="25" font-weight="800" fill="#162b24">${card.hypLen} 公分</text>
+    </svg>
+  `;
+}
+
+// ============================================================================
+// 6. 練習舞台渲染與互動邏輯
+// ============================================================================
+function renderPairNav() {
+  const navEl = document.getElementById("pair-nav-grid");
+  const pairs = [
+    { idx: 1, m: QUESTIONS_5_2[0], p: QUESTIONS_5_2[1] },
+    { idx: 2, m: QUESTIONS_5_2[2], p: QUESTIONS_5_2[3] },
+    { idx: 3, m: QUESTIONS_5_2[4], p: QUESTIONS_5_2[5] }
+  ];
+
+  navEl.innerHTML = pairs.map((pair, pIdx) => {
+    const mGlobalIdx = pIdx * 2;
+    const pGlobalIdx = pIdx * 2 + 1;
+    const isGroupActive = (currentStepIndex === mGlobalIdx || currentStepIndex === pGlobalIdx);
+
+    const getTabClass = (q, gIdx) => {
+      let cls = `step-tab ${q.type === 'mistake' ? 'type-mistake' : 'type-practice'}`;
+      if (currentStepIndex === gIdx) cls += " current";
+      else {
+        const st = userState[q.id];
+        if (st && (st.selected === q.answer || st.revealed)) cls += " done-ok";
+        else if (st && st.selected !== null && st.selected !== q.answer) cls += " done-wrong";
+      }
+      return cls;
+    };
+
+    return `
+      <div class="pair-group ${isGroupActive ? 'active-group' : ''}">
+        <button class="${getTabClass(pair.m, mGlobalIdx)}" onclick="jumpToStep(${mGlobalIdx})">
+          <span>⚠️ 錯題 ${pair.idx}</span>
+        </button>
+        <span class="pair-arrow">➔</span>
+        <button class="${getTabClass(pair.p, pGlobalIdx)}" onclick="jumpToStep(${pGlobalIdx})">
+          <span>🎯 類題 ${pair.idx}</span>
+        </button>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderPracticeStage() {
+  const q = QUESTIONS_5_2[currentStepIndex];
+  const st = userState[q.id] || { selected: null, slot1: "請選擇角", slot2: "請選擇三角形", revealed: false };
+
+  renderPairNav();
+  clearCanvas();
+
+  // 設定卡片頂部邊框顏色（錯題紅、類題深青綠）
+  const stageCard = document.getElementById("stage-card");
+  stageCard.className = `stage-card ${q.type === 'mistake' ? 'mode-mistake' : 'mode-practice'}`;
+
+  // 題型徽章
+  document.getElementById("stage-badge-wrap").innerHTML = `
+    <span class="q-type-badge ${q.type}">
+      ${q.badgeText}
+    </span>
+  `;
+
+  // 原圖切換按鈕（僅錯題 1~3 有原題截圖）
+  const btnOrig = document.getElementById("btn-toggle-orig");
+  if (q.origImg) {
+    btnOrig.style.display = "inline-flex";
+    btnOrig.classList.toggle("active", showOrigImage);
+    btnOrig.textContent = showOrigImage ? "📐 切回互動向量圖" : "🖼️ 對照原題截圖";
+    document.getElementById("orig-img-el").src = q.origImg;
+  } else {
+    btnOrig.style.display = "none";
+    showOrigImage = false;
+  }
+
+  // 類題隨機出題按鈕
+  const btnRandom = document.getElementById("btn-random-practice");
+  btnRandom.style.display = (q.type === "practice") ? "inline-flex" : "none";
+
+  const isCorrectOrRevealed = (st.selected === q.answer) || st.revealed;
+
+  // 判斷版面：第 3 組（visual-cards）使用滿版雙圖卡，第 1、2 組使用左圖右題
+  const bodyGrid = document.getElementById("stage-body-grid");
+  const diagPanel = document.getElementById("diagram-panel");
+  const stemEl = document.getElementById("stage-stem");
+  const hintEl = document.getElementById("options-hint");
+  const optsWrap = document.getElementById("stage-options-wrap");
+
+  if (q.layoutType === "visual-cards") {
+    bodyGrid.className = "stage-body-grid full-width-layout";
+    diagPanel.style.display = showOrigImage ? "flex" : "none";
+    if (showOrigImage) {
+      document.getElementById("diagram-svg-wrap").style.display = "none";
+      document.getElementById("orig-img-wrap").className = "orig-img-wrap show";
+    }
+
+    stemEl.innerHTML = q.stem;
+    hintEl.textContent = "👇 請直接點選正確的三角形圖卡：";
+
+    optsWrap.innerHTML = `
+      <div class="visual-choice-grid">
+        ${q.visualCards.map((card, idx) => {
+          let cls = "visual-card-btn";
+          if (st.revealed) {
+            if (idx === q.answer) cls += " correct";
+            else if (st.selected === idx) cls += " wrong";
+          }
+          const highlightThisCard = isCorrectOrRevealed && (idx === q.answer);
+          return `
+            <div class="${cls}" onclick="selectOption(${idx})">
+              <div class="visual-card-header">
+                <span class="visual-card-label">${card.num} 三角形 ${card.name}</span>
+                <span style="font-size:1.2rem;font-weight:900;color:#48635a;">點擊選我</span>
+              </div>
+              <div class="visual-card-svg">
+                ${renderVisualCardSVG(card, highlightThisCard)}
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  } else {
+    bodyGrid.className = "stage-body-grid";
+    diagPanel.style.display = "flex";
+
+    if (showOrigImage && q.origImg) {
+      document.getElementById("diagram-svg-wrap").style.display = "none";
+      document.getElementById("orig-img-wrap").className = "orig-img-wrap show";
+    } else {
+      document.getElementById("diagram-svg-wrap").style.display = "flex";
+      document.getElementById("orig-img-wrap").className = "orig-img-wrap";
+      document.getElementById("diagram-svg-wrap").innerHTML = renderDiagramSVG(q, isCorrectOrRevealed);
+    }
+
+    if (q.layoutType === "dual-select") {
+      let slot1Cls = "inline-select";
+      let slot2Cls = "inline-select";
+      if (st.revealed) {
+        slot1Cls += (st.slot1 === q.correctSlot1) ? " correct-slot" : " wrong-slot";
+        slot2Cls += (st.slot2 === q.correctSlot2) ? " correct-slot" : " wrong-slot";
+      }
+
+      const s1Opts = q.slot1Options.map(o => `<option value="${o}" ${st.slot1 === o ? 'selected' : ''}>${o}</option>`).join("");
+      const s2Opts = q.slot2Options.map(o => `<option value="${o}" ${st.slot2 === o ? 'selected' : ''}>${o}</option>`).join("");
+
+      stemEl.innerHTML = `
+        ${q.stemPrefix}
+        <span class="inline-select-wrap">
+          <select class="${slot1Cls}" onchange="onInlineSlotChange(1, this.value)">${s1Opts}</select>
+          <span class="inline-select-arrow">▾</span>
+        </span>
+        ${q.stemMiddle}
+        <span class="inline-select-wrap">
+          <select class="${slot2Cls}" onchange="onInlineSlotChange(2, this.value)">${s2Opts}</select>
+          <span class="inline-select-arrow">▾</span>
+        </span>
+        ${q.stemSuffix}
+      `;
+      hintEl.textContent = "💡 可直接點選上方空格下拉選單，或點擊下方組合快速作答：";
+    } else {
+      stemEl.innerHTML = q.stem;
+      hintEl.textContent = "👇 請選擇正確答案：";
+    }
+
+    optsWrap.innerHTML = `
+      <div class="options-grid ${q.options.some(o => o.length > 12) ? 'single-col' : ''}">
+        ${q.options.map((optText, idx) => {
+          let cls = "option-btn";
+          if (st.revealed) {
+            if (idx === q.answer) cls += " correct";
+            else if (st.selected === idx) cls += " wrong";
+          }
+          return `
+            <button class="${cls}" onclick="selectOption(${idx})">
+              <span class="opt-index">${CIRCLED_NUMS[idx]}</span>
+              <span>${optText}</span>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  // 診斷詳解與「挑戰類題」按鈕區
+  const expBox = document.getElementById("stage-exp");
+  if (st.revealed) {
+    expBox.classList.add("show");
+    const isCorrect = (st.selected === q.answer);
+    const titleEl = document.getElementById("stage-exp-title");
+
+    if (st.selected === null) {
+      titleEl.innerHTML = `💡 觀念解析｜正確答案：${CIRCLED_NUMS[q.answer]} ${q.options[q.answer]}`;
+      titleEl.style.color = "#b45309";
+    } else if (isCorrect) {
+      titleEl.innerHTML = `🎉 答對了！正確答案是 ${CIRCLED_NUMS[q.answer]} ${q.options[q.answer]}`;
+      titleEl.style.color = "#15803d";
+    } else {
+      titleEl.innerHTML = `❌ 答錯囉！正確答案是 ${CIRCLED_NUMS[q.answer]} ${q.options[q.answer]}`;
+      titleEl.style.color = "#dc2626";
+    }
+
+    document.getElementById("stage-pitfall").innerHTML = `<b>🔍 迷思診斷：</b>${q.pitfall}`;
+    document.getElementById("stage-concept").innerHTML = q.concept;
+
+    const actionsEl = document.getElementById("stage-exp-actions");
+    if (q.type === "mistake") {
+      actionsEl.innerHTML = `
+        <button class="go-similar-btn" onclick="nextStep()">
+          <span>🎯 檢討完了！立即練習【類題 ${q.pairIndex}】</span>
+          <span>➔</span>
+        </button>
+      `;
+    } else {
+      const hasNextMistake = currentStepIndex < QUESTIONS_5_2.length - 1;
+      actionsEl.innerHTML = `
+        <button class="ctrl-btn random-gen" onclick="generateNewNumbersForPractice()">
+          🎲 換一組數字再練一次
+        </button>
+        ${hasNextMistake ? `
+          <button class="go-similar-btn" onclick="nextStep()">
+            <span>✅ 類題過關！前往【錯題 ${q.pairIndex + 1}】</span>
+            <span>➔</span>
+          </button>
+        ` : `
+          <button class="go-similar-btn" onclick="goHome()">
+            <span>🏆 恭喜完成 5-2 全部錯題與類題！返回目次</span>
+          </button>
+        `}
+      `;
+    }
+  } else {
+    expBox.classList.remove("show");
+  }
+
+  document.getElementById("btn-prev").disabled = (currentStepIndex === 0);
+  document.getElementById("btn-next").disabled = (currentStepIndex === QUESTIONS_5_2.length - 1);
+
+  setTimeout(resizeCanvas, 30);
+}
+
+// 當學生使用第一題題幹中的下拉選單作答時
+function onInlineSlotChange(slotNum, val) {
+  const q = QUESTIONS_5_2[currentStepIndex];
+  const st = userState[q.id] || { selected: null, slot1: "請選擇角", slot2: "請選擇三角形", revealed: false };
+  if (slotNum === 1) st.slot1 = val;
+  if (slotNum === 2) st.slot2 = val;
+
+  if (st.slot1 !== "請選擇角" && st.slot2 !== "請選擇三角形") {
+    const combined = `${st.slot1} ／ ${st.slot2}`;
+    const matchedIdx = q.options.findIndex(o => o === combined);
+    if (matchedIdx !== -1) {
+      st.selected = matchedIdx;
+    } else {
+      st.selected = (st.slot1 === q.correctSlot1 && st.slot2 === q.correctSlot2) ? q.answer : -1;
+    }
+    st.revealed = true;
+  }
+  userState[q.id] = st;
+  saveProgress();
+  renderPracticeStage();
+}
+
+function selectOption(optIdx) {
+  const q = QUESTIONS_5_2[currentStepIndex];
+  let slot1 = "請選擇角";
+  let slot2 = "請選擇三角形";
+  if (q.layoutType === "dual-select") {
+    const parts = q.options[optIdx].split(" ／ ");
+    slot1 = parts[0];
+    slot2 = parts[1];
+  }
+  userState[q.id] = {
+    selected: optIdx,
+    slot1,
+    slot2,
+    revealed: true
+  };
+  saveProgress();
+  renderPracticeStage();
+}
+
+function revealCurrentAnswer() {
+  const q = QUESTIONS_5_2[currentStepIndex];
+  const cur = userState[q.id] || { selected: null, slot1: "請選擇角", slot2: "請選擇三角形", revealed: false };
+  userState[q.id] = {
+    selected: cur.selected,
+    slot1: q.correctSlot1 || cur.slot1,
+    slot2: q.correctSlot2 || cur.slot2,
+    revealed: true
+  };
+  saveProgress();
+  renderPracticeStage();
+}
+
+function resetCurrentStep() {
+  const q = QUESTIONS_5_2[currentStepIndex];
+  delete userState[q.id];
+  saveProgress();
+  renderPracticeStage();
+}
+
+function jumpToStep(idx) {
+  currentStepIndex = idx;
+  showOrigImage = false;
+  renderPracticeStage();
+}
+
+function prevStep() {
+  if (currentStepIndex > 0) {
+    currentStepIndex--;
+    showOrigImage = false;
+    renderPracticeStage();
+  }
+}
+
+function nextStep() {
+  if (currentStepIndex < QUESTIONS_5_2.length - 1) {
+    currentStepIndex++;
+    showOrigImage = false;
+    renderPracticeStage();
+  }
+}
+
+function toggleOriginalImage() {
+  showOrigImage = !showOrigImage;
+  renderPracticeStage();
+}
+
+// ============================================================================
+// 7. 類題動態隨機出題器（讓學生可以換數字反覆練習！）
+// ============================================================================
+function generateNewNumbersForPractice() {
+  const q = QUESTIONS_5_2[currentStepIndex];
+  if (q.type !== "practice") return;
+
+  if (q.id === "P1") {
+    const angles = [45, 52, 65, 68, 70, 74];
+    const newAng = angles[Math.floor(Math.random() * angles.length)];
+    q.diagramData.angleVal = newAng;
+    q.concept = `1. 圖中頂點 <b>D</b> 和頂點 <b>F</b> 都是 <b>${newAng}°</b>，因此 <b>∠D 和 ∠F</b> 一樣大。<br>2. 有兩個角一樣大的三角形，對面的兩條腰等長，所以它是<b>等腰三角形</b>！`;
+  } else if (q.id === "P2") {
+    const baseAngles = [50, 58, 62, 65, 68, 72];
+    const legLens = [42, 48, 56, 64, 75];
+    const baseLens = [26, 30, 35, 40];
+    const newAng = baseAngles[Math.floor(Math.random() * baseAngles.length)];
+    const newLeg = legLens[Math.floor(Math.random() * legLens.length)];
+    const newBase = baseLens[Math.floor(Math.random() * baseLens.length)];
+
+    q.diagramData.baseAngle = newAng;
+    q.diagramData.legLen = newLeg;
+    q.diagramData.baseLen = newBase;
+    q.options = [
+      `${newBase} 公分`,
+      `${newLeg} 公分`,
+      `${newAng} 公分`,
+      `${newLeg - 9} 公分`
+    ];
+    q.answer = 1;
+    q.concept = `1. 圖中 ∠Q = ${newAng}°、∠R = ${newAng}°，兩個底角相等，因此三角形 PQR 是<b>等腰三角形</b>。<br>2. 左右兩側的<b>邊 PQ</b> 和<b>邊 PR</b> 是等長的兩腰。已知邊 PR = ${newLeg} 公分，所以<b>邊 PQ = ${newLeg} 公分</b>！`;
+  } else if (q.id === "P3") {
+    const isoLeg = [5, 6, 7, 8, 10][Math.floor(Math.random() * 5)];
+    const isoBase = isoLeg + 3;
+    const isFirstIso = Math.random() > 0.5;
+
+    if (isFirstIso) {
+      q.visualCards = [
+        { num: "(1)", name: "甲", svgType: "inverted_iso", topLen: isoBase, leftLen: isoLeg, rightLen: isoLeg, fill: "#fde68a" },
+        { num: "(2)", name: "乙", svgType: "right_scalene", leftLen: isoLeg, bottomLen: isoLeg + 2, hypLen: isoLeg + 1, fill: "#d9f99d" }
+      ];
+      q.options = [
+        `甲（邊長 ${isoBase} 公分、${isoLeg} 公分、${isoLeg} 公分）`,
+        `乙（邊長 ${isoLeg} 公分、${isoLeg + 1} 公分、${isoLeg + 2} 公分）`
+      ];
+      q.answer = 0;
+      q.concept = `<b>(1) 甲三角形</b>有兩條邊都是 <b>${isoLeg} 公分（一樣長）</b>，所以<b>甲是等腰三角形</b>！`;
+    } else {
+      q.visualCards = [
+        { num: "(1)", name: "甲", svgType: "right_scalene", leftLen: isoLeg, bottomLen: isoLeg + 2, hypLen: isoLeg + 1, fill: "#d9f99d" },
+        { num: "(2)", name: "乙", svgType: "inverted_iso", topLen: isoBase, leftLen: isoLeg, rightLen: isoLeg, fill: "#fde68a" }
+      ];
+      q.options = [
+        `甲（邊長 ${isoLeg} 公分、${isoLeg + 1} 公分、${isoLeg + 2} 公分）`,
+        `乙（邊長 ${isoBase} 公分、${isoLeg} 公分、${isoLeg} 公分）`
+      ];
+      q.answer = 1;
+      q.concept = `<b>(2) 乙三角形</b>有兩條邊都是 <b>${isoLeg} 公分（一樣長）</b>，所以<b>乙是等腰三角形</b>！`;
+    }
+  }
+
+  delete userState[q.id];
+  saveProgress();
+  renderPracticeStage();
+}
+
+// ============================================================================
+// 8. 平板與投影專用：互動手寫畫筆（Canvas）與工具列
+// ============================================================================
+const canvas = document.getElementById("draw-canvas");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+function resizeCanvas() {
+  const panel = document.getElementById("stage-card");
+  if (!panel) return;
+  const rect = panel.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0) {
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  }
+}
+
+function toggleDrawMode() {
+  isDrawingMode = !isDrawingMode;
+  document.getElementById("btn-toggle-draw").classList.toggle("active", isDrawingMode);
+  document.getElementById("draw-canvas").classList.toggle("drawing-active", isDrawingMode);
+  document.getElementById("draw-toolbar").classList.toggle("show", isDrawingMode);
+  resizeCanvas();
+}
+
+function setPenColor(color, el) {
+  penColor = color;
+  document.querySelectorAll(".color-dot").forEach(d => d.classList.remove("active"));
+  if (el) el.classList.add("active");
+}
+
+function clearCanvas() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+canvas.addEventListener("pointerdown", (e) => {
+  if (!isDrawingMode) return;
+  drawing = true;
+  const rect = canvas.getBoundingClientRect();
+  ctx.beginPath();
+  ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  if (!drawing || !isDrawingMode) return;
+  const rect = canvas.getBoundingClientRect();
+  ctx.lineWidth = 4.5;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = penColor;
+  ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+  ctx.stroke();
+});
+
+window.addEventListener("pointerup", () => {
+  drawing = false;
+});
+
+window.addEventListener("resize", resizeCanvas);
+
+// 字級縮放與全螢幕
+function adjustFontSize(delta) {
+  if (delta === 0) fontScale = 1;
+  else fontScale = Math.min(1.35, Math.max(0.85, fontScale + delta));
+  document.documentElement.style.setProperty("--font-scale", fontScale.toFixed(2));
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen().catch(() => {});
+  }
+}
+
+// 鍵盤快捷鍵支援
+document.addEventListener("keydown", (e) => {
+  const practiceVisible = document.getElementById("practice-view").style.display === "block";
+  if (!practiceVisible) return;
+
+  const tag = (document.activeElement && document.activeElement.tagName || "").toUpperCase();
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(tag)) return;
+
+  if (e.key === "ArrowRight") {
+    e.preventDefault();
+    nextStep();
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    prevStep();
+  } else if (["1", "2", "3", "4"].includes(e.key)) {
+    const idx = parseInt(e.key, 10) - 1;
+    const q = QUESTIONS_5_2[currentStepIndex];
+    if (q && idx < q.options.length) {
+      e.preventDefault();
+      selectOption(idx);
+    }
+  } else if (e.key === " ") {
+    e.preventDefault();
+    revealCurrentAnswer();
+  }
+});
+
+// ============================================================================
+// 9. URL 參數直達初始化
+// ============================================================================
+function applyInitialQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  const unitParam = (params.get("unit") || "").toUpperCase();
+  const subParam = (params.get("sub") || "").trim();
+
+  if (unitParam && CURRICULUM.some(u => u.unitId === unitParam)) {
+    CURRICULUM.forEach(u => {
+      u.expandedByDefault = (u.unitId === unitParam);
+    });
+  }
+
+  renderTOC();
+
+  if (subParam) {
+    for (const u of CURRICULUM) {
+      if (unitParam && u.unitId !== unitParam) continue;
+      const matched = u.subsections.find(s => s.code === subParam || s.altCode === subParam);
+      if (matched && matched.ready) {
+        openPracticeUnit(matched.code);
+        return;
+      }
+    }
+  }
+
+  if (unitParam && unitParam !== "U6") {
+    const unitEl = document.getElementById(`unit-${unitParam}`);
+    if (unitEl) {
+      setTimeout(() => unitEl.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    }
+  }
+}
+
+// 初始化
+loadProgress();
+applyInitialQueryParams();
+</script>
+</body>
+</html>

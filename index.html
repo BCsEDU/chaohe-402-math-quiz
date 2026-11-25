@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<title>康軒四上數學｜隨堂練習與線上測驗互動網</title>
+<title>康軒四上數學｜隨堂練習、錯題紀錄與線上測驗互動網</title>
 <style>
   :root {
     --bg: #edf5f0;
@@ -108,6 +108,12 @@
   .tool-btn:hover {
     background: rgba(255, 255, 255, 0.28);
     transform: translateY(-1px);
+  }
+
+  .tool-btn.active {
+    background: #fbbf24;
+    color: #1b4d3e;
+    border-color: #fbbf24;
   }
 
   .tool-btn.teacher-link {
@@ -249,9 +255,9 @@
   }
 
   .action-btn {
-    flex: 1;
-    min-width: 150px;
-    padding: 13px 12px;
+    flex: 1 1 150px;
+    min-width: 140px;
+    padding: 13px 14px;
     border-radius: 14px;
     font-size: calc(1.08rem * var(--font-scale));
     font-weight: 900;
@@ -263,7 +269,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    white-space: nowrap;
+    line-height: 1.3;
   }
 
   .action-btn.proj { background: #24745f; color: #fff; }
@@ -954,8 +960,13 @@
 
   @media (max-width: 640px) {
     header { padding: 10px 14px; }
-    .brand-title { font-size: 1.2rem; }
+    .brand-title { font-size: 1.18rem; }
+    .tool-btn { padding: 7px 11px; font-size: 0.95rem; }
     main { padding: 16px 12px 56px; }
+    .hero-banner { padding: 20px 18px; border-radius: 18px; }
+    .hero-banner h1 { font-size: calc(1.55rem * var(--font-scale)); }
+    .hero-banner p { font-size: calc(1.05rem * var(--font-scale)); }
+    .lesson-card { padding: 20px 18px; }
     .stage-card { padding: 20px 16px; border-radius: 18px; }
     .fill-row { padding: 14px 14px; font-size: calc(1.35rem * var(--font-scale)); }
     .math-input { width: 92px; min-width: 74px; height: 46px; font-size: calc(1.3rem * var(--font-scale)); }
@@ -973,10 +984,11 @@
 <header>
   <div class="brand" onclick="goHome()" title="返回單元首頁">
     <span class="brand-badge">康軒四上數學</span>
-    <span class="brand-title">隨堂練習與線上測驗互動網</span>
+    <span class="brand-title">隨堂練習・錯題・線上測驗網</span>
   </div>
   <div class="toolbar">
-    <button class="tool-btn" id="btn-home" onclick="goHome()" style="display:none;">🏠 回首頁</button>
+    <button class="tool-btn active" id="btn-home" onclick="goHome()">🏠 單元首頁</button>
+    <a class="tool-btn" href="mistakes.html">📖 錯題與類題</a>
     <button class="tool-btn" onclick="adjustFontSize(-0.1)" title="縮小字體">A-</button>
     <button class="tool-btn" onclick="adjustFontSize(0)" title="標準字體">標準</button>
     <button class="tool-btn" onclick="adjustFontSize(0.12)" title="放大字體">A+</button>
@@ -990,18 +1002,20 @@
   <section id="view-home" class="view-panel active">
     <div class="hero-banner">
       <div>
-        <h1>康軒四上數學｜單元隨堂練習與測驗</h1>
-        <p>請點選下方單元進入「課堂互動練習」或「隨堂線上測驗」</p>
+        <h1>康軒四上數學｜隨堂練習、錯題紀錄與線上測驗</h1>
+        <p>整合「課堂互動練習」、「錯題紀錄與類題」及「隨堂線上測驗」，請點選下方單元開始學習</p>
       </div>
       <div class="hero-meta-pills">
         <span class="hero-pill">📐 第六～十單元</span>
-        <span class="hero-pill">✨ 第七單元「小數」已開放</span>
+        <span class="hero-pill">📖 第六單元「錯題與類題」已上線</span>
+        <span class="hero-pill">✨ 第七單元「小數」測驗開放</span>
       </div>
     </div>
 
     <div class="lesson-grid" id="unit-grid"></div>
 
-    <div style="text-align:center;margin-top:44px;padding-top:16px;border-top:1px solid #c4d6ce;">
+    <div style="text-align:center;margin-top:44px;padding-top:16px;border-top:1px solid #c4d6ce;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+      <a href="mistakes.html" style="color:#1f6351;font-size:1rem;text-decoration:none;font-weight:800;">📖 前往學生錯題紀錄與類題練習</a>
       <a href="teacher.html" style="color:#48635a;font-size:1rem;text-decoration:none;font-weight:800;">👩‍🏫 前往教師成績管理後台</a>
     </div>
   </section>
@@ -1163,8 +1177,11 @@ const UNITS = [
     examId: "U6-math-triangle",
     unitNum: "第六單元",
     title: "三角形",
-    subtitle: "認識三角形、以邊與角分類（建置中）",
+    subtitle: "以邊分類三角形｜已收錄 5-2 小節 3 題錯題＋3 題類題（含原卷圖解與隨機出題）",
     ready: false,
+    mistakesReady: true,
+    mistakesHref: "mistakes.html?unit=U6",
+    mistakesStatus: "✅ 已上線（錯題與類題）",
     cards: []
   },
   {
@@ -1651,7 +1668,8 @@ let matchSelections = {};
 function showView(viewId) {
   document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
   document.getElementById(viewId).classList.add("active");
-  document.getElementById("btn-home").style.display = (viewId === "view-home") ? "none" : "inline-flex";
+  const btnHome = document.getElementById("btn-home");
+  if (btnHome) btnHome.classList.toggle("active", viewId === "view-home");
   window.scrollTo({ top: 0, behavior: "smooth" });
   requestAnimationFrame(redrawAllMatchingSVGs);
 }
@@ -1660,33 +1678,66 @@ function goHome() {
   currentUnit = null;
   currentMode = "home";
   matchSelections = {};
+  if (window.location.search && window.history && window.history.replaceState) {
+    window.history.replaceState(null, "", window.location.pathname);
+  }
   showView("view-home");
 }
 
 function renderHome() {
   const grid = document.getElementById("unit-grid");
-  grid.innerHTML = UNITS.map(u => `
-    <div class="lesson-card ${u.ready ? 'ready' : 'locked'}">
-      <div>
-        <div class="card-top">
-          <span class="lesson-tag">${u.unitNum}</span>
-          <span class="status-pill ${u.ready ? 'ready' : 'soon'}">
-            ${u.ready ? `✅ 已上線（${u.cards.length} 題組 / ${u.scoringUnits.length} 格）` : '⏳ 即將推出'}
-          </span>
-        </div>
-        <div class="lesson-name">${u.title}</div>
-        <div class="lesson-desc">${u.subtitle}</div>
-      </div>
-      <div class="card-actions">
-        <button class="action-btn proj" ${u.ready ? '' : 'disabled'} onclick="openPracticeMode('${u.id}')">
+  grid.innerHTML = UNITS.map(u => {
+    const isOnline = u.ready || u.mistakesReady;
+    const statusLabel = u.ready
+      ? `✅ 已上線（${u.cards.length} 題組 / ${u.scoringUnits.length} 格）`
+      : (u.mistakesReady ? (u.mistakesStatus || "✅ 已上線（錯題與類題）") : "⏳ 即將推出");
+
+    let actionsHtml = "";
+    if (u.ready) {
+      actionsHtml = `
+        <button class="action-btn proj" onclick="openPracticeMode('${u.id}')">
           🖥 課堂互動練習
         </button>
-        <button class="action-btn exam" ${u.ready ? '' : 'disabled'} onclick="openExamLogin('${u.id}')">
+        <button class="action-btn exam" onclick="openExamLogin('${u.id}')">
           ✍️ 隨堂線上測驗
         </button>
+      `;
+    } else if (u.mistakesReady) {
+      actionsHtml = `
+        <a class="action-btn proj" href="${u.mistakesHref}" style="text-decoration:none;flex:1 1 100%;">
+          📖 錯題紀錄與類題練習
+        </a>
+        <button class="action-btn" disabled title="隨堂線上測驗建置中" style="flex:1 1 100%;padding:9px 12px;font-size:calc(0.96rem * var(--font-scale));">
+          ⏳ 隨堂線上測驗（建置中）
+        </button>
+      `;
+    } else {
+      actionsHtml = `
+        <button class="action-btn proj" disabled>
+          🖥 課堂互動練習
+        </button>
+        <button class="action-btn exam" disabled>
+          ✍️ 隨堂線上測驗
+        </button>
+      `;
+    }
+
+    return `
+      <div class="lesson-card ${isOnline ? 'ready' : 'locked'}">
+        <div>
+          <div class="card-top">
+            <span class="lesson-tag">${u.unitNum}</span>
+            <span class="status-pill ${isOnline ? 'ready' : 'soon'}">${statusLabel}</span>
+          </div>
+          <div class="lesson-name">${u.title}</div>
+          <div class="lesson-desc">${u.subtitle}</div>
+        </div>
+        <div class="card-actions">
+          ${actionsHtml}
+        </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function initSeatSelect() {
@@ -3303,10 +3354,25 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+function handleInitialRoute() {
+  const params = new URLSearchParams(window.location.search);
+  const unitParam = (params.get("unit") || "").toUpperCase();
+  const modeParam = (params.get("mode") || "").toLowerCase();
+  if (!unitParam) return;
+  const unit = UNITS.find(u => u.id === unitParam);
+  if (!unit || !unit.ready) return;
+  if (modeParam === "practice") {
+    openPracticeMode(unit.id);
+  } else if (modeParam === "exam") {
+    openExamLogin(unit.id);
+  }
+}
+
 // 初始化
 initSeatSelect();
 renderHome();
 syncPendingLocalRetries();
+handleInitialRoute();
 </script>
 </body>
 </html>
