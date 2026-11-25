@@ -1111,7 +1111,7 @@
       <div class="bonus-callout" id="res-bonus-callout" style="display:none;"></div>
       <div class="result-actions">
         <button class="ctrl-btn" id="btn-start-retry" onclick="startWrongRetry()" style="display:none;background:#d97706;color:#fff;border-color:#b45309;font-size:1.3rem;">
-          💪 進行錯題訂正練習（全對 +10 分）
+          💪 進行錯題訂正練習（訂正答對就加分）
         </button>
         <button class="ctrl-btn primary" id="btn-peek-answers" onclick="revealAllWithoutRetry()" style="display:none;font-size:1.18rem;">
           👁 直接查看完整正解與詳解
@@ -1128,7 +1128,7 @@
     <div class="retry-bar">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
         <span class="exam-student-badge" id="retry-badge-info">402 班 01 號</span>
-        <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="retry-unit-title">錯題訂正練習（全部答對加 10 分）</span>
+        <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="retry-unit-title">錯題訂正練習（訂正答對即依比例加分，最高 +10 分）</span>
       </div>
       <div class="exam-progress-text" id="retry-progress-text" style="color:#ffedd5;">待訂正 0 格</div>
     </div>
@@ -2550,7 +2550,31 @@ async function postSubmissionWithFallback(payload) {
   return { res, errTxt };
 }
 
-async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnswersFull, allCorrect, retryRawObj) {
+function calcRetryBonus(origCorrect, total, retryCorrectCount) {
+  const wrongCount = Math.max(0, Number(total || 0) - Number(origCorrect || 0));
+  if (wrongCount === 0 || retryCorrectCount <= 0) return 0;
+  const rawPct = Math.round((origCorrect / total) * 100);
+  const maxPossiblePct = Math.round(((origCorrect + retryCorrectCount) / total) * 100);
+  const proportionalBonus = Math.max(1, Math.round((retryCorrectCount / wrongCount) * 10));
+  const cappedFinalPct = Math.min(100, maxPossiblePct, rawPct + proportionalBonus);
+  return Math.max(0, cappedFinalPct - rawPct);
+}
+
+function countRetryCorrect(origAnswers, retryAnswers) {
+  if (!Array.isArray(retryAnswers)) return 0;
+  let cnt = 0;
+  retryAnswers.forEach((st, idx) => {
+    const origSt = Array.isArray(origAnswers) ? origAnswers[idx] : 0;
+    if (origSt !== 1 && st === 1) cnt++;
+  });
+  return cnt;
+}
+
+async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnswersFull, allCorrect, retryRawObj, bonusPoints) {
+  const computedBonus = (typeof bonusPoints === "number" && !Number.isNaN(bonusPoints))
+    ? Math.max(0, Math.min(10, Math.round(bonusPoints)))
+    : (allCorrect ? 10 : 0);
+
   // 1. 優先嘗試升級後的 RPC submit_exam_retry
   try {
     const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/submit_exam_retry`, {
@@ -2576,7 +2600,7 @@ async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnsw
     console.warn("submit_exam_retry RPC 無法使用，改走零 SQL 備援寫入:", err);
   }
 
-  // 2. 零 SQL 備援：寫入 ${examId}__retry 紀錄至 public.submissions
+  // 2. 零 SQL 備援：寫入 ${examId}__retry 紀錄至 public.submissions（score 存實際訂正加分 0~10）
   try {
     const examTitle = getMathExamTitleById(examId);
     const packedName = retryRawObj
@@ -2592,7 +2616,7 @@ async function sendRetryToSupabase(examId, cls, seat, clientId, total, retryAnsw
       seat: seat,
       name: packedName,
       answers: retryAnswersFull,
-      score: allCorrect ? 10 : 0,
+      score: computedBonus,
       total: total,
       is_deleted: false,
       client_id: `${clientId}_retry`
@@ -2616,6 +2640,10 @@ async function syncPendingLocalRetries() {
       const rec = JSON.parse(localStorage.getItem(key) || "null");
       if (!rec || rec.retry_passed === null || rec.retry_passed === undefined || rec._retry_synced) continue;
       if (!rec.client_id || !rec.retry_answers) continue;
+      const retryCorrectCnt = countRetryCorrect(rec.answers, rec.retry_answers);
+      const earnedBonus = (typeof rec.bonus_points === "number")
+        ? rec.bonus_points
+        : calcRetryBonus(rec.score, rec.total, retryCorrectCnt);
       const ok = await sendRetryToSupabase(
         rec.exam_id,
         rec.class,
@@ -2624,7 +2652,8 @@ async function syncPendingLocalRetries() {
         rec.total,
         rec.retry_answers,
         rec.retry_passed === true,
-        rec.retry_raw || null
+        rec.retry_raw || null,
+        earnedBonus
       );
       if (ok) {
         rec._retry_synced = true;
@@ -2637,9 +2666,13 @@ async function syncPendingLocalRetries() {
 async function checkStudentDailyStatus(examId, cls, seat) {
   const localRec = loadDailyLocalRecord(examId, cls, seat);
   if (localRec && localRec.retry_passed !== null && localRec.retry_passed !== undefined && !localRec._retry_synced) {
+    const retryCorrectCnt = countRetryCorrect(localRec.answers, localRec.retry_answers);
+    const earnedBonus = (typeof localRec.bonus_points === "number")
+      ? localRec.bonus_points
+      : calcRetryBonus(localRec.score, localRec.total, retryCorrectCnt);
     const synced = await sendRetryToSupabase(
       examId, cls, seat, localRec.client_id, localRec.total,
-      localRec.retry_answers || [], localRec.retry_passed === true, localRec.retry_raw || null
+      localRec.retry_answers || [], localRec.retry_passed === true, localRec.retry_raw || null, earnedBonus
     );
     if (synced) {
       localRec._retry_synced = true;
@@ -2974,8 +3007,10 @@ function renderExamResultView(isReturning) {
   const correctCount = currentSubmission.score;
   const wrongIds = getWrongUnitIds();
   const rawPct = Math.round((correctCount / total) * 100);
-  const bonus = Number(currentSubmission.bonus_points || 0);
-  const finalPct = Math.min(100, rawPct + bonus);
+  const retryCorrectCnt = countRetryCorrect(currentSubmission.answers, currentSubmission.retry_answers);
+  const rawBonus = Number(currentSubmission.bonus_points || 0);
+  const finalPct = Math.min(100, rawPct + rawBonus);
+  const bonus = Math.max(0, finalPct - rawPct);
   const retryState = currentSubmission.retry_passed; // null | true | false
 
   const resCard = document.getElementById("res-card");
@@ -3018,9 +3053,9 @@ function renderExamResultView(isReturning) {
       calloutEl.style.background = "#fffbeb";
       calloutEl.style.borderColor = "#f59e0b";
       calloutEl.style.color = "#92400e";
-      calloutEl.innerHTML = `💪 <b>錯題訂正加分挑戰：</b>您共有 <b>${wrongIds.length} 格</b>答錯或未填。<br>現在針對錯題再訂正一次，全部訂正答對就能獲得 <b>+10 分</b>（最高 100 分）並留下完整訂正紀錄！`;
+      calloutEl.innerHTML = `💪 <b>錯題訂正加分挑戰：</b>您共有 <b>${wrongIds.length} 格</b>答錯或未填。<br>現在針對錯題再訂正一次，<b>不一定要全對，只要訂正答對就會依答對比例加分</b>（最高 <b>+10 分</b>，總分上限 100 分）並留下完整訂正紀錄！`;
       btnRetry.style.display = "inline-flex";
-      btnRetry.textContent = `💪 進行錯題訂正練習（${wrongIds.length} 格，全對 +10 分）`;
+      btnRetry.textContent = `💪 進行錯題訂正練習（${wrongIds.length} 格，有對就加分）`;
       btnPeek.style.display = "inline-flex";
     }
   } else if (retryState === true) {
@@ -3028,13 +3063,26 @@ function renderExamResultView(isReturning) {
     scoreEl.style.color = "#059669";
     headerEl.textContent = `🎊 ${seatLabel} 錯題訂正全部答對！`;
     scoreEl.textContent = `${finalPct} 分`;
-    const capNote = (rawPct + bonus > 100) ? "（滿分上限 100 分）" : "";
+    const capNote = (finalPct === 100 && rawPct < 100) ? "（達滿分上限 100 分）" : "";
     descEl.textContent = `原卷答對 ${correctCount} / ${total} 格（${rawPct} 分）＋ 訂正全對加 ${bonus} 分 ＝ 最終 ${finalPct} 分${capNote}`;
     calloutEl.style.display = "block";
     calloutEl.style.background = "#dcfce7";
     calloutEl.style.borderColor = "#16a34a";
     calloutEl.style.color = "#14532d";
-    calloutEl.innerHTML = `✅ 已獲得 <b>+10 分</b>訂正加分，訂正紀錄與最終成績已更新傳送至教師後台！`;
+    calloutEl.innerHTML = `✅ 全部 ${wrongIds.length} 格錯題皆訂正答對，已獲得 <b>+${bonus} 分</b>訂正加分，訂正紀錄與最終成績已更新傳送至教師後台！`;
+    btnRetry.style.display = "none";
+    btnPeek.style.display = "none";
+  } else if (bonus > 0) {
+    resCard.style.borderColor = "#1f6351";
+    scoreEl.style.color = "#15803d";
+    headerEl.textContent = `💪 ${seatLabel} 錯題訂正完成，獲得加分！`;
+    scoreEl.textContent = `${finalPct} 分`;
+    descEl.textContent = `原卷答對 ${correctCount} / ${total} 格（${rawPct} 分）＋ 訂正答對 ${retryCorrectCnt} / ${wrongIds.length} 格加 ${bonus} 分 ＝ 最終 ${finalPct} 分`;
+    calloutEl.style.display = "block";
+    calloutEl.style.background = "#dcfce7";
+    calloutEl.style.borderColor = "#16a34a";
+    calloutEl.style.color = "#14532d";
+    calloutEl.innerHTML = `🎉 訂正答對 <b>${retryCorrectCnt} / ${wrongIds.length} 格</b>，獲得 <b>+${bonus} 分</b>訂正加分並已送至教師後台！其餘未對題目請仔細閱讀下方詳解喔！`;
     btnRetry.style.display = "none";
     btnPeek.style.display = "none";
   } else {
@@ -3042,7 +3090,7 @@ function renderExamResultView(isReturning) {
     scoreEl.style.color = "#b45309";
     headerEl.textContent = `📋 ${seatLabel} 已完成測驗與錯題訂正`;
     scoreEl.textContent = `${rawPct} 分`;
-    descEl.textContent = `原卷答對 ${correctCount} / ${total} 格（${rawPct} 分），訂正尚有部分未對，維持原分數 ${rawPct} 分`;
+    descEl.textContent = `原卷答對 ${correctCount} / ${total} 格（${rawPct} 分），本次訂正尚未答對（0 / ${wrongIds.length} 格），維持原分數 ${rawPct} 分`;
     calloutEl.style.display = "block";
     calloutEl.style.background = "#fffbeb";
     calloutEl.style.borderColor = "#f59e0b";
@@ -3056,7 +3104,7 @@ function renderExamResultView(isReturning) {
 }
 
 function revealAllWithoutRetry() {
-  if (!confirm("直接查看全部正解與詳解後，將無法進行本次的「錯題訂正 +10 分」挑戰喔！確定要直接看解答嗎？")) return;
+  if (!confirm("直接查看全部正解與詳解後，將無法進行本次的「錯題訂正加分」挑戰喔！確定要直接看解答嗎？")) return;
   answersRevealedWithoutRetry = true;
   renderExamResultView(false);
 }
@@ -3112,7 +3160,7 @@ function startWrongRetry() {
 
   const pad = currentStudent.seat < 10 ? `0${currentStudent.seat}` : `${currentStudent.seat}`;
   document.getElementById("retry-badge-info").textContent = `${currentStudent.class} 班 ${pad} 號`;
-  document.getElementById("retry-unit-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》錯題訂正練習（全對 +10 分）`;
+  document.getElementById("retry-unit-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》錯題訂正練習（訂正有對即加分，最高 +10 分）`;
 
   renderRetryCards();
   showView("view-exam-retry");
@@ -3177,6 +3225,7 @@ async function submitWrongRetry() {
   const total = currentUnit.scoringUnits.length;
   const retryAnswersFull = new Array(total).fill(0);
   const retryRawObj = {};
+  let retryCorrectCount = 0;
   let allCorrect = true;
 
   currentUnit.scoringUnits.forEach((u, idx) => {
@@ -3185,9 +3234,12 @@ async function submitWrongRetry() {
       const g = gradeScoringUnit(u, raw);
       retryAnswersFull[idx] = g.status; // 1 or 2
       retryRawObj[u.id] = g.normalized;
-      if (!g.isCorrect) allCorrect = false;
+      if (g.isCorrect) retryCorrectCount++;
+      else allCorrect = false;
     }
   });
+
+  const earnedBonus = calcRetryBonus(currentSubmission.score, total, retryCorrectCount);
 
   const synced = await sendRetryToSupabase(
     currentUnit.examId,
@@ -3197,7 +3249,8 @@ async function submitWrongRetry() {
     total,
     retryAnswersFull,
     allCorrect,
-    retryRawObj
+    retryRawObj,
+    earnedBonus
   );
 
   btn.disabled = false;
@@ -3206,7 +3259,8 @@ async function submitWrongRetry() {
   currentSubmission.retry_answers = retryAnswersFull;
   currentSubmission.retry_raw = retryRawObj;
   currentSubmission.retry_passed = allCorrect;
-  currentSubmission.bonus_points = allCorrect ? 10 : 0;
+  currentSubmission.retry_correct_count = retryCorrectCount;
+  currentSubmission.bonus_points = earnedBonus;
   currentSubmission._retry_synced = synced;
 
   saveDailyLocalRecord(currentUnit.examId, currentStudent.class, currentStudent.seat, currentSubmission);

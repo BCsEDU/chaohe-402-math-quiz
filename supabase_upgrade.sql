@@ -78,25 +78,55 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
+  rec public.submissions%ROWTYPE;
   updated_id bigint;
-  new_bonus integer;
+  new_bonus integer := 0;
+  wrong_cnt integer := 0;
+  retry_ok_cnt integer := 0;
+  raw_pct integer := 0;
+  max_pct integer := 0;
+  prop_bonus integer := 0;
+  i integer;
 BEGIN
-  new_bonus := CASE WHEN p_retry_passed THEN 10 ELSE 0 END;
+  SELECT *
+  INTO rec
+  FROM public.submissions
+  WHERE client_id = p_client_id
+    AND NOT COALESCE(is_deleted, false)
+    AND retry_passed IS NULL
+    AND score < total
+  LIMIT 1;
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'already_retried_or_not_found');
+  END IF;
+
+  IF rec.subject = 'math' THEN
+    wrong_cnt := GREATEST(0, rec.total - rec.score);
+    IF p_retry_answers IS NOT NULL THEN
+      FOR i IN 1..COALESCE(array_length(p_retry_answers, 1), 0) LOOP
+        IF COALESCE(rec.answers[i], 0) <> 1 AND p_retry_answers[i] = 1 THEN
+          retry_ok_cnt := retry_ok_cnt + 1;
+        END IF;
+      END LOOP;
+    END IF;
+    IF wrong_cnt > 0 AND retry_ok_cnt > 0 THEN
+      raw_pct := round((rec.score::numeric / rec.total::numeric) * 100)::integer;
+      max_pct := round(((rec.score + retry_ok_cnt)::numeric / rec.total::numeric) * 100)::integer;
+      prop_bonus := GREATEST(1, round((retry_ok_cnt::numeric / wrong_cnt::numeric) * 10)::integer);
+      new_bonus := GREATEST(0, LEAST(100, max_pct, raw_pct + prop_bonus) - raw_pct);
+    END IF;
+  ELSE
+    new_bonus := CASE WHEN p_retry_passed THEN 10 ELSE 0 END;
+  END IF;
 
   UPDATE public.submissions
   SET retry_answers = p_retry_answers,
       retry_passed = p_retry_passed,
       bonus_points = new_bonus,
       retry_at = now()
-  WHERE client_id = p_client_id
-    AND NOT COALESCE(is_deleted, false)
-    AND retry_passed IS NULL
-    AND score < total
+  WHERE id = rec.id
   RETURNING id INTO updated_id;
-
-  IF updated_id IS NULL THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'already_retried_or_not_found');
-  END IF;
 
   RETURN jsonb_build_object('ok', true, 'id', updated_id, 'bonus_points', new_bonus);
 END;

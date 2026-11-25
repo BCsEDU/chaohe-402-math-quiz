@@ -703,6 +703,26 @@ function parsePackedRetryName(nameStr) {
   return { cid: nameStr, rawObj: null };
 }
 
+function calcRetryBonus(origCorrect, total, retryCorrectCount) {
+  const wrongCount = Math.max(0, Number(total || 0) - Number(origCorrect || 0));
+  if (wrongCount === 0 || retryCorrectCount <= 0) return 0;
+  const rawPct = Math.round((origCorrect / total) * 100);
+  const maxPossiblePct = Math.round(((origCorrect + retryCorrectCount) / total) * 100);
+  const proportionalBonus = Math.max(1, Math.round((retryCorrectCount / wrongCount) * 10));
+  const cappedFinalPct = Math.min(100, maxPossiblePct, rawPct + proportionalBonus);
+  return Math.max(0, cappedFinalPct - rawPct);
+}
+
+function countRetryCorrect(origAnswers, retryAnswers) {
+  if (!Array.isArray(retryAnswers)) return 0;
+  let cnt = 0;
+  retryAnswers.forEach((st, idx) => {
+    const origSt = Array.isArray(origAnswers) ? origAnswers[idx] : 0;
+    if (origSt !== 1 && st === 1) cnt++;
+  });
+  return cnt;
+}
+
 function mergeRetryRows(rawRows) {
   const mathRows = (rawRows || []).filter(isMathQuizRow);
   const mainRows = [];
@@ -737,9 +757,19 @@ function mergeRetryRows(rawRows) {
       );
     }
     if (target && target.score < target.total && (target.retry_passed === null || target.retry_passed === undefined)) {
+      const wrongCount = Math.max(0, Number(target.total || 0) - Number(target.score || 0));
+      const retryCorrectCnt = countRetryCorrect(target.answers, rr.answers);
+      const calcBonus = Array.isArray(rr.answers)
+        ? calcRetryBonus(target.score, target.total, retryCorrectCnt)
+        : 0;
+      const storedBonus = Number(rr.score || 0);
       target._retry_id = rr.id;
-      target.bonus_points = Number(rr.score || 0);
-      target.retry_passed = (Number(rr.score || 0) === 10);
+      target.retry_correct_count = retryCorrectCnt;
+      target.retry_wrong_total = wrongCount;
+      target.bonus_points = Math.max(storedBonus, calcBonus);
+      target.retry_passed = Array.isArray(rr.answers)
+        ? (wrongCount > 0 && retryCorrectCnt >= wrongCount)
+        : (storedBonus >= 10);
       target.retry_answers = rr.answers;
       target.retry_raw = rawObj;
       target.retry_at = rr.created_at;
@@ -887,8 +917,13 @@ function getFilteredSubmissions() {
 
 function computeScoreInfo(r) {
   const rawPct = r.total ? Math.round((r.score / r.total) * 100) : 0;
-  const bonus = Number(r.bonus_points || 0);
-  const finalPct = Math.min(100, rawPct + bonus);
+  const wrongCount = Math.max(0, Number(r.total || 0) - Number(r.score || 0));
+  const retryCorrectCnt = (r.retry_correct_count !== undefined && r.retry_correct_count !== null)
+    ? r.retry_correct_count
+    : countRetryCorrect(r.answers, r.retry_answers);
+  const rawBonus = Number(r.bonus_points || 0);
+  const finalPct = Math.min(100, rawPct + rawBonus);
+  const bonus = Math.max(0, finalPct - rawPct);
 
   let statusText = "";
   let statusClass = "";
@@ -899,11 +934,15 @@ function computeScoreInfo(r) {
     statusClass = "pill-perfect";
     shortTag = "原卷滿分";
   } else if (r.retry_passed === true) {
-    statusText = "✅ 訂正全對 +10";
+    statusText = `✅ 訂正全對 +${bonus}`;
     statusClass = "pill-retry-ok";
-    shortTag = `原${rawPct} +10`;
+    shortTag = `原${rawPct} +${bonus}`;
+  } else if (r.retry_passed === false && bonus > 0) {
+    statusText = `💪 訂正對 ${retryCorrectCnt}/${wrongCount} 格 +${bonus}`;
+    statusClass = "pill-retry-ok";
+    shortTag = `原${rawPct} +${bonus}`;
   } else if (r.retry_passed === false) {
-    statusText = "❌ 訂正未全對";
+    statusText = `❌ 訂正 0/${wrongCount} 格`;
     statusClass = "pill-retry-fail";
     shortTag = `原${rawPct} 已訂正`;
   } else {
@@ -912,7 +951,7 @@ function computeScoreInfo(r) {
     shortTag = `原${rawPct} 待訂正`;
   }
 
-  return { rawPct, bonus, finalPct, statusText, statusClass, shortTag };
+  return { rawPct, bonus, finalPct, retryCorrectCnt, wrongCount, statusText, statusClass, shortTag };
 }
 
 function renderDashboard() {
@@ -1330,7 +1369,7 @@ function isClass402(cls) {
 function buildAutoSyncNote(r, info) {
   if (r.score >= r.total && r.total > 0) return "[線上測驗] 原卷滿分";
   if (info.bonus > 0) return `[線上測驗] 原${info.rawPct}分 +${info.bonus}訂正`;
-  if (r.retry_passed === false) return `[線上測驗] 原${info.rawPct}分（已訂正未全對）`;
+  if (r.retry_passed === false) return `[線上測驗] 原${info.rawPct}分（已訂正未加分）`;
   return `[線上測驗] 原${info.rawPct}分（待訂正）`;
 }
 
