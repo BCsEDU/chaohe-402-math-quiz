@@ -422,6 +422,141 @@
     display: inline-block;
   }
 
+  /* 差異化版本徽章與名單管理面板 */
+  .badge-sup {
+    display: inline-block;
+    background: #ede9fe;
+    color: #5b21b6;
+    border: 1.5px solid #c4b5fd;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 900;
+    margin-left: 6px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .seat-sup-tag {
+    display: inline-block;
+    background: #ede9fe;
+    color: #5b21b6;
+    border: 1px solid #c4b5fd;
+    font-size: 0.72rem;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 999px;
+    margin-top: 3px;
+  }
+  .action-btn.support-toggle {
+    background: #f5f3ff;
+    color: #5b21b6;
+    border-color: #c4b5fd;
+  }
+  .action-btn.support-toggle:hover,
+  .action-btn.support-toggle.active {
+    background: #6d28d9;
+    color: #fff;
+    border-color: #5b21b6;
+  }
+  .support-panel {
+    border: 2.5px solid #c4b5fd;
+    background: linear-gradient(180deg, #faf8ff 0%, #ffffff 100%);
+  }
+  .support-form-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: #fff;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin: 12px 0;
+  }
+  .support-input {
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 2px solid #c4d6ce;
+    font-size: 1rem;
+    font-weight: 800;
+    background: #f5faf7;
+    color: #162b24;
+    outline: none;
+  }
+  .support-input:focus { border-color: #6d28d9; background: #fff; }
+  .support-roster-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .support-roster-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #fff;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .support-token-code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.92rem;
+    background: #f1f5f9;
+    color: #334155;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-weight: 700;
+  }
+  .support-status-box {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    display: none;
+    line-height: 1.5;
+  }
+  .support-status-box.ok { display: block; background: #dcfce7; color: #14532d; border: 1.5px solid #86efac; }
+  .support-status-box.warn { display: block; background: #fffbeb; color: #92400e; border: 1.5px solid #fcd34d; }
+  .support-status-box.err { display: block; background: #fee2e2; color: #7f1d1d; border: 1.5px solid #fca5a5; }
+  .analysis-version-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #f5faf7;
+    border: 1.5px solid #dce8e2;
+    font-size: 0.96rem;
+    font-weight: 800;
+    color: #334155;
+  }
+  .ver-tab-btn {
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #c4d6ce;
+    background: #fff;
+    color: #334155;
+    font-size: 0.92rem;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .ver-tab-btn.active {
+    background: #1f6351;
+    color: #fff;
+    border-color: #1b4d3e;
+  }
+  .ver-tab-btn.active.sup {
+    background: #6d28d9;
+    border-color: #5b21b6;
+  }
+
   @media (max-width: 640px) {
     header { padding: 12px 14px; }
     .panel { padding: 16px 14px; }
@@ -465,8 +600,9 @@
       <div class="filters-bar">
         <div class="filter-group">
           <label style="font-weight:900;">單元：</label>
-          <select id="sel-exam" class="filter-select" onchange="renderDashboard()">
-            <option value="U7-math-decimal" selected>第七單元《小數》（45計分格）</option>
+          <select id="sel-exam" class="filter-select" onchange="onExamOrVersionFilterChange()">
+            <option value="U7-math-decimal" selected>第七單元《小數》</option>
+            <option value="U6-math-triangle">第六單元《三角形》</option>
             <option value="">全部數學單元</option>
           </select>
 
@@ -483,9 +619,17 @@
           <select id="sel-date" class="filter-select" onchange="renderDashboard()">
             <option value="">全部日期</option>
           </select>
+
+          <label style="font-weight:900;">版本：</label>
+          <select id="sel-version" class="filter-select" onchange="onExamOrVersionFilterChange()">
+            <option value="all" selected>全部版本</option>
+            <option value="standard">一般版</option>
+            <option value="support">支持版</option>
+          </select>
         </div>
 
         <div class="filter-group">
+          <button class="action-btn support-toggle" id="btn-toggle-support-panel" onclick="toggleSupportPanel()">🧩 差異化名單管理</button>
           <button class="action-btn" onclick="fetchData()">🔄 立即更新</button>
           <label style="display:flex;align-items:center;gap:6px;font-weight:800;cursor:pointer;">
             <input type="checkbox" id="chk-auto-refresh" checked> 自動更新 (5s)
@@ -498,6 +642,47 @@
       </div>
 
       <div class="stats-grid" id="stats-summary"></div>
+    </div>
+
+    <!-- 差異化名單管理（可折疊） -->
+    <div class="panel support-panel" id="panel-support-roster" style="display:none;">
+      <div class="section-title">
+        <span style="color:#5b21b6;">🧩 差異化名單管理（匿名靜默分流・國語與數學跨站共用）</span>
+        <div class="filter-group">
+          <span id="support-sync-pill" class="pill-status pill-retry-wait">讀取中...</span>
+          <button class="action-btn" onclick="toggleSupportPanel(false)">✕ 收合</button>
+        </div>
+      </div>
+      <p style="font-size:0.96rem;font-weight:700;color:#48635a;line-height:1.6;">
+        輸入「班級＋座號」加入名單後，系統僅將 16 碼匿名雜湊 token 同步至 Supabase <code>support_roster</code>（絕不上傳明文座號與個資）；座號對照備忘僅儲存在老師本機瀏覽器。學生端登入後會自動無縫切換題本，畫面上絕不顯示任何差異化標籤。
+      </p>
+
+      <form class="support-form-row" onsubmit="addSupportRosterEntry(event)">
+        <label style="font-weight:900;">班級：</label>
+        <select id="sup-add-class" class="support-input" onchange="toggleSupCustomClass()">
+          <option value="402" selected>四年二班 (402)</option>
+          <option value="401">四年一班 (401)</option>
+          <option value="403">四年三班 (403)</option>
+          <option value="404">四年四班 (404)</option>
+          <option value="__custom__">其他班級</option>
+        </select>
+        <input type="text" id="sup-add-class-custom" class="support-input" style="display:none;width:110px;" placeholder="例如 405">
+
+        <label style="font-weight:900;">座號：</label>
+        <select id="sup-add-seat" class="support-input" required></select>
+
+        <input type="text" id="sup-add-note" class="support-input" style="min-width:150px;" placeholder="本機備忘（選填，不上傳）">
+        <button type="submit" class="action-btn" style="background:#6d28d9;color:#fff;border-color:#5b21b6;">➕ 加入名單</button>
+      </form>
+
+      <div class="support-roster-list" id="support-roster-list"></div>
+
+      <div class="filter-group" style="margin-top:12px;">
+        <button type="button" class="action-btn" id="btn-save-support-roster" style="background:#059669;color:#fff;border-color:#047857;" onclick="saveSupportRoster()">💾 儲存並同步至雲端</button>
+        <button type="button" class="action-btn" onclick="copySupportPreviewLink()">🔗 複製靜默預覽連結 (?s=preview)</button>
+        <button type="button" class="action-btn" onclick="copyStaticSupportTokens()">📋 複製靜態設定碼（備援用）</button>
+      </div>
+      <div class="support-status-box" id="support-roster-status"></div>
     </div>
 
     <!-- 1~29 座號即時盤點看板 -->
@@ -526,6 +711,7 @@
           </select>
         </div>
       </div>
+      <div id="item-analysis-version-bar"></div>
       <div style="overflow-x:auto;">
         <table class="data-table">
           <thead>
@@ -592,6 +778,75 @@ const SUPABASE_CONFIG = {
 
 const CMP_DISPLAY = { ">": "＞", "<": "＜", "=": "＝" };
 
+// ==================== 匿名座號雜湊與共用設定（對齊統一協定 v1） ====================
+const DEFAULT_SUPPORT_TOKENS = ["29ed3f137502a0b9"];
+const SUPPORT_TOKENS_LS_KEY = "chaohe_support_tokens_v1";
+const SUPPORT_MEMO_LS_KEY = "chaohe_support_roster_memo_v1";
+
+function canonicalSupportClass(cls) {
+  const cleaned = String(cls || "").trim().replace(/[^0-9a-zA-Z]/g, "");
+  return cleaned === "42" ? "402" : cleaned;
+}
+
+function supportSeatToken(cls, seat) {
+  const c = canonicalSupportClass(cls);
+  const s = Number(seat);
+  if (!c || !Number.isFinite(s) || s <= 0) return "";
+  const str = `chaohe-support-v1:${c}:${s}`;
+  let h1 = 0x811c9dc5;
+  let h2 = 0x050c5d1f;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 0x01000193);
+    h2 = Math.imul(h2 ^ ch, 0x85ebca6b);
+  }
+  return ((h1 >>> 0).toString(16).padStart(8, "0")) + ((h2 >>> 0).toString(16).padStart(8, "0"));
+}
+
+function isSupportRow(r) {
+  return Boolean(r && String(r.client_id || "").endsWith("__sup"));
+}
+
+// 第六單元「三角形」一般版（10 題）與支持版（6 題）定義
+const UNIT6_ITEMS = [
+  { id: "u6_0", sec: 1, secName: "第一大題：以邊分類三角形", code: "一(1)", prompt: "看圖辨識等腰三角形（甲 5,4,4 vs 乙 3,4,5）", expected: "甲（邊長 5、4、4 公分）", type: "choice" },
+  { id: "u6_1", sec: 1, secName: "第一大題：以邊分類三角形", code: "一(2)", prompt: "∠B＝50°、∠C＝50° 是什麼三角形", expected: "等腰三角形", type: "choice" },
+  { id: "u6_2", sec: 1, secName: "第一大題：以邊分類三角形", code: "一(3)", prompt: "等腰三角形 ABC，邊 AC＝44 公分，求邊 AB", expected: "44 公分", type: "choice" },
+  { id: "u6_3", sec: 1, secName: "第一大題：以邊分類三角形", code: "一(4)", prompt: "正三角形三個角各是幾度", expected: "都是 60°", type: "choice" },
+  { id: "u6_4", sec: 1, secName: "第一大題：以邊分類三角形", code: "一(5)", prompt: "哪一組邊長圍起來是正三角形", expected: "7 公分、7 公分、7 公分", type: "choice" },
+  { id: "u6_5", sec: 2, secName: "第二大題：以角分類與全等", code: "二(1)", prompt: "有一個 90° 直角的三角形", expected: "直角三角形", type: "choice" },
+  { id: "u6_6", sec: 2, secName: "第二大題：以角分類與全等", code: "二(2)", prompt: "120°、30°、30° 是什麼三角形", expected: "鈍角三角形", type: "choice" },
+  { id: "u6_7", sec: 2, secName: "第二大題：以角分類與全等", code: "二(3)", prompt: "70°、60°、50° 是什麼三角形", expected: "銳角三角形", type: "choice" },
+  { id: "u6_8", sec: 2, secName: "第二大題：以角分類與全等", code: "二(4)", prompt: "兩腰 6 公分且有一個直角", expected: "等腰直角三角形", type: "choice" },
+  { id: "u6_9", sec: 2, secName: "第二大題：以角分類與全等", code: "二(5)", prompt: "全等三角形對應邊與對應角關係", expected: "對應邊一樣長，對應角一樣大", type: "choice" }
+];
+
+const UNIT6_SUPPORT_ITEMS = [
+  { id: "su6_0", sec: 1, secName: "第一大題：認識等腰與正三角形", code: "一(1)", prompt: "看圖辨識等腰三角形（甲 vs 乙）", expected: "甲（兩條邊都是 4 公分）", type: "choice" },
+  { id: "su6_1", sec: 1, secName: "第一大題：認識等腰與正三角形", code: "一(2)", prompt: "兩個角都是 50° 是什麼三角形", expected: "等腰三角形", type: "choice" },
+  { id: "su6_2", sec: 1, secName: "第一大題：認識等腰與正三角形", code: "一(3)", prompt: "等腰三角形右腰 44 公分，求左腰", expected: "44 公分", type: "choice" },
+  { id: "su6_3", sec: 1, secName: "第一大題：認識等腰與正三角形", code: "一(4)", prompt: "三條邊都是 6 公分是什麼三角形", expected: "正三角形", type: "choice" },
+  { id: "su6_4", sec: 2, secName: "第二大題：認識直角與正三角形", code: "二(1)", prompt: "有一個 90° 直角是什麼三角形", expected: "直角三角形", type: "choice" },
+  { id: "su6_5", sec: 2, secName: "第二大題：認識直角與正三角形", code: "二(2)", prompt: "看圖找正三角形（甲 5,5,5 vs 乙 5,5,8）", expected: "甲（三條邊都是 5 公分）", type: "choice" }
+];
+
+// 第七單元「小數」支持版（9 題組 13 格，與 index.html 100% 對齊）
+const UNIT7_SUPPORT_ITEMS = [
+  { id: "su7_0",  sec: 1, secName: "第一大題：認識二位小數", code: "一(1)",   prompt: "0.06 是幾個 0.01（選）", expected: "6 個", type: "choice" },
+  { id: "su7_1",  sec: 1, secName: "第一大題：認識二位小數", code: "一(2)①", prompt: "看定位板：6.49 個位數字", expected: "6", type: "integer" },
+  { id: "su7_2",  sec: 1, secName: "第一大題：認識二位小數", code: "一(2)②", prompt: "看定位板：6.49 十分位數字", expected: "4", type: "integer" },
+  { id: "su7_3",  sec: 1, secName: "第一大題：認識二位小數", code: "一(2)③", prompt: "看定位板：6.49 百分位數字", expected: "9", type: "integer" },
+  { id: "su7_4",  sec: 1, secName: "第一大題：認識二位小數", code: "一(3)",   prompt: "2 個 0.1 和 5 個 0.01 合起來（選）", expected: "0.25", type: "choice" },
+  { id: "su7_5",  sec: 1, secName: "第一大題：認識二位小數", code: "一(4)",   prompt: "3.05 要怎麼讀（選）", expected: "三點零五", type: "choice" },
+  { id: "su7_6",  sec: 2, secName: "第二大題：小數與長度換算", code: "二(1)", prompt: "6 公尺 52 公分＝幾公尺（選）", expected: "6.52 公尺", type: "choice" },
+  { id: "su7_7",  sec: 2, secName: "第二大題：小數與長度換算", code: "二(2)", prompt: "815 公分＝( ) 公尺", expected: "8.15", type: "decimal" },
+  { id: "su7_8",  sec: 2, secName: "第二大題：小數與長度換算", code: "二(3)a", prompt: "4.86 公尺＝( ) 公尺", expected: "4", type: "integer" },
+  { id: "su7_9",  sec: 2, secName: "第二大題：小數與長度換算", code: "二(3)b", prompt: "4.86 公尺＝4公尺 ( ) 公分", expected: "86", type: "integer" },
+  { id: "su7_10", sec: 3, secName: "第三大題：小數比大小", code: "三(1)①", prompt: "0.65 □ 0.56", expected: "＞", type: "compare" },
+  { id: "su7_11", sec: 3, secName: "第三大題：小數比大小", code: "三(1)②", prompt: "8.25 □ 8.52", expected: "＜", type: "compare" },
+  { id: "su7_12", sec: 3, secName: "第三大題：小數比大小", code: "三(2)①", prompt: "17.5 □ 16.92", expected: "＞", type: "compare" }
+];
+
 // 第七單元「小數」完整 45 個計分單元定義（與 index.html 100% 對齊）
 const UNIT7_ITEMS = [
   { id: "u0",  sec: 1, secName: "第一大題：認識二位小數", code: "一(6)",   prompt: "0.06 是 ( ) 個 0.01", expected: "6", type: "integer" },
@@ -644,16 +899,41 @@ const UNIT7_ITEMS = [
 ];
 
 const EXAM_META = {
-  "U6-math-triangle": { name: "第六單元《三角形》", total: 0, items: [] },
-  "U7-math-decimal":  { name: "第七單元《小數》", total: UNIT7_ITEMS.length, items: UNIT7_ITEMS },
-  "U8-math-arithmetic": { name: "第八單元《整數四則計算》", total: 0, items: [] },
-  "U9-math-fraction": { name: "第九單元《分數》", total: 0, items: [] },
-  "U10-math-charts":  { name: "第十單元《統計圖》", total: 0, items: [] }
+  "U6-math-triangle": {
+    name: "第六單元《三角形》",
+    total: UNIT6_ITEMS.length,
+    items: UNIT6_ITEMS,
+    supportTotal: UNIT6_SUPPORT_ITEMS.length,
+    supportItems: UNIT6_SUPPORT_ITEMS
+  },
+  "U7-math-decimal": {
+    name: "第七單元《小數》",
+    total: UNIT7_ITEMS.length,
+    items: UNIT7_ITEMS,
+    supportTotal: UNIT7_SUPPORT_ITEMS.length,
+    supportItems: UNIT7_SUPPORT_ITEMS
+  },
+  "U8-math-arithmetic": { name: "第八單元《整數四則計算》", total: 0, items: [], supportItems: [] },
+  "U9-math-fraction": { name: "第九單元《分數》", total: 0, items: [], supportItems: [] },
+  "U10-math-charts":  { name: "第十單元《統計圖》", total: 0, items: [], supportItems: [] }
 };
+
+function getItemsForRow(r) {
+  const meta = EXAM_META[r?.exam_id];
+  if (!meta) return [];
+  if (isSupportRow(r) && meta.supportItems && meta.supportItems.length) {
+    return meta.supportItems;
+  }
+  return meta.items || [];
+}
 
 let currentPw = "";
 let allSubmissions = [];
 let autoRefreshTimer = null;
+let itemAnalysisVersion = "standard"; // "standard" | "support"
+let supportRosterTokens = [];
+let supportRosterSyncedSource = "default"; // "cloud" | "local" | "default"
+let supportRosterDirty = false;
 
 function escapeHTML(str) {
   return String(str ?? "")
@@ -811,6 +1091,8 @@ async function handleLogin(e) {
     document.getElementById("btn-logout").style.display = "inline-flex";
 
     syncDynamicFilters();
+    initSupportRosterUI();
+    await loadSupportRosterState();
     renderDashboard();
     startAutoRefresh();
   } catch (err) {
@@ -908,12 +1190,312 @@ function getFilteredSubmissions() {
   const selectedExam = document.getElementById("sel-exam").value;
   const selectedClass = document.getElementById("sel-class").value;
   const selectedDate = document.getElementById("sel-date").value;
+  const selectedVersion = document.getElementById("sel-version")?.value || "all";
   return allSubmissions.filter(r => {
     if (selectedExam && r.exam_id !== selectedExam) return false;
     if (selectedClass && r.class !== selectedClass) return false;
     if (selectedDate && getTaipeiDay(r.created_at) !== selectedDate) return false;
+    if (selectedVersion === "support" && !isSupportRow(r)) return false;
+    if (selectedVersion === "standard" && isSupportRow(r)) return false;
     return true;
   });
+}
+
+function onExamOrVersionFilterChange() {
+  const selVer = document.getElementById("sel-version")?.value || "all";
+  if (selVer === "support") itemAnalysisVersion = "support";
+  else if (selVer === "standard") itemAnalysisVersion = "standard";
+  const secSel = document.getElementById("sel-item-section");
+  if (secSel) secSel.value = "0";
+  renderDashboard();
+}
+
+function setItemAnalysisVersion(ver) {
+  itemAnalysisVersion = ver === "support" ? "support" : "standard";
+  const secSel = document.getElementById("sel-item-section");
+  if (secSel) secSel.value = "0";
+  renderDashboard();
+}
+
+// ==================== 差異化名單管理（本機備忘＋雲端匿名同步） ====================
+function initSupportRosterUI() {
+  const seatSel = document.getElementById("sup-add-seat");
+  if (!seatSel || seatSel.options.length > 0) return;
+  seatSel.innerHTML = '<option value="" disabled selected>-- 座號 --</option>';
+  for (let i = 1; i <= 29; i++) {
+    const pad = i < 10 ? `0${i}` : `${i}`;
+    seatSel.innerHTML += `<option value="${i}">${pad} 號</option>`;
+  }
+}
+
+function toggleSupCustomClass() {
+  const val = document.getElementById("sup-add-class").value;
+  const inp = document.getElementById("sup-add-class-custom");
+  inp.style.display = (val === "__custom__") ? "inline-block" : "none";
+  if (val === "__custom__") inp.focus();
+}
+
+function toggleSupportPanel(forceOpen) {
+  const panel = document.getElementById("panel-support-roster");
+  const btn = document.getElementById("btn-toggle-support-panel");
+  if (!panel) return;
+  const open = (typeof forceOpen === "boolean") ? forceOpen : (panel.style.display === "none");
+  panel.style.display = open ? "block" : "none";
+  if (btn) btn.classList.toggle("active", open);
+  if (open) renderSupportRosterList();
+}
+
+function loadLocalSupportMemos() {
+  try {
+    const raw = localStorage.getItem(SUPPORT_MEMO_LS_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalSupportMemos(memos) {
+  try {
+    localStorage.setItem(SUPPORT_MEMO_LS_KEY, JSON.stringify(memos));
+  } catch {}
+}
+
+function loadLocalSupportTokensRaw() {
+  try {
+    const raw = localStorage.getItem(SUPPORT_TOKENS_LS_KEY);
+    if (raw === null) return null;
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.map(t => String(t || "").trim().toLowerCase()).filter(Boolean) : null;
+  } catch {
+    return null;
+  }
+}
+
+function showSupportStatus(type, msg) {
+  const box = document.getElementById("support-roster-status");
+  if (!box) return;
+  if (!msg) {
+    box.className = "support-status-box";
+    box.textContent = "";
+    return;
+  }
+  box.className = `support-status-box ${type}`;
+  box.textContent = msg;
+}
+
+async function loadSupportRosterState() {
+  supportRosterDirty = false;
+  let cloudTokens = null;
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/support_roster?select=token`, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+      }
+    });
+    if (res.ok) {
+      const rows = await res.json();
+      if (Array.isArray(rows)) {
+        cloudTokens = rows.map(r => String(r?.token || "").trim().toLowerCase()).filter(Boolean);
+      }
+    }
+  } catch {}
+
+  if (cloudTokens !== null && cloudTokens.length > 0) {
+    supportRosterTokens = Array.from(new Set(cloudTokens));
+    supportRosterSyncedSource = "cloud";
+  } else {
+    const localToks = loadLocalSupportTokensRaw();
+    if (localToks !== null) {
+      supportRosterTokens = Array.from(new Set(localToks));
+      supportRosterSyncedSource = "local";
+    } else {
+      supportRosterTokens = [...DEFAULT_SUPPORT_TOKENS];
+      supportRosterSyncedSource = "default";
+    }
+  }
+  renderSupportRosterList();
+}
+
+function updateSupportToggleBadge() {
+  const btn = document.getElementById("btn-toggle-support-panel");
+  if (btn) {
+    btn.textContent = `🧩 差異化名單管理 (${supportRosterTokens.length})`;
+  }
+  const pill = document.getElementById("support-sync-pill");
+  if (pill) {
+    if (supportRosterDirty) {
+      pill.className = "pill-status pill-retry-wait";
+      pill.textContent = "⚠️ 尚未儲存變更";
+    } else if (supportRosterSyncedSource === "cloud") {
+      pill.className = "pill-status pill-perfect";
+      pill.textContent = `☁️ 雲端同步生效（${supportRosterTokens.length} 筆）`;
+    } else if (supportRosterSyncedSource === "local") {
+      pill.className = "pill-status pill-retry-ok";
+      pill.textContent = `💻 本機瀏覽器生效（${supportRosterTokens.length} 筆）`;
+    } else {
+      pill.className = "pill-status pill-retry-ok";
+      pill.textContent = `✅ 內建預設生效（${supportRosterTokens.length} 筆）`;
+    }
+  }
+}
+
+function renderSupportRosterList() {
+  updateSupportToggleBadge();
+  const listEl = document.getElementById("support-roster-list");
+  if (!listEl) return;
+  const memos = loadLocalSupportMemos();
+  const memoByToken = {};
+  memos.forEach(m => { if (m && m.token) memoByToken[String(m.token).toLowerCase()] = m; });
+
+  if (!supportRosterTokens.length) {
+    listEl.innerHTML = `<div style="padding:14px;text-align:center;color:#5d786f;font-weight:800;background:#fff;border:1.5px dashed #c4d6ce;border-radius:12px;">目前名單為空（全員皆使用一般版）。可使用上方表單加入班級與座號。</div>`;
+    return;
+  }
+
+  listEl.innerHTML = supportRosterTokens.map(tok => {
+    const memo = memoByToken[tok];
+    const isDefaultTok = DEFAULT_SUPPORT_TOKENS.includes(tok);
+    const labelHtml = memo
+      ? `<b>${escapeHTML(memo.cls)} 班 ${Number(memo.seat) < 10 ? "0" + memo.seat : memo.seat} 號</b>${memo.note ? ` <span style="color:#5d786f;">(${escapeHTML(memo.note)})</span>` : ""}`
+      : (isDefaultTok
+        ? `<b>內建預設對象</b> <span style="color:#5d786f;font-size:0.9rem;">（跨裝置靜默生效；可於上方輸入對應座號加上本機備忘）</span>`
+        : `<b>跨裝置／國語端已設定對象</b> <span style="color:#5d786f;font-size:0.9rem;">（此瀏覽器無本機座號備忘）</span>`);
+    return `
+      <div class="support-roster-item">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span>${labelHtml}</span>
+          <span class="support-token-code">${escapeHTML(tok)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="btn-detail" onclick="copySingleStudentLink('${escapeHTML(tok)}')">🔗 複製專屬連結</button>
+          <button type="button" class="badge-del" onclick="removeSupportRosterToken('${escapeHTML(tok)}')">移除</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function addSupportRosterEntry(e) {
+  e.preventDefault();
+  let cls = document.getElementById("sup-add-class").value;
+  if (cls === "__custom__") {
+    cls = document.getElementById("sup-add-class-custom").value.trim();
+    if (!cls) { alert("請輸入班級！"); return; }
+  }
+  const seatVal = document.getElementById("sup-add-seat").value;
+  if (!seatVal) { alert("請選擇座號！"); return; }
+  const seat = parseInt(seatVal, 10);
+  const note = (document.getElementById("sup-add-note").value || "").trim();
+  const canonCls = canonicalSupportClass(cls);
+  const token = supportSeatToken(canonCls, seat);
+  if (!token) { alert("無法產生座號代碼，請確認班級與座號。"); return; }
+
+  // 僅於老師本機瀏覽器紀錄座號對照備忘
+  const memos = loadLocalSupportMemos().filter(m => m.token !== token);
+  memos.push({ cls: canonCls, seat, token, note });
+  saveLocalSupportMemos(memos);
+
+  if (!supportRosterTokens.includes(token)) {
+    supportRosterTokens.push(token);
+    supportRosterDirty = true;
+    showSupportStatus("warn", `已加入 ${canonCls} 班 ${seat} 號（匿名代碼 ${token}），請按「💾 儲存並同步至雲端」套用變更。`);
+  } else {
+    showSupportStatus("ok", `已更新 ${canonCls} 班 ${seat} 號的本機備忘（匿名代碼 ${token} 已在名單內）。`);
+  }
+
+  document.getElementById("sup-add-seat").value = "";
+  document.getElementById("sup-add-note").value = "";
+  renderSupportRosterList();
+}
+
+function removeSupportRosterToken(tok) {
+  supportRosterTokens = supportRosterTokens.filter(t => t !== tok);
+  supportRosterDirty = true;
+  renderSupportRosterList();
+  showSupportStatus("warn", `已從名單移除代碼 ${tok}，請按「💾 儲存並同步至雲端」正式套用。`);
+}
+
+async function saveSupportRoster() {
+  const btn = document.getElementById("btn-save-support-roster");
+  const prevTxt = btn ? btn.textContent : "";
+  if (btn) { btn.disabled = true; btn.textContent = "⏳ 同步中..."; }
+
+  // 1. 本機先立即生效
+  try {
+    localStorage.setItem(SUPPORT_TOKENS_LS_KEY, JSON.stringify(supportRosterTokens));
+  } catch {}
+
+  // 2. 同步至 Supabase support_roster（國語／數學跨裝置共用）
+  try {
+    const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/rpc/teacher_set_support_tokens`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_CONFIG.ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ pw: currentPw, p_tokens: supportRosterTokens })
+    });
+
+    if (res.ok) {
+      supportRosterDirty = false;
+      supportRosterSyncedSource = "cloud";
+      renderSupportRosterList();
+      showSupportStatus("ok", `✅ 已成功同步 ${supportRosterTokens.length} 筆匿名代碼至雲端！數學與國語隨堂測驗皆已跨裝置即時生效。`);
+    } else if (res.status === 404) {
+      supportRosterDirty = false;
+      supportRosterSyncedSource = "local";
+      renderSupportRosterList();
+      showSupportStatus(
+        "warn",
+        `⚠️ 雲端資料表尚未建立（尚未執行 math-quiz/supabase_support_config.sql）。名單已先儲存於本機瀏覽器生效！若要跨裝置同步，請到 Supabase SQL Editor 執行 supabase_support_config.sql，或點「複製靜態設定碼」貼入 index.html 的 DEFAULT_SUPPORT_TOKENS。`
+      );
+    } else {
+      const errTxt = await res.text().catch(() => "");
+      showSupportStatus("err", `❌ 雲端同步失敗 (${res.status})：${errTxt || "請檢查密碼或網路連線"}（本機設定已先保存）。`);
+    }
+  } catch (err) {
+    supportRosterSyncedSource = "local";
+    renderSupportRosterList();
+    showSupportStatus("warn", `⚠️ 網路連線異常，已先套用於本機瀏覽器：${err.message}`);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = prevTxt; }
+  }
+}
+
+function buildStudentIndexUrl(query) {
+  try {
+    return new URL(`index.html${query}`, window.location.href).href;
+  } catch {
+    return `index.html${query}`;
+  }
+}
+
+async function copyTextHelper(txt, successMsg) {
+  try {
+    await navigator.clipboard.writeText(txt);
+    showSupportStatus("ok", successMsg);
+  } catch {
+    prompt("請手動複製下方內容：", txt);
+  }
+}
+
+function copySupportPreviewLink() {
+  const url = buildStudentIndexUrl("?s=preview");
+  copyTextHelper(url, `✅ 已複製靜默預覽連結：${url}（貼到新分頁即可直接體驗支持版畫面與語音報讀）`);
+}
+
+function copySingleStudentLink(tok) {
+  const url = buildStudentIndexUrl(`?s=${encodeURIComponent(tok)}`);
+  copyTextHelper(url, `✅ 已複製該對象專屬連結：${url}`);
+}
+
+function copyStaticSupportTokens() {
+  const code = `const DEFAULT_SUPPORT_TOKENS = ${JSON.stringify(supportRosterTokens)};`;
+  copyTextHelper(code, `✅ 已複製靜態備援設定：${code}`);
 }
 
 function computeScoreInfo(r) {
@@ -982,11 +1564,17 @@ function renderDashboard() {
     ? `${completedRetryRows.length} / ${needRetryRows.length} 人完成訂正`
     : (totalCount > 0 ? "全員原卷滿分" : "尚無作答紀錄");
 
+  const supCountInFiltered = filtered.filter(isSupportRow).length;
+  const stdCountInFiltered = totalCount - supCountInFiltered;
+  const verSubText = supCountInFiltered > 0
+    ? `一般版 ${stdCountInFiltered} / 支持版 ${supCountInFiltered}`
+    : `不重複 ${new Set(filtered.map(r => `${r.class}-${r.seat}`)).size} 人`;
+
   document.getElementById("stats-summary").innerHTML = `
     <div class="stat-card">
       <div class="stat-val">${totalCount}</div>
       <div class="stat-lbl">繳交人數</div>
-      <div class="stat-sub">不重複 ${new Set(filtered.map(r => `${r.class}-${r.seat}`)).size} 人</div>
+      <div class="stat-sub">${verSubText}</div>
     </div>
     <div class="stat-card">
       <div class="stat-val" style="color:#15803d;">${avgFinal}<span style="font-size:1.3rem;">分</span></div>
@@ -1031,11 +1619,13 @@ function renderDashboard() {
     if (rec) {
       submittedSeats++;
       const info = computeScoreInfo(rec);
+      const supTagHtml = isSupportRow(rec) ? `<div class="seat-sup-tag">支持版</div>` : "";
       seatsHtml += `
         <div class="seat-box submitted" onclick="openDetailModal(${rec.id})" title="點擊查看 ${boardClass} 班 ${pad} 號作答明細">
           <div class="seat-num">${pad} 號 ✅</div>
           <div class="seat-score">${info.finalPct} 分</div>
           <div class="seat-name" style="color:${info.bonus > 0 ? '#175243' : '#15803d'};">${info.shortTag}</div>
+          ${supTagHtml}
         </div>
       `;
     } else {
@@ -1052,24 +1642,73 @@ function renderDashboard() {
   document.getElementById("seat-status-text").textContent =
     `${boardClass} 班已繳交：${submittedSeats} / 29 人（${Math.round((submittedSeats / 29) * 100)}%）`;
 
-  // 3. 各題答對率與常見錯誤寫法分析
-  const examInfo = EXAM_META[selectedExam] || (filtered.length ? EXAM_META[filtered[0].exam_id] : null);
+  // 3. 各題答對率與常見錯誤寫法分析（嚴格隔離一般版與支持版，避免題數不同互染）
+  const activeExamId = selectedExam || (filtered.length ? filtered[0].exam_id : "");
+  const examInfo = EXAM_META[activeExamId] || null;
   const tbodyItem = document.getElementById("tbody-item-analysis");
-  const itemSecFilter = parseInt(document.getElementById("sel-item-section").value, 10);
+  const verBarEl = document.getElementById("item-analysis-version-bar");
+  const secSelEl = document.getElementById("sel-item-section");
+  const selectedVersion = document.getElementById("sel-version")?.value || "all";
+
+  const examRows = activeExamId ? filtered.filter(r => r.exam_id === activeExamId) : [];
+  const stdRows = examRows.filter(r => !isSupportRow(r));
+  const supRows = examRows.filter(r => isSupportRow(r));
+
+  let effectiveVer = itemAnalysisVersion;
+  if (selectedVersion === "support") effectiveVer = "support";
+  else if (selectedVersion === "standard") effectiveVer = "standard";
+  else if (stdRows.length === 0 && supRows.length > 0) effectiveVer = "support";
+  else if (supRows.length === 0 && stdRows.length > 0) effectiveVer = "standard";
+
+  const analysisRows = effectiveVer === "support" ? supRows : stdRows;
+  const analysisItems = examInfo
+    ? (effectiveVer === "support" ? (examInfo.supportItems || []) : (examInfo.items || []))
+    : [];
+
+  // 動態同步大題下拉選項
+  if (secSelEl) {
+    const prevSec = secSelEl.value;
+    const secMap = new Map();
+    analysisItems.forEach(it => {
+      if (!secMap.has(it.sec)) secMap.set(it.sec, it.secName);
+    });
+    secSelEl.innerHTML = `<option value="0">全部大題</option>` +
+      Array.from(secMap.entries()).map(([sNum, sName]) => `<option value="${sNum}">${escapeHTML(sName)}</option>`).join("");
+    if (prevSec === "0" || secMap.has(Number(prevSec))) secSelEl.value = prevSec;
+  }
+
+  const itemSecFilter = parseInt(secSelEl ? secSelEl.value : "0", 10) || 0;
   const itemSort = document.getElementById("sel-item-sort").value;
 
-  if (!examInfo || !examInfo.items.length) {
+  if (verBarEl) {
+    if (!examInfo || examRows.length === 0) {
+      verBarEl.innerHTML = "";
+    } else {
+      const toggleBtns = (selectedVersion === "all" && (stdRows.length > 0 || supRows.length > 0)) ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="ver-tab-btn ${effectiveVer === 'standard' ? 'active' : ''}" onclick="setItemAnalysisVersion('standard')">一般版逐題分析 (${stdRows.length}人)</button>
+          <button type="button" class="ver-tab-btn ${effectiveVer === 'support' ? 'active sup' : ''}" onclick="setItemAnalysisVersion('support')">支持版逐題分析 (${supRows.length}人)</button>
+        </div>
+      ` : "";
+      const noteTxt = effectiveVer === "support"
+        ? `目前統計：<b>支持版</b>（${analysisRows.length} 筆，共 ${analysisItems.length} 格；已與一般版獨立計算）`
+        : `目前統計：<b>一般版</b>（${analysisRows.length} 筆，共 ${analysisItems.length} 格${supRows.length > 0 ? `；已自動排除 ${supRows.length} 筆支持版避免混算` : ""}）`;
+      verBarEl.innerHTML = `<div class="analysis-version-bar"><span>${noteTxt}</span>${toggleBtns}</div>`;
+    }
+  }
+
+  if (!examInfo || !analysisItems.length) {
     tbodyItem.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#5d786f;padding:22px;">請於上方選單指定已建置題庫之單元</td></tr>`;
-  } else if (filtered.length === 0) {
-    tbodyItem.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#5d786f;padding:22px;">目前篩選條件下尚無學生作答數據</td></tr>`;
+  } else if (analysisRows.length === 0) {
+    tbodyItem.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#5d786f;padding:22px;">目前版本篩選條件下尚無學生作答數據</td></tr>`;
   } else {
-    let stats = examInfo.items.map((item, idx) => {
+    let stats = analysisItems.map((item, idx) => {
       let correctCnt = 0;
       let wrongCnt = 0;
       let blankCnt = 0;
       const wrongFreq = {};
 
-      filtered.forEach(r => {
+      analysisRows.forEach(r => {
         const st = (r.answers && r.answers[idx] !== undefined) ? r.answers[idx] : 0;
         if (st === 1) {
           correctCnt++;
@@ -1085,7 +1724,7 @@ function renderDashboard() {
         }
       });
 
-      const rate = Math.round((correctCnt / filtered.length) * 100);
+      const rate = Math.round((correctCnt / analysisRows.length) * 100);
       const topWrongs = Object.entries(wrongFreq)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 3);
@@ -1098,7 +1737,7 @@ function renderDashboard() {
 
     tbodyItem.innerHTML = stats.map(s => {
       const barCls = s.rate >= 80 ? "bar-high" : s.rate >= 55 ? "bar-mid" : "bar-low";
-      const verb = s.item.type === "compare" ? "誤選" : s.item.type === "match" ? "誤連" : "寫成";
+      const verb = (s.item.type === "compare" || s.item.type === "choice") ? "誤選" : s.item.type === "match" ? "誤連" : "寫成";
       const wrongChips = s.topWrongs.map(([txt, cnt]) =>
         `<span class="wrong-pattern-chip">${verb}「${escapeHTML(txt)}」(${cnt}人)</span>`
       ).join("") + (s.blankCnt > 0 ? `<span class="ans-pill-blank">未作答 ${s.blankCnt}人</span>` : "");
@@ -1129,10 +1768,11 @@ function renderDashboard() {
   } else {
     tbodyStudent.innerHTML = filtered.map(r => {
       const eInfo = EXAM_META[r.exam_id];
+      const rowItems = getItemsForRow(r);
       const info = computeScoreInfo(r);
       const wrongCodes = [];
-      if (eInfo && eInfo.items.length && r.answers) {
-        eInfo.items.forEach((it, idx) => {
+      if (rowItems.length && r.answers) {
+        rowItems.forEach((it, idx) => {
           if (r.answers[idx] !== 1) wrongCodes.push(it.code);
         });
       }
@@ -1142,10 +1782,11 @@ function renderDashboard() {
 
       const dateStr = new Date(r.created_at).toLocaleString("zh-TW", { hour12: false });
       const padSeat = Number(r.seat) < 10 ? `0${r.seat}` : `${r.seat}`;
+      const supBadge = isSupportRow(r) ? `<span class="badge-sup">支持版</span>` : "";
       return `
         <tr>
           <td style="color:#5d786f;font-size:0.95rem;">${dateStr}</td>
-          <td><b>${eInfo ? escapeHTML(eInfo.name) : escapeHTML(r.exam_id)}</b></td>
+          <td><b>${eInfo ? escapeHTML(eInfo.name) : escapeHTML(r.exam_id)}</b>${supBadge}</td>
           <td><b>${escapeHTML(r.class)}</b></td>
           <td><b>${padSeat} 號</b></td>
           <td><b>${info.rawPct} 分</b> <span style="color:#5d786f;font-size:0.9rem;">(${r.score}/${r.total})</span></td>
@@ -1167,14 +1808,17 @@ function openDetailModal(id) {
   const r = allSubmissions.find(x => x.id === id);
   if (!r) return;
   const eInfo = EXAM_META[r.exam_id];
+  const rowItems = getItemsForRow(r);
   const info = computeScoreInfo(r);
   const padSeat = Number(r.seat) < 10 ? `0${r.seat}` : `${r.seat}`;
   const dateStr = new Date(r.created_at).toLocaleString("zh-TW", { hour12: false });
+  const isSup = isSupportRow(r);
 
   document.getElementById("modal-title-text").textContent =
-    `${r.class} 班 ${padSeat} 號｜${eInfo ? eInfo.name : r.exam_id} 個人作答明細`;
+    `${r.class} 班 ${padSeat} 號｜${eInfo ? eInfo.name : r.exam_id}${isSup ? " [支持版]" : ""} 個人作答明細`;
 
   document.getElementById("modal-summary-strip").innerHTML = `
+    ${isSup ? `<span class="badge-sup" style="margin-left:0;">支持版</span>` : ""}
     <span>🕒 交卷時間：${dateStr}</span>
     <span>📝 原始成績：<b>${info.rawPct} 分</b>（答對 ${r.score} / ${r.total} 格）</span>
     <span class="pill-status ${info.statusClass}">${info.statusText}</span>
@@ -1182,12 +1826,12 @@ function openDetailModal(id) {
   `;
 
   const bodyEl = document.getElementById("modal-detail-body");
-  if (!eInfo || !eInfo.items.length) {
+  if (!rowItems.length) {
     bodyEl.innerHTML = `<p style="color:#5d786f;">此試卷尚未建立詳細題解對照表。</p>`;
   } else {
-    const sections = [1, 2, 3];
+    const sections = Array.from(new Set(rowItems.map(it => it.sec))).sort((a, b) => a - b);
     bodyEl.innerHTML = sections.map(secNum => {
-      const itemsWithIdx = eInfo.items
+      const itemsWithIdx = rowItems
         .map((it, idx) => ({ it, idx }))
         .filter(x => x.it.sec === secNum);
       if (!itemsWithIdx.length) return "";
@@ -1315,15 +1959,16 @@ function exportCSV() {
   }
 
   const rows = [
-    ["交卷時間", "單元代號", "單元名稱", "班級", "座號", "答對格數", "總格數", "原始分數", "錯題訂正狀態", "訂正加分", "最終成績", "錯題題號"]
+    ["交卷時間", "單元代號", "單元名稱", "版本", "班級", "座號", "答對格數", "總格數", "原始分數", "錯題訂正狀態", "訂正加分", "最終成績", "錯題題號"]
   ];
 
   filtered.forEach(r => {
     const eInfo = EXAM_META[r.exam_id];
+    const rowItems = getItemsForRow(r);
     const info = computeScoreInfo(r);
     const wrongCodes = [];
-    if (eInfo && eInfo.items.length && r.answers) {
-      eInfo.items.forEach((it, idx) => {
+    if (rowItems.length && r.answers) {
+      rowItems.forEach((it, idx) => {
         if (r.answers[idx] !== 1) wrongCodes.push(it.code);
       });
     }
@@ -1331,6 +1976,7 @@ function exportCSV() {
       new Date(r.created_at).toLocaleString("zh-TW", { hour12: false }),
       r.exam_id,
       eInfo ? eInfo.name : r.exam_id,
+      isSupportRow(r) ? "支持版" : "一般版",
       r.class,
       r.seat,
       r.score,

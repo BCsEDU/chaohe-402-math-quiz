@@ -977,6 +977,395 @@
     .cmp-btn { min-width: 56px; height: 50px; font-size: calc(1.5rem * var(--font-scale)); }
     .lesson-grid { grid-template-columns: 1fr; }
   }
+
+  /* ==================== 選擇題互動卡、視覺鷹架與語音朗讀 ==================== */
+  .kw {
+    background: #fef08a;
+    color: #162b24;
+    padding: 1px 7px;
+    border-radius: 7px;
+    font-weight: 900;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  .card-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .card-title-row .question-title-text {
+    margin-bottom: 0;
+    flex: 1 1 320px;
+  }
+
+  .card-tts-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    min-height: 52px;
+    border-radius: 16px;
+    border: 3px solid #0284c7;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: calc(1.22rem * var(--font-scale));
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.15);
+  }
+  .card-tts-btn:hover {
+    background: #0284c7;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .card-tts-btn.speaking {
+    background: #0284c7;
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.3);
+  }
+
+  .auto-tts-btn.active {
+    background: #fbbf24 !important;
+    color: #1b4d3e !important;
+    border-color: #f59e0b !important;
+  }
+
+  .hint-banner {
+    background: #eff6ff;
+    border: 2.5px solid #93c5fd;
+    border-left: 7px solid #2563eb;
+    border-radius: 14px;
+    padding: 13px 18px;
+    margin-bottom: 18px;
+    font-size: calc(1.25rem * var(--font-scale));
+    font-weight: 800;
+    color: #1e3a8a;
+    line-height: 1.6;
+  }
+
+  .visual-aid-box {
+    background: #f8fcf9;
+    border: 2.5px solid #c4d6ce;
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .visual-split-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .visual-svg-box {
+    flex: 1 1 260px;
+    max-width: 440px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .visual-svg-box svg {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    display: block;
+  }
+
+  .visual-orig-box {
+    flex: 1 1 220px;
+    max-width: 340px;
+    text-align: center;
+    background: #fff;
+    border: 2px solid #dce8e2;
+    border-radius: 14px;
+    padding: 10px;
+  }
+  .visual-orig-box img {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 10px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+  .visual-orig-caption {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #48635a;
+    margin-top: 6px;
+  }
+
+  /* 彩色視覺位值定位板 */
+  .pv-board-wrap {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+  }
+  .pv-board {
+    border-collapse: separate;
+    border-spacing: 6px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .pv-board th {
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: calc(1.08rem * var(--font-scale));
+    font-weight: 900;
+    min-width: 78px;
+    line-height: 1.25;
+  }
+  .pv-board td {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: calc(1.95rem * var(--font-scale));
+    font-weight: 900;
+    border: 3px solid transparent;
+  }
+  .pv-sub {
+    display: block;
+    font-size: calc(0.84rem * var(--font-scale));
+    font-weight: 800;
+    opacity: 0.85;
+  }
+  .pv-lbl-col {
+    background: #f1f5f9;
+    color: #334155;
+    font-size: calc(1.1rem * var(--font-scale)) !important;
+    min-width: 68px;
+  }
+  .pv-col-tens { background: #ede9fe; color: #5b21b6; }
+  .pv-col-ones { background: #dbeafe; color: #1d4ed8; }
+  .pv-col-dot  { background: #fef3c7; color: #b45309; min-width: 44px !important; }
+  .pv-col-tenths { background: #dcfce7; color: #15803d; }
+  .pv-col-hundredths { background: #fce7f3; color: #be185d; }
+  .pv-board td.pv-hl {
+    border-color: #d97706;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+  }
+
+  /* 單位換算視覺提示卡 */
+  .unit-conv-card {
+    width: 100%;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 2.5px solid #f59e0b;
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .unit-conv-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: calc(1.3rem * var(--font-scale));
+    font-weight: 900;
+    color: #92400e;
+  }
+  .unit-conv-pill {
+    background: #fff;
+    border: 2px solid #f59e0b;
+    border-radius: 999px;
+    padding: 4px 14px;
+    color: #78350f;
+  }
+  .unit-conv-sub {
+    font-size: calc(1.12rem * var(--font-scale));
+    font-weight: 800;
+    color: #78350f;
+  }
+
+  /* 讀法分解卡 */
+  .read-chips-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .read-chip {
+    background: #fff;
+    border: 2.5px solid #93c5fd;
+    border-radius: 14px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 72px;
+  }
+  .read-chip-num {
+    font-size: calc(1.85rem * var(--font-scale));
+    font-weight: 900;
+    color: #1d4ed8;
+    line-height: 1.1;
+  }
+  .read-chip-txt {
+    font-size: calc(1.15rem * var(--font-scale));
+    font-weight: 900;
+    color: #0f766e;
+    margin-top: 4px;
+  }
+
+  /* 選擇題按鈕網格 */
+  .choice-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .choice-list.cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (max-width: 720px) {
+    .choice-list.cols-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .choice-row-wrap {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .choice-btn {
+    flex: 1;
+    min-height: 68px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 3px solid #c4d6ce;
+    background: #f5faf7;
+    color: #162b24;
+    font-size: calc(1.5rem * var(--font-scale));
+    font-weight: 900;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.15s ease;
+    line-height: 1.4;
+  }
+  .choice-btn:hover:not(:disabled) {
+    border-color: #24745f;
+    background: #ebf7f2;
+    transform: translateY(-2px);
+  }
+  .choice-btn.selected {
+    border-color: #1f6351;
+    background: #d8f0e7;
+    color: #1b4d3e;
+    box-shadow: 0 0 0 4px rgba(31, 99, 81, 0.22);
+  }
+  .choice-btn.choice-ok {
+    border-color: #16a34a !important;
+    background: #dcfce7 !important;
+    color: #14532d !important;
+  }
+  .choice-btn.choice-err {
+    border-color: #dc2626 !important;
+    background: #fee2e2 !important;
+    color: #7f1d1d !important;
+  }
+  .choice-btn:disabled {
+    cursor: default;
+  }
+
+  .choice-opt-badge {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #dce8e2;
+    color: #1b4d3e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(1.25rem * var(--font-scale));
+    font-weight: 900;
+  }
+  .choice-btn.selected .choice-opt-badge {
+    background: #1f6351;
+    color: #fff;
+  }
+  .choice-btn.choice-ok .choice-opt-badge {
+    background: #16a34a;
+    color: #fff;
+  }
+  .choice-btn.choice-err .choice-opt-badge {
+    background: #dc2626;
+    color: #fff;
+  }
+
+  .choice-speak-mini {
+    flex-shrink: 0;
+    width: 56px;
+    border-radius: 16px;
+    border: 2.5px solid #7dd3fc;
+    background: #f0f9ff;
+    color: #0369a1;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .choice-speak-mini:hover {
+    background: #0284c7;
+    color: #fff;
+    border-color: #0284c7;
+  }
+
+  .math-input.slot-ones { border-color: #2563eb; background: #eff6ff; color: #1e3a8a; }
+  .math-input.slot-tenths { border-color: #16a34a; background: #f0fdf4; color: #14532d; }
+  .math-input.slot-hundredths { border-color: #db2777; background: #fdf2f8; color: #831843; }
+
+  /* 視覺舒適排版微調 */
+  body.comfort-ui .question-title-text {
+    font-size: calc(2rem * var(--font-scale));
+    line-height: 1.7;
+  }
+  body.comfort-ui .fill-row {
+    font-size: calc(1.88rem * var(--font-scale));
+    line-height: 2.25;
+    padding: 20px 24px;
+  }
+  body.comfort-ui .math-input {
+    height: calc(62px * var(--font-scale));
+    min-width: 108px;
+    font-size: calc(1.8rem * var(--font-scale));
+  }
+  body.comfort-ui .choice-btn {
+    min-height: 76px;
+    font-size: calc(1.62rem * var(--font-scale));
+    padding: 18px 22px;
+  }
+  body.comfort-ui .cmp-btn {
+    min-width: calc(78px * var(--font-scale));
+    height: calc(66px * var(--font-scale));
+    font-size: calc(2.1rem * var(--font-scale));
+  }
+  body.comfort-ui .ctrl-btn {
+    min-height: 58px;
+    padding: 15px 24px;
+  }
 </style>
 </head>
 <body>
@@ -1007,8 +1396,8 @@
       </div>
       <div class="hero-meta-pills">
         <span class="hero-pill">📐 第六～十單元</span>
-        <span class="hero-pill">📖 第六單元「錯題與類題」已上線</span>
-        <span class="hero-pill">✨ 第七單元「小數」測驗開放</span>
+        <span class="hero-pill">📐 第六單元「三角形」已開放</span>
+        <span class="hero-pill">✨ 第七單元「小數」已開放</span>
       </div>
     </div>
 
@@ -1059,6 +1448,7 @@
         <span style="background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:999px;font-weight:800;font-size:1rem;margin-left:8px;">課堂互動練習</span>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button type="button" class="ctrl-btn auto-tts-btn" id="btn-prac-auto-tts" style="display:none;" onclick="toggleAutoTTS()">🔊 自動朗讀：關</button>
         <button class="ctrl-btn" onclick="togglePracticeViewMode()" id="btn-prac-view-toggle">📋 切換全大題一覽</button>
       </div>
     </div>
@@ -1095,7 +1485,10 @@
         <span class="exam-student-badge" id="exam-badge-info">402 班 01 號</span>
         <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="exam-test-title">第七單元《小數》線上測驗</span>
       </div>
-      <div class="exam-progress-text" id="exam-progress-text">已填答 0 / 45 格</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button type="button" class="tool-btn auto-tts-btn" id="btn-exam-auto-tts" style="display:none;" onclick="toggleAutoTTS()">🔊 自動朗讀：關</button>
+        <div class="exam-progress-text" id="exam-progress-text">已填答 0 / 45 格</div>
+      </div>
     </div>
 
     <div class="section-tabs" id="exam-section-tabs"></div>
@@ -1144,7 +1537,10 @@
         <span class="exam-student-badge" id="retry-badge-info">402 班 01 號</span>
         <span style="font-size:calc(1.3rem * var(--font-scale));font-weight:900;" id="retry-unit-title">錯題訂正練習（訂正答對即依比例加分，最高 +10 分）</span>
       </div>
-      <div class="exam-progress-text" id="retry-progress-text" style="color:#ffedd5;">待訂正 0 格</div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <button type="button" class="tool-btn auto-tts-btn" id="btn-retry-auto-tts" style="display:none;" onclick="toggleAutoTTS()">🔊 自動朗讀：關</button>
+        <div class="exam-progress-text" id="retry-progress-text" style="color:#ffedd5;">待訂正 0 格</div>
+      </div>
     </div>
 
     <div id="retry-cards-list" style="display:flex;flex-direction:column;gap:22px;"></div>
@@ -1170,6 +1566,476 @@ const SUPABASE_CONFIG = {
 const MATCH_COLORS = ["#1f6351", "#d97706", "#7c3aed", "#0284c7"];
 const CMP_DISPLAY = { ">": "＞", "<": "＜", "=": "＝" };
 
+// ==================== 匿名座號識別與雲端設定讀取（跨站共用協定） ====================
+const DEFAULT_SUPPORT_TOKENS = ["29ed3f137502a0b9"];
+const SUPPORT_TOKENS_LS_KEY = "chaohe_support_tokens_v1";
+
+function canonicalSupportClass(cls) {
+  const cleaned = String(cls || "").trim().replace(/[^0-9a-zA-Z]/g, "");
+  return cleaned === "42" ? "402" : cleaned;
+}
+
+function supportSeatToken(cls, seat) {
+  const c = canonicalSupportClass(cls);
+  const s = Number(seat);
+  if (!c || !Number.isFinite(s) || s <= 0) return "";
+  const str = `chaohe-support-v1:${c}:${s}`;
+  let h1 = 0x811c9dc5;
+  let h2 = 0x050c5d1f;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 0x01000193);
+    h2 = Math.imul(h2 ^ ch, 0x85ebca6b);
+  }
+  return ((h1 >>> 0).toString(16).padStart(8, "0")) + ((h2 >>> 0).toString(16).padStart(8, "0"));
+}
+
+const initialUrlSupportParam = (new URLSearchParams(window.location.search).get("s") || "").trim().toLowerCase();
+let remoteSupportTokens = null; // null = 尚未讀取或尚未建立遠端表
+let remoteSupportFetchPromise = null;
+
+function loadRemoteSupportTokens() {
+  if (remoteSupportFetchPromise) return remoteSupportFetchPromise;
+  remoteSupportFetchPromise = (async () => {
+    try {
+      const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+      const timer = ctrl ? setTimeout(() => ctrl.abort(), 2500) : null;
+      const res = await fetch(`${SUPABASE_CONFIG.URL}/rest/v1/support_roster?select=token`, {
+        method: "GET",
+        headers: {
+          "apikey": SUPABASE_CONFIG.ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_CONFIG.ANON_KEY}`
+        },
+        ...(ctrl ? { signal: ctrl.signal } : {})
+      });
+      if (timer) clearTimeout(timer);
+      if (res.ok) {
+        const rows = await res.json();
+        if (Array.isArray(rows)) {
+          remoteSupportTokens = rows
+            .map(r => String(r?.token || "").trim().toLowerCase())
+            .filter(Boolean);
+        }
+      }
+    } catch {
+      // 遠端表未建立或離線時靜默降級
+    }
+    return remoteSupportTokens;
+  })();
+  return remoteSupportFetchPromise;
+}
+
+async function ensureRemoteSupportTokensLoaded() {
+  try {
+    await loadRemoteSupportTokens();
+  } catch {}
+}
+
+function loadLocalSupportTokens() {
+  try {
+    const raw = localStorage.getItem(SUPPORT_TOKENS_LS_KEY);
+    if (raw === null) return null;
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return null;
+    return arr.map(t => String(t || "").trim().toLowerCase()).filter(Boolean);
+  } catch {
+    return null;
+  }
+}
+
+function getEffectiveSupportTokenSet() {
+  if (Array.isArray(remoteSupportTokens) && remoteSupportTokens.length > 0) {
+    return new Set(remoteSupportTokens);
+  }
+  const localArr = loadLocalSupportTokens();
+  if (localArr !== null) {
+    return new Set(localArr);
+  }
+  return new Set(DEFAULT_SUPPORT_TOKENS.map(t => String(t).trim().toLowerCase()).filter(Boolean));
+}
+
+function checkSeatUsesAssist(cls, seat) {
+  if (initialUrlSupportParam === "preview") return true;
+  const tok = supportSeatToken(cls, seat);
+  if (!tok) return false;
+  if (initialUrlSupportParam && initialUrlSupportParam === tok) return true;
+  return getEffectiveSupportTokenSet().has(tok);
+}
+
+// ==================== 語音報讀引擎（Web Speech API zh-TW） ====================
+let autoTTSEnabled = false;
+let activeTTSBtn = null;
+let cachedZhVoice = null;
+
+function pickZhTwVoice() {
+  if (!("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices() || [];
+  if (!voices.length) return cachedZhVoice;
+  const exact = voices.find(v => /^(zh[-_]TW|zh[-_]Hant)/i.test(v.lang));
+  if (exact) { cachedZhVoice = exact; return exact; }
+  const anyZh = voices.find(v => /^zh/i.test(v.lang));
+  cachedZhVoice = anyZh || null;
+  return cachedZhVoice;
+}
+
+if ("speechSynthesis" in window) {
+  pickZhTwVoice();
+  window.speechSynthesis.onvoiceschanged = () => { pickZhTwVoice(); };
+}
+
+function stopSpeech() {
+  if ("speechSynthesis" in window) {
+    try { window.speechSynthesis.cancel(); } catch {}
+  }
+  if (activeTTSBtn) {
+    activeTTSBtn.classList.remove("speaking");
+    activeTTSBtn = null;
+  }
+}
+
+function formatMathForSpeech(str) {
+  return String(str || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/□/g, "框框")
+    .replace(/∠/g, "角")
+    .replace(/°/g, "度")
+    .replace(/＞/g, "大於")
+    .replace(/＜/g, "小於")
+    .replace(/[＝=]/g, "等於")
+    .replace(/＋/g, "加")
+    .replace(/－/g, "減")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function speakText(text, btnEl) {
+  if (!("speechSynthesis" in window)) return;
+  const cleaned = formatMathForSpeech(text);
+  if (!cleaned) return;
+  const wasSameBtn = !!(btnEl && activeTTSBtn === btnEl && window.speechSynthesis.speaking);
+  stopSpeech();
+  if (wasSameBtn) return;
+
+  const utt = new SpeechSynthesisUtterance(cleaned);
+  utt.lang = "zh-TW";
+  utt.rate = 0.85;
+  utt.pitch = 1.0;
+  const v = pickZhTwVoice();
+  if (v) utt.voice = v;
+
+  if (btnEl) {
+    activeTTSBtn = btnEl;
+    btnEl.classList.add("speaking");
+  }
+  utt.onend = () => {
+    if (activeTTSBtn === btnEl) {
+      btnEl.classList.remove("speaking");
+      activeTTSBtn = null;
+    }
+  };
+  utt.onerror = () => {
+    if (activeTTSBtn === btnEl) {
+      btnEl.classList.remove("speaking");
+      activeTTSBtn = null;
+    }
+  };
+  try {
+    window.speechSynthesis.speak(utt);
+  } catch {}
+}
+
+function buildCardSpeechText(card) {
+  if (!card) return "";
+  const parts = [];
+  if (card.speechText) {
+    parts.push(card.speechText);
+  } else {
+    parts.push(card.title || "");
+    if (card.kind === "fill") {
+      (card.rows || []).forEach(r => {
+        const line = r.parts.map(p => (typeof p === "string" ? p : "多少")).join("");
+        parts.push(line);
+      });
+    } else if (card.kind === "compare") {
+      (card.items || []).forEach((it, idx) => {
+        parts.push(`第 ${idx + 1} 小題，${it.leftExpr} 和 ${it.rightExpr} 比大小`);
+      });
+    }
+  }
+  if (card.kind === "choice" && card.items && card.items[0]) {
+    const opts = card.items[0].options || [];
+    opts.forEach((opt, i) => {
+      parts.push(`選項 ${i + 1}，${opt}`);
+    });
+  }
+  if (card.hintText) {
+    parts.push("小提示：" + card.hintText);
+  }
+  return parts.join("。");
+}
+
+function speakCardById(cardId, btnEl) {
+  if (!currentUnit) return;
+  const card = currentUnit.cards.find(c => c.cardId === cardId);
+  if (!card) return;
+  speakText(buildCardSpeechText(card), btnEl);
+}
+
+function speakOptionText(text, ev) {
+  if (ev) ev.stopPropagation();
+  speakText(text, null);
+}
+
+function updateAutoTTSButtons() {
+  const show = !!(currentUnit && currentUnit.hasAudioAssist);
+  ["btn-prac-auto-tts", "btn-exam-auto-tts", "btn-retry-auto-tts"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = show ? "inline-flex" : "none";
+    el.classList.toggle("active", autoTTSEnabled);
+    el.textContent = autoTTSEnabled ? "🔊 自動朗讀：開" : "🔊 自動朗讀：關";
+  });
+}
+
+function toggleAutoTTS() {
+  autoTTSEnabled = !autoTTSEnabled;
+  updateAutoTTSButtons();
+  if (!autoTTSEnabled) {
+    stopSpeech();
+  } else if (currentMode === "exam") {
+    const card = getExamFilteredCards()[examCardIndex];
+    if (card) speakText(buildCardSpeechText(card), null);
+  } else if (currentMode === "practice" && !pracIsListMode) {
+    const card = getPracFilteredCards()[pracCardIndex];
+    if (card) speakText(buildCardSpeechText(card), null);
+  }
+}
+
+function maybeAutoSpeakCard(card) {
+  stopSpeech();
+  if (!autoTTSEnabled || !currentUnit || !currentUnit.hasAudioAssist || !card) return;
+  setTimeout(() => {
+    if (autoTTSEnabled && currentUnit && currentUnit.hasAudioAssist) {
+      speakText(buildCardSpeechText(card), null);
+    }
+  }, 180);
+}
+
+// ==================== 視覺提示鷹架元件建構函式 ====================
+function renderPlaceValueBoard(rows) {
+  const hasTens = rows.some(r => r.tens !== undefined && r.tens !== "");
+  const hasLabel = rows.some(r => !!r.label);
+  const thTens = hasTens ? `<th class="pv-col-tens">十位<span class="pv-sub">10</span></th>` : "";
+  const thLbl = hasLabel ? `<th class="pv-lbl-col">數字</th>` : "";
+
+  const bodyRows = rows.map(r => {
+    const hl = new Set(r.hlCols || []);
+    const tdLbl = hasLabel ? `<td class="pv-lbl-col">${escapeHTML(r.label || "")}</td>` : "";
+    const tdTens = hasTens ? `<td class="pv-col-tens ${hl.has("tens") ? "pv-hl" : ""}">${escapeHTML(r.tens ?? "")}</td>` : "";
+    return `
+      <tr>
+        ${tdLbl}
+        ${tdTens}
+        <td class="pv-col-ones ${hl.has("ones") ? "pv-hl" : ""}">${escapeHTML(r.ones ?? "")}</td>
+        <td class="pv-col-dot">.</td>
+        <td class="pv-col-tenths ${hl.has("tenths") ? "pv-hl" : ""}">${escapeHTML(r.tenths ?? "")}</td>
+        <td class="pv-col-hundredths ${hl.has("hundredths") ? "pv-hl" : ""}">${escapeHTML(r.hundredths ?? "")}</td>
+      </tr>
+    `;
+  }).join("");
+
+  return `
+    <div class="pv-board-wrap">
+      <table class="pv-board" aria-label="位值定位板">
+        <thead>
+          <tr>
+            ${thLbl}
+            ${thTens}
+            <th class="pv-col-ones">個位<span class="pv-sub">1</span></th>
+            <th class="pv-col-dot">點</th>
+            <th class="pv-col-tenths">十分位<span class="pv-sub">0.1</span></th>
+            <th class="pv-col-hundredths">百分位<span class="pv-sub">0.01</span></th>
+          </tr>
+        </thead>
+        <tbody>${bodyRows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderUnitConvCard(extraLine) {
+  return `
+    <div class="unit-conv-card">
+      <div class="unit-conv-main">
+        <span>📏 單位小幫手：</span>
+        <span class="unit-conv-pill">1 公尺 ＝ 100 公分</span>
+        <span class="unit-conv-pill">1 公分 ＝ 0.01 公尺</span>
+      </div>
+      ${extraLine ? `<div class="unit-conv-sub">${extraLine}</div>` : ""}
+    </div>
+  `;
+}
+
+function renderReadChips(pairs) {
+  return `
+    <div class="read-chips-row">
+      ${pairs.map(([num, txt]) => `
+        <div class="read-chip">
+          <div class="read-chip-num">${escapeHTML(num)}</div>
+          <div class="read-chip-txt">${escapeHTML(txt)}</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderTriangleSVG(kind) {
+  if (kind === "iso_compare") {
+    return `
+      <svg viewBox="0 0 460 220" role="img" aria-label="甲乙兩個三角形邊長圖">
+        <rect x="6" y="6" width="214" height="208" rx="16" fill="#f0f9ff" stroke="#7dd3fc" stroke-width="2.5"/>
+        <text x="26" y="34" font-size="22" font-weight="900" fill="#0369a1">甲</text>
+        <polygon points="46,56 184,56 115,178" fill="#bae6fd" stroke="#0284c7" stroke-width="3.5" stroke-linejoin="round"/>
+        <line x1="72" y1="112" x2="88" y2="122" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="158" y1="112" x2="142" y2="122" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <text x="115" y="47" text-anchor="middle" font-size="18" font-weight="900" fill="#334155">5 公分</text>
+        <text x="48" y="138" text-anchor="middle" font-size="19" font-weight="900" fill="#dc2626">4 公分</text>
+        <text x="182" y="138" text-anchor="middle" font-size="19" font-weight="900" fill="#dc2626">4 公分</text>
+
+        <rect x="240" y="6" width="214" height="208" rx="16" fill="#fff1f2" stroke="#fda4af" stroke-width="2.5"/>
+        <text x="260" y="34" font-size="22" font-weight="900" fill="#be123c">乙</text>
+        <polygon points="282,58 282,174 416,174" fill="#fecdd3" stroke="#e11d48" stroke-width="3.5" stroke-linejoin="round"/>
+        <text x="264" y="122" text-anchor="middle" font-size="18" font-weight="900" fill="#334155">3</text>
+        <text x="350" y="198" text-anchor="middle" font-size="18" font-weight="900" fill="#334155">4 公分</text>
+        <text x="368" y="110" text-anchor="middle" font-size="18" font-weight="900" fill="#334155">5 公分</text>
+      </svg>
+    `;
+  }
+  if (kind === "iso_angles_50") {
+    return `
+      <svg viewBox="0 0 360 220" role="img" aria-label="兩個角都是50度的等腰三角形">
+        <polygon points="60,178 300,178 180,36" fill="#fef3c7" stroke="#d97706" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M 96,178 A 36,36 0 0 0 83,150" fill="none" stroke="#dc2626" stroke-width="4"/>
+        <path d="M 264,178 A 36,36 0 0 1 277,150" fill="none" stroke="#dc2626" stroke-width="4"/>
+        <text x="180" y="26" text-anchor="middle" font-size="20" font-weight="900" fill="#162b24">A</text>
+        <text x="44" y="190" text-anchor="middle" font-size="20" font-weight="900" fill="#dc2626">B</text>
+        <text x="316" y="190" text-anchor="middle" font-size="20" font-weight="900" fill="#dc2626">C</text>
+        <text x="108" y="168" font-size="21" font-weight="900" fill="#dc2626">50°</text>
+        <text x="218" y="168" font-size="21" font-weight="900" fill="#dc2626">50°</text>
+        <text x="180" y="208" text-anchor="middle" font-size="16" font-weight="900" fill="#b45309">兩個紅角一樣大（50° ＝ 50°）</text>
+      </svg>
+    `;
+  }
+  if (kind === "iso_find_leg_44") {
+    return `
+      <svg viewBox="0 0 380 235" role="img" aria-label="等腰三角形求腰長">
+        <polygon points="85,182 295,182 190,32" fill="#ecfdf5" stroke="#059669" stroke-width="3.5" stroke-linejoin="round"/>
+        <line x1="85" y1="182" x2="190" y2="32" stroke="#16a34a" stroke-width="6"/>
+        <line x1="295" y1="182" x2="190" y2="32" stroke="#16a34a" stroke-width="6"/>
+        <line x1="126" y1="100" x2="146" y2="112" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="254" y1="100" x2="234" y2="112" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <text x="190" y="24" text-anchor="middle" font-size="20" font-weight="900" fill="#162b24">A</text>
+        <text x="68" y="192" text-anchor="middle" font-size="20" font-weight="900" fill="#162b24">B</text>
+        <text x="312" y="192" text-anchor="middle" font-size="20" font-weight="900" fill="#162b24">C</text>
+        <text x="122" y="172" font-size="18" font-weight="900" fill="#b45309">55°</text>
+        <text x="232" y="172" font-size="18" font-weight="900" fill="#b45309">55°</text>
+        <text x="72" y="108" text-anchor="middle" font-size="22" font-weight="900" fill="#dc2626">? 公分</text>
+        <text x="308" y="108" text-anchor="middle" font-size="22" font-weight="900" fill="#15803d">44 公分</text>
+        <text x="190" y="206" text-anchor="middle" font-size="18" font-weight="900" fill="#475569">底邊 32 公分</text>
+        <text x="190" y="228" text-anchor="middle" font-size="15" font-weight="900" fill="#15803d">兩條綠邊（腰）一樣長</text>
+      </svg>
+    `;
+  }
+  if (kind === "equilateral_6") {
+    return `
+      <svg viewBox="0 0 360 225" role="img" aria-label="三邊都是6公分的正三角形">
+        <polygon points="80,185 280,185 180,28" fill="#ede9fe" stroke="#7c3aed" stroke-width="4" stroke-linejoin="round"/>
+        <line x1="120" y1="100" x2="140" y2="112" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="240" y1="100" x2="220" y2="112" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <line x1="180" y1="175" x2="180" y2="195" stroke="#dc2626" stroke-width="4.5" stroke-linecap="round"/>
+        <text x="88" y="104" text-anchor="middle" font-size="21" font-weight="900" fill="#5b21b6">6 公分</text>
+        <text x="272" y="104" text-anchor="middle" font-size="21" font-weight="900" fill="#5b21b6">6 公分</text>
+        <text x="180" y="214" text-anchor="middle" font-size="21" font-weight="900" fill="#5b21b6">6 公分</text>
+      </svg>
+    `;
+  }
+  if (kind === "right_90") {
+    return `
+      <svg viewBox="0 0 360 220" role="img" aria-label="有一個90度直角的直角三角形">
+        <polygon points="82,36 82,182 292,182" fill="#e0f2fe" stroke="#0284c7" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="82" y="148" width="34" height="34" fill="#fee2e2" stroke="#dc2626" stroke-width="4"/>
+        <text x="136" y="168" font-size="22" font-weight="900" fill="#dc2626">90° 直角</text>
+      </svg>
+    `;
+  }
+  if (kind === "equilateral_compare") {
+    return `
+      <svg viewBox="0 0 460 220" role="img" aria-label="甲正三角形與乙等腰三角形比較">
+        <rect x="6" y="6" width="214" height="208" rx="16" fill="#f0fdf4" stroke="#86efac" stroke-width="2.5"/>
+        <text x="26" y="34" font-size="22" font-weight="900" fill="#15803d">甲</text>
+        <polygon points="48,176 178,176 113,62" fill="#bbf7d0" stroke="#16a34a" stroke-width="3.5" stroke-linejoin="round"/>
+        <line x1="72" y1="114" x2="88" y2="124" stroke="#dc2626" stroke-width="4"/>
+        <line x1="154" y1="114" x2="138" y2="124" stroke="#dc2626" stroke-width="4"/>
+        <line x1="113" y1="168" x2="113" y2="184" stroke="#dc2626" stroke-width="4"/>
+        <text x="52" y="114" text-anchor="middle" font-size="18" font-weight="900" fill="#15803d">5</text>
+        <text x="174" y="114" text-anchor="middle" font-size="18" font-weight="900" fill="#15803d">5</text>
+        <text x="113" y="202" text-anchor="middle" font-size="18" font-weight="900" fill="#15803d">5 公分</text>
+
+        <rect x="240" y="6" width="214" height="208" rx="16" fill="#fffbeb" stroke="#fcd34d" stroke-width="2.5"/>
+        <text x="260" y="34" font-size="22" font-weight="900" fill="#b45309">乙</text>
+        <polygon points="262,174 434,174 348,108" fill="#fde68a" stroke="#d97706" stroke-width="3.5" stroke-linejoin="round"/>
+        <text x="292" y="130" text-anchor="middle" font-size="18" font-weight="900" fill="#92400e">5</text>
+        <text x="404" y="130" text-anchor="middle" font-size="18" font-weight="900" fill="#92400e">5</text>
+        <text x="348" y="200" text-anchor="middle" font-size="18" font-weight="900" fill="#b45309">8 公分</text>
+      </svg>
+    `;
+  }
+  if (kind === "obtuse_120") {
+    return `
+      <svg viewBox="0 0 360 200" role="img" aria-label="120度鈍角三角形">
+        <polygon points="48,166 314,166 146,84" fill="#fef3c7" stroke="#d97706" stroke-width="4" stroke-linejoin="round"/>
+        <text x="150" y="122" text-anchor="middle" font-size="22" font-weight="900" fill="#dc2626">120°</text>
+        <text x="86" y="156" font-size="18" font-weight="900" fill="#475569">30°</text>
+        <text x="248" y="156" font-size="18" font-weight="900" fill="#475569">30°</text>
+      </svg>
+    `;
+  }
+  if (kind === "acute_70_60_50") {
+    return `
+      <svg viewBox="0 0 360 210" role="img" aria-label="三個角都小於90度的銳角三角形">
+        <polygon points="62,178 302,178 164,34" fill="#dcfce7" stroke="#16a34a" stroke-width="4" stroke-linejoin="round"/>
+        <text x="164" y="74" text-anchor="middle" font-size="19" font-weight="900" fill="#15803d">70°</text>
+        <text x="98" y="166" font-size="19" font-weight="900" fill="#15803d">60°</text>
+        <text x="234" y="166" font-size="19" font-weight="900" fill="#15803d">50°</text>
+      </svg>
+    `;
+  }
+  if (kind === "iso_right") {
+    return `
+      <svg viewBox="0 0 340 215" role="img" aria-label="等腰直角三角形">
+        <polygon points="90,34 90,180 236,180" fill="#fae8ff" stroke="#a21caf" stroke-width="4" stroke-linejoin="round"/>
+        <rect x="90" y="148" width="32" height="32" fill="#fee2e2" stroke="#dc2626" stroke-width="3.5"/>
+        <line x1="80" y1="104" x2="100" y2="104" stroke="#dc2626" stroke-width="4"/>
+        <line x1="163" y1="170" x2="163" y2="190" stroke="#dc2626" stroke-width="4"/>
+        <text x="50" y="112" text-anchor="middle" font-size="19" font-weight="900" fill="#86198f">6 cm</text>
+        <text x="163" y="206" text-anchor="middle" font-size="19" font-weight="900" fill="#86198f">6 cm</text>
+      </svg>
+    `;
+  }
+  return "";
+}
+
+function renderOrigWithSVG(svgKind, origSrc, caption) {
+  const svgHtml = svgKind ? `<div class="visual-svg-box">${renderTriangleSVG(svgKind)}</div>` : "";
+  const imgHtml = origSrc ? `
+    <div class="visual-orig-box">
+      <img src="${origSrc}" alt="${escapeHTML(caption || "題目圖示")}" loading="lazy">
+      <div class="visual-orig-caption">${escapeHTML(caption || "原卷圖解")}</div>
+    </div>
+  ` : "";
+  return `<div class="visual-split-row">${imgHtml}${svgHtml}</div>`;
+}
+
 // ==================== 單元與題庫定義 ====================
 const UNITS = [
   {
@@ -1177,12 +2043,349 @@ const UNITS = [
     examId: "U6-math-triangle",
     unitNum: "第六單元",
     title: "三角形",
-    subtitle: "以邊分類三角形｜已收錄 5-2 小節 3 題錯題＋3 題類題（含原卷圖解與隨機出題）",
-    ready: false,
+    subtitle: "等腰三角形、正三角形、以角分類與全等（含原卷圖解＋錯題類題）",
+    ready: true,
     mistakesReady: true,
     mistakesHref: "mistakes.html?unit=U6",
     mistakesStatus: "✅ 已上線（錯題與類題）",
-    cards: []
+    sections: [
+      { idx: 1, name: "第一大題：以邊分類三角形" },
+      { idx: 2, name: "第二大題：以角分類與全等" }
+    ],
+    cards: [
+      {
+        cardId: "u6-s1-q1",
+        sectionIdx: 1,
+        section: "第一大題：以邊分類三角形",
+        label: "(1)",
+        title: "觀察下圖，哪一個三角形是等腰三角形？",
+        kind: "choice",
+        visualHtml: renderOrigWithSVG("iso_compare", "assets/q3_orig.jpg", "圖形對照"),
+        items: [
+          {
+            id: "u6_0",
+            expected: "甲（邊長 5、4、4 公分）",
+            options: [
+              "甲（邊長 5、4、4 公分）",
+              "乙（邊長 3、4、5 公分）",
+              "甲和乙都是",
+              "甲和乙都不是"
+            ],
+            label: "一(1) 辨識等腰三角形"
+          }
+        ],
+        explanation: "只要有兩條邊一樣長就是等腰三角形。甲有兩條邊都是 4 公分，所以甲是等腰三角形；乙的三邊 3、4、5 公分都不一樣長。"
+      },
+      {
+        cardId: "u6-s1-q2",
+        sectionIdx: 1,
+        section: "第一大題：以邊分類三角形",
+        label: "(2)",
+        title: "看圖回答：三角形 ABC 中 ∠B＝50°、∠C＝50°，它是什麼三角形？",
+        kind: "choice",
+        visualHtml: renderOrigWithSVG("iso_angles_50", "assets/q1_orig.png", "圖形對照"),
+        items: [
+          {
+            id: "u6_1",
+            expected: "等腰三角形",
+            options: ["等腰三角形", "正三角形", "直角三角形", "鈍角三角形"],
+            label: "一(2) 兩底角相等判斷三角形"
+          }
+        ],
+        explanation: "三角形中有兩個角一樣大（∠B＝∠C＝50°），對應的兩條邊也會一樣長，所以它是等腰三角形。"
+      },
+      {
+        cardId: "u6-s1-q3",
+        sectionIdx: 1,
+        section: "第一大題：以邊分類三角形",
+        label: "(3)",
+        title: "看圖回答：等腰三角形 ABC 中，邊 AC 是 44 公分，請問邊 AB 是多少公分？",
+        kind: "choice",
+        visualHtml: renderOrigWithSVG("iso_find_leg_44", "assets/q2_orig.png", "圖形對照"),
+        items: [
+          {
+            id: "u6_2",
+            expected: "44 公分",
+            options: ["32 公分", "44 公分", "55 公分", "38 公分"],
+            label: "一(3) 等腰三角形求腰長"
+          }
+        ],
+        explanation: "∠B 和 ∠C 都是 55°，兩條腰（邊 AB 與邊 AC）一樣長，所以邊 AB 也是 44 公分。"
+      },
+      {
+        cardId: "u6-s1-q4",
+        sectionIdx: 1,
+        section: "第一大題：以邊分類三角形",
+        label: "(4)",
+        title: "三條邊都是 6 公分的正三角形，它的三個角各是幾度？",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("equilateral_6")}</div>`,
+        items: [
+          {
+            id: "u6_3",
+            expected: "都是 60°",
+            options: ["都是 60°", "都是 90°", "都是 45°", "都是 50°"],
+            label: "一(4) 正三角形三個角度"
+          }
+        ],
+        explanation: "正三角形不只三條邊一樣長，三個角也一樣大，每個角都是 60°。"
+      },
+      {
+        cardId: "u6-s1-q5",
+        sectionIdx: 1,
+        section: "第一大題：以邊分類三角形",
+        label: "(5)",
+        title: "下面哪一組邊長圍起來是正三角形？",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("equilateral_compare")}</div>`,
+        items: [
+          {
+            id: "u6_4",
+            expected: "7 公分、7 公分、7 公分",
+            options: [
+              "7 公分、7 公分、7 公分",
+              "5 公分、5 公分、8 公分",
+              "3 公分、4 公分、5 公分",
+              "6 公分、6 公分、9 公分"
+            ],
+            label: "一(5) 判斷正三角形邊長"
+          }
+        ],
+        explanation: "正三角形必須三條邊全部一樣長，所以 7 公分、7 公分、7 公分是正三角形。"
+      },
+      {
+        cardId: "u6-s2-q1",
+        sectionIdx: 2,
+        section: "第二大題：以角分類與全等",
+        label: "(1)",
+        title: "有一個角是 90°（直角）的三角形，叫作什麼三角形？",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("right_90")}</div>`,
+        items: [
+          {
+            id: "u6_5",
+            expected: "直角三角形",
+            options: ["直角三角形", "銳角三角形", "鈍角三角形", "正三角形"],
+            label: "二(1) 認識直角三角形"
+          }
+        ],
+        explanation: "只要三角形中有一個直角（90°），就叫作直角三角形。"
+      },
+      {
+        cardId: "u6-s2-q2",
+        sectionIdx: 2,
+        section: "第二大題：以角分類與全等",
+        label: "(2)",
+        title: "三個角分別是 120°、30°、30° 的三角形，叫作什麼三角形？",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("obtuse_120")}</div>`,
+        items: [
+          {
+            id: "u6_6",
+            expected: "鈍角三角形",
+            options: ["鈍角三角形", "銳角三角形", "直角三角形", "正三角形"],
+            label: "二(2) 認識鈍角三角形"
+          }
+        ],
+        explanation: "120° 大於 90° 是鈍角，有一個鈍角的三角形叫作鈍角三角形。"
+      },
+      {
+        cardId: "u6-s2-q3",
+        sectionIdx: 2,
+        section: "第二大題：以角分類與全等",
+        label: "(3)",
+        title: "三個角分別是 70°、60°、50°（都小於 90°），它是什麼三角形？",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("acute_70_60_50")}</div>`,
+        items: [
+          {
+            id: "u6_7",
+            expected: "銳角三角形",
+            options: ["銳角三角形", "直角三角形", "鈍角三角形", "等腰直角三角形"],
+            label: "二(3) 認識銳角三角形"
+          }
+        ],
+        explanation: "三個角都小於 90°（都是銳角）的三角形，叫作銳角三角形。"
+      },
+      {
+        cardId: "u6-s2-q4",
+        sectionIdx: 2,
+        section: "第二大題：以角分類與全等",
+        label: "(4)",
+        title: "有兩條邊都是 6 公分，而且有一個直角的三角形，叫作什麼？",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("iso_right")}</div>`,
+        items: [
+          {
+            id: "u6_8",
+            expected: "等腰直角三角形",
+            options: ["等腰直角三角形", "正三角形", "鈍角三角形", "不等邊三角形"],
+            label: "二(4) 認識等腰直角三角形"
+          }
+        ],
+        explanation: "同時有「兩條邊一樣長（等腰）」和「一個直角（90°）」，叫作等腰直角三角形。"
+      },
+      {
+        cardId: "u6-s2-q5",
+        sectionIdx: 2,
+        section: "第二大題：以角分類與全等",
+        label: "(5)",
+        title: "兩個形狀和大小完全相同、可以疊合的「全等三角形」，下面哪一句話正確？",
+        kind: "choice",
+        items: [
+          {
+            id: "u6_9",
+            expected: "對應邊一樣長，對應角一樣大",
+            options: [
+              "對應邊一樣長，對應角一樣大",
+              "只有對應角一樣大，邊不一樣長",
+              "只有對應邊一樣長，角不一樣大",
+              "大小一樣但形狀不同"
+            ],
+            label: "二(5) 全等三角形性質"
+          }
+        ],
+        explanation: "全等三角形完全疊合，因此對應邊一定一樣長，對應角也一定一樣大。"
+      }
+    ],
+    supportSections: [
+      { idx: 1, name: "第一大題：認識等腰與正三角形" },
+      { idx: 2, name: "第二大題：認識直角與正三角形" }
+    ],
+    supportCards: [
+      {
+        cardId: "su6-s1-q1",
+        sectionIdx: 1,
+        section: "第一大題：認識等腰與正三角形",
+        label: "(1)",
+        title: "哪一個是等腰三角形？",
+        stemHtml: `看圖選一選：哪一個是 <span class="kw">等腰三角形</span>？`,
+        speechText: "看圖選一選：哪一個是等腰三角形？",
+        hintText: "等腰三角形有「兩條邊一樣長」。看看甲和乙，哪一個有兩個一樣的數字？",
+        kind: "choice",
+        visualHtml: renderOrigWithSVG("iso_compare", "assets/q3_orig.jpg", "原卷圖解"),
+        items: [
+          {
+            id: "su6_0",
+            expected: "甲（兩條邊都是 4 公分）",
+            options: [
+              "甲（兩條邊都是 4 公分）",
+              "乙（三條邊都不一樣長）"
+            ],
+            label: "一(1) 辨識等腰三角形"
+          }
+        ],
+        explanation: "甲有兩條邊都是 4 公分（一樣長），所以甲是等腰三角形！"
+      },
+      {
+        cardId: "su6-s1-q2",
+        sectionIdx: 1,
+        section: "第一大題：認識等腰與正三角形",
+        label: "(2)",
+        title: "有兩個角一樣大，它是什麼三角形？",
+        stemHtml: `這個三角形有 <span class="kw">兩個角都是 50°（一樣大）</span>，它是什麼三角形？`,
+        speechText: "這個三角形有兩個角都是 50 度，一樣大，它是什麼三角形？",
+        hintText: "有兩個角一樣大（50° 和 50°），它就是等腰三角形。",
+        kind: "choice",
+        visualHtml: renderOrigWithSVG("iso_angles_50", "assets/q1_orig.png", "原卷圖解"),
+        items: [
+          {
+            id: "su6_1",
+            expected: "等腰三角形",
+            options: ["等腰三角形", "直角三角形"],
+            label: "一(2) 看角度認等腰三角形"
+          }
+        ],
+        explanation: "∠B 和 ∠C 都是 50°，有兩個角一樣大，所以是等腰三角形！"
+      },
+      {
+        cardId: "su6-s1-q3",
+        sectionIdx: 1,
+        section: "第一大題：認識等腰與正三角形",
+        label: "(3)",
+        title: "找一找一樣長的腰是多少公分？",
+        stemHtml: `這是等腰三角形。右邊綠線是 <span class="kw">44 公分</span>，左邊綠線（邊 AB）是多少公分？`,
+        speechText: "這是等腰三角形。右邊綠線是 44 公分，左邊綠線邊 AB 是多少公分？",
+        hintText: "等腰三角形的左右兩條綠邊（腰）會一樣長喔！",
+        kind: "choice",
+        visualHtml: renderOrigWithSVG("iso_find_leg_44", "assets/q2_orig.png", "原卷圖解"),
+        items: [
+          {
+            id: "su6_2",
+            expected: "44 公分",
+            options: ["44 公分", "32 公分"],
+            label: "一(3) 找等腰三角形腰長"
+          }
+        ],
+        explanation: "左右兩條腰一樣長，右邊是 44 公分，所以左邊也是 44 公分！"
+      },
+      {
+        cardId: "su6-s1-q4",
+        sectionIdx: 1,
+        section: "第一大題：認識等腰與正三角形",
+        label: "(4)",
+        title: "三條邊一樣長，是什麼三角形？",
+        stemHtml: `這個三角形 <span class="kw">三條邊都是 6 公分（全部一樣長）</span>，它是什麼三角形？`,
+        speechText: "這個三角形三條邊都是 6 公分，全部一樣長，它是什麼三角形？",
+        hintText: "三條邊全部都一樣長，叫作「正三角形」。",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("equilateral_6")}</div>`,
+        items: [
+          {
+            id: "su6_3",
+            expected: "正三角形",
+            options: ["正三角形", "直角三角形", "鈍角三角形"],
+            label: "一(4) 認識正三角形"
+          }
+        ],
+        explanation: "三條邊都是 6 公分，全部一樣長，就是正三角形！"
+      },
+      {
+        cardId: "su6-s2-q1",
+        sectionIdx: 2,
+        section: "第二大題：認識直角與正三角形",
+        label: "(1)",
+        title: "有一個正正的直角，是什麼三角形？",
+        stemHtml: `圖裡有一個 <span class="kw">90° 直角（紅色小方格）</span>，它是什麼三角形？`,
+        speechText: "圖裡有一個 90 度直角，紅色小方格，它是什麼三角形？",
+        hintText: "看到紅色小方格就是 90° 直角，有直角的就叫「直角三角形」。",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("right_90")}</div>`,
+        items: [
+          {
+            id: "su6_4",
+            expected: "直角三角形",
+            options: ["直角三角形", "正三角形"],
+            label: "二(1) 認識直角三角形"
+          }
+        ],
+        explanation: "圖裡有一個 90° 的直角，所以它是直角三角形！"
+      },
+      {
+        cardId: "su6-s2-q2",
+        sectionIdx: 2,
+        section: "第二大題：認識直角與正三角形",
+        label: "(2)",
+        title: "哪一個是正三角形？",
+        stemHtml: `看圖選一選：哪一個是 <span class="kw">正三角形</span>？`,
+        speechText: "看圖選一選：哪一個是正三角形？",
+        hintText: "正三角形要「三條邊全部一樣長」，檢查甲和乙的三個數字！",
+        kind: "choice",
+        visualHtml: `<div class="visual-svg-box">${renderTriangleSVG("equilateral_compare")}</div>`,
+        items: [
+          {
+            id: "su6_5",
+            expected: "甲（三條邊都是 5 公分）",
+            options: [
+              "甲（三條邊都是 5 公分）",
+              "乙（只有兩條邊是 5 公分）"
+            ],
+            label: "二(2) 辨識正三角形"
+          }
+        ],
+        explanation: "甲的三條邊都是 5 公分，全部一樣長，所以甲是正三角形！"
+      }
+    ]
   },
   {
     id: "U7",
@@ -1489,6 +2692,222 @@ const UNITS = [
         ],
         explanation: "① 整數都是 20，比十分位 1 ＜ 2（20.2＝20.20），所以 20.18 ＜ 20.2；② 先比整數部分 13 ＜ 14，所以 13.07 ＜ 14。"
       }
+    ],
+    supportSections: [
+      { idx: 1, name: "第一大題：認識二位小數" },
+      { idx: 2, name: "第二大題：小數與長度換算" },
+      { idx: 3, name: "第三大題：小數比大小" }
+    ],
+    supportCards: [
+      {
+        cardId: "su7-s1-q1",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(1)",
+        title: "0.06 是幾個 0.01？",
+        stemHtml: `看定位板：<span class="kw">0.06</span> 是幾個 <span class="kw">0.01</span>？`,
+        speechText: "看定位板：0.06 是幾個 0.01？",
+        hintText: "看粉紅色的「百分位（0.01）」裡面的數字，就是有幾個 0.01！",
+        kind: "choice",
+        visualHtml: renderPlaceValueBoard([{ ones: "0", tenths: "0", hundredths: "6", hlCols: ["hundredths"] }]),
+        items: [
+          {
+            id: "su7_0",
+            expected: "6 個",
+            options: ["6 個", "60 個", "1 個"],
+            label: "一(1) 0.06是幾個0.01"
+          }
+        ],
+        explanation: "百分位（0.01）是 6，所以 0.06 是 6 個 0.01 合起來的。"
+      },
+      {
+        cardId: "su7-s1-q2",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(2)",
+        title: "看定位板，填出 6.49 的數字",
+        stemHtml: `看彩色定位板，依序填出 <span class="kw">6.49</span> 的每個數字：`,
+        speechText: "看彩色定位板，依序填出 6.49 的個位、十分位和百分位數字。",
+        hintText: "對照顏色填進去：藍色＝個位、綠色＝十分位、粉紅色＝百分位。",
+        kind: "fill",
+        visualHtml: renderPlaceValueBoard([{ ones: "6", tenths: "4", hundredths: "9" }]),
+        rows: [
+          {
+            parts: [
+              "個位數字（藍）是 ",
+              { id: "su7_1", type: "integer", expected: "6", slotClass: "slot-ones", label: "一(2) 6.49個位數字" }
+            ]
+          },
+          {
+            parts: [
+              "十分位數字（綠）是 ",
+              { id: "su7_2", type: "integer", expected: "4", slotClass: "slot-tenths", label: "一(2) 6.49十分位數字" }
+            ]
+          },
+          {
+            parts: [
+              "百分位數字（粉）是 ",
+              { id: "su7_3", type: "integer", expected: "9", slotClass: "slot-hundredths", label: "一(2) 6.49百分位數字" }
+            ]
+          }
+        ],
+        explanation: "6.49 的個位是 6（藍色）、十分位是 4（綠色）、百分位是 9（粉紅色）。"
+      },
+      {
+        cardId: "su7-s1-q3",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(3)",
+        title: "2 個 0.1 和 5 個 0.01 合起來是多少？",
+        stemHtml: `看定位板：<span class="kw">2 個 0.1</span> 和 <span class="kw">5 個 0.01</span> 合起來是多少？`,
+        speechText: "看定位板：2 個 0.1 和 5 個 0.01 合起來是多少？",
+        hintText: "個位寫 0、十分位寫 2、百分位寫 5，合起來讀出來就是答案！",
+        kind: "choice",
+        visualHtml: renderPlaceValueBoard([{ ones: "0", tenths: "2", hundredths: "5", hlCols: ["tenths", "hundredths"] }]),
+        items: [
+          {
+            id: "su7_4",
+            expected: "0.25",
+            options: ["0.25", "2.5", "0.52"],
+            label: "一(3) 2個0.1和5個0.01合起來"
+          }
+        ],
+        explanation: "個位是 0，十分位是 2，百分位是 5，合起來就是 0.25。"
+      },
+      {
+        cardId: "su7-s1-q4",
+        sectionIdx: 1,
+        section: "第一大題：認識二位小數",
+        label: "(4)",
+        title: "3.05 要怎麼讀？",
+        stemHtml: `小數 <span class="kw">3.05</span> 要怎麼讀？`,
+        speechText: "小數 3.05 要怎麼讀？",
+        hintText: "照順序一個字一個字念：3 念三、小數點念點、0 念零、5 念五！",
+        kind: "choice",
+        visualHtml: renderReadChips([["3", "三"], [".", "點"], ["0", "零"], ["5", "五"]]),
+        items: [
+          {
+            id: "su7_5",
+            expected: "三點零五",
+            options: ["三點零五", "三點五", "三十五"],
+            label: "一(4) 3.05讀法"
+          }
+        ],
+        explanation: "3.05 照順序讀出「三點零五」，中間的 0 一定要讀「零」喔！"
+      },
+      {
+        cardId: "su7-s2-q1",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(1)",
+        title: "6 公尺 52 公分是多少公尺？",
+        stemHtml: `<span class="kw">6 公尺 52 公分</span> ＝ 多少公尺？`,
+        speechText: "6 公尺 52 公分，等於多少公尺？",
+        hintText: "6 公尺放在小數點前面，52 公分放在小數點後面！",
+        kind: "choice",
+        visualHtml: renderUnitConvCard("6 公尺（小數點前面）＋ 52 公分（小數點後面兩位）") +
+          renderPlaceValueBoard([{ ones: "6", tenths: "5", hundredths: "2" }]),
+        items: [
+          {
+            id: "su7_6",
+            expected: "6.52 公尺",
+            options: ["6.52 公尺", "65.2 公尺", "0.65 公尺"],
+            label: "二(1) 6公尺52公分＝幾公尺"
+          }
+        ],
+        explanation: "1 公尺＝100 公分，52 公分＝0.52 公尺，加上 6 公尺就是 6.52 公尺。"
+      },
+      {
+        cardId: "su7-s2-q2",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(2)",
+        title: "把公分換成公尺（填小數）",
+        stemHtml: `看小幫手，把 <span class="kw">公分換成公尺</span>：`,
+        speechText: "看小幫手，815 公分等於幾公尺？",
+        hintText: "800 公分是 8 公尺，剩下的 15 公分寫在小數點後面，變成 8.15！",
+        kind: "fill",
+        visualHtml: renderUnitConvCard("815 公分 ＝ 800 公分（8 公尺）＋ 15 公分（0.15 公尺）"),
+        rows: [
+          {
+            parts: [
+              "815 公分 ＝ ",
+              { id: "su7_7", type: "decimal", expected: "8.15", label: "二(2) 815公分＝幾公尺" },
+              " 公尺"
+            ]
+          }
+        ],
+        explanation: "100 公分＝1 公尺，815 公分＝8 公尺 15 公分＝8.15 公尺。"
+      },
+      {
+        cardId: "su7-s2-q3",
+        sectionIdx: 2,
+        section: "第二大題：小數與長度換算",
+        label: "(3)",
+        title: "把公尺拆成「幾公尺幾公分」",
+        stemHtml: `看小幫手，把 <span class="kw">4.86 公尺</span> 拆成幾公尺、幾公分：`,
+        speechText: "看小幫手，4.86 公尺等於幾公尺幾公分？",
+        hintText: "小數點前面的「4」是公尺，小數點後面的「86」是公分！",
+        kind: "fill",
+        visualHtml: renderUnitConvCard("小數點前面是「公尺」，小數點後面兩位是「公分」") +
+          renderPlaceValueBoard([{ ones: "4", tenths: "8", hundredths: "6", hlCols: ["ones"] }]),
+        rows: [
+          {
+            parts: [
+              "4.86 公尺 ＝ ",
+              { id: "su7_8", type: "integer", expected: "4", slotClass: "slot-ones", label: "二(3) 4.86公尺_公尺" },
+              " 公尺 ",
+              { id: "su7_9", type: "integer", expected: "86", slotClass: "slot-tenths", label: "二(3) 4.86公尺_公分" },
+              " 公分"
+            ]
+          }
+        ],
+        explanation: "4.86 公尺的小數點前面是 4 公尺，後面 0.86 公尺是 86 公分。"
+      },
+      {
+        cardId: "su7-s3-q1",
+        sectionIdx: 3,
+        section: "第三大題：小數比大小",
+        label: "(1)",
+        title: "看定位板比大小，點選 ＞、＜ 或 ＝",
+        stemHtml: `看對齊好的定位板，先比 <span class="kw">個位</span>，再比 <span class="kw">十分位</span>：`,
+        speechText: "看定位板比大小，第一小題 0.65 和 0.56 比大小；第二小題 8.25 和 8.52 比大小。",
+        hintText: "個位一樣大時，就比綠色的「十分位」誰比較大！",
+        kind: "compare",
+        visualHtml:
+          renderPlaceValueBoard([
+            { label: "① 左邊", ones: "0", tenths: "6", hundredths: "5", hlCols: ["tenths"] },
+            { label: "① 右邊", ones: "0", tenths: "5", hundredths: "6", hlCols: ["tenths"] }
+          ]) +
+          renderPlaceValueBoard([
+            { label: "② 左邊", ones: "8", tenths: "2", hundredths: "5", hlCols: ["tenths"] },
+            { label: "② 右邊", ones: "8", tenths: "5", hundredths: "2", hlCols: ["tenths"] }
+          ]),
+        items: [
+          { id: "su7_10", subLabel: "①", leftExpr: "0.65", rightExpr: "0.56", expected: ">", label: "三(1)① 0.65□0.56" },
+          { id: "su7_11", subLabel: "②", leftExpr: "8.25", rightExpr: "8.52", expected: "<", label: "三(1)② 8.25□8.52" }
+        ],
+        explanation: "① 個位都是 0，比十分位 6 ＞ 5，所以 0.65 ＞ 0.56；② 個位都是 8，比十分位 2 ＜ 5，所以 8.25 ＜ 8.52。"
+      },
+      {
+        cardId: "su7-s3-q2",
+        sectionIdx: 3,
+        section: "第三大題：小數比大小",
+        label: "(2)",
+        title: "先比整數部分，點選 ＞、＜ 或 ＝",
+        stemHtml: `比大小時，<span class="kw">先比小數點前面的整數</span>（17 和 16）：`,
+        speechText: "比大小，17.5 和 16.92，哪一個比較大？先比小數點前面的整數 17 和 16。",
+        hintText: "先看小數點前面的整數：17 比 16 大，馬上就能知道答案！",
+        kind: "compare",
+        visualHtml: renderPlaceValueBoard([
+          { label: "左邊", tens: "1", ones: "7", tenths: "5", hundredths: "0", hlCols: ["tens", "ones"] },
+          { label: "右邊", tens: "1", ones: "6", tenths: "9", hundredths: "2", hlCols: ["tens", "ones"] }
+        ]),
+        items: [
+          { id: "su7_12", subLabel: "①", leftExpr: "17.5", rightExpr: "16.92", expected: ">", label: "三(2)① 17.5□16.92" }
+        ],
+        explanation: "先比整數部分：17 ＞ 16，所以 17.5 ＞ 16.92。"
+      }
     ]
   },
   {
@@ -1520,10 +2939,10 @@ const UNITS = [
   }
 ];
 
-// 從卡片展開出線性計分單元（共 45 格）
-function extractScoringUnits(unit) {
+// 從卡片展開出線性計分單元
+function extractScoringUnitsFromCards(cards) {
   const list = [];
-  (unit.cards || []).forEach((card, cardIdx) => {
+  (cards || []).forEach((card, cardIdx) => {
     if (card.kind === "fill") {
       card.rows.forEach(row => {
         row.parts.forEach(p => {
@@ -1558,12 +2977,54 @@ function extractScoringUnits(unit) {
           section: card.section
         });
       });
+    } else if (card.kind === "choice") {
+      card.items.forEach(item => {
+        list.push({
+          ...item,
+          kind: "choice",
+          type: "choice",
+          cardIdx,
+          cardLabel: card.label,
+          section: card.section
+        });
+      });
     }
   });
   return list;
 }
 
-UNITS.forEach(u => { u.scoringUnits = extractScoringUnits(u); });
+UNITS.forEach(u => {
+  u.scoringUnits = extractScoringUnitsFromCards(u.cards);
+  u.supportScoringUnits = extractScoringUnitsFromCards(u.supportCards || []);
+});
+
+function getActiveUnitView(baseUnit, useAssist) {
+  if (!baseUnit) return null;
+  if (useAssist && baseUnit.supportCards && baseUnit.supportCards.length) {
+    return {
+      ...baseUnit,
+      isAssist: true,
+      hasAudioAssist: true,
+      sections: baseUnit.supportSections || baseUnit.sections,
+      cards: baseUnit.supportCards,
+      scoringUnits: baseUnit.supportScoringUnits
+    };
+  }
+  return {
+    ...baseUnit,
+    isAssist: false,
+    hasAudioAssist: false
+  };
+}
+
+function setComfortUI(enabled) {
+  document.body.classList.toggle("comfort-ui", !!enabled);
+  if (!enabled) {
+    autoTTSEnabled = false;
+    stopSpeech();
+  }
+  updateAutoTTSButtons();
+}
 
 // ==================== 輸入正規化與精準判分 ====================
 function normalizeMathInput(raw) {
@@ -1617,6 +3078,11 @@ function gradeScoringUnit(unitItem, rawVal) {
     return { status: ok ? 1 : 2, isCorrect: ok, normalized: s };
   }
 
+  if (unitItem.kind === "choice" || unitItem.type === "choice") {
+    const ok = s === normalizeMathInput(unitItem.expected);
+    return { status: ok ? 1 : 2, isCorrect: ok, normalized: String(rawVal || "").trim() };
+  }
+
   return { status: 2, isCorrect: false, normalized: s };
 }
 
@@ -1628,6 +3094,7 @@ function getCardUnitIds(card) {
   }
   if (card.kind === "match") return card.pairs.map(p => p.id);
   if (card.kind === "compare") return card.items.map(it => it.id);
+  if (card.kind === "choice") return card.items.map(it => it.id);
   return [];
 }
 
@@ -1675,11 +3142,14 @@ function showView(viewId) {
 }
 
 function goHome() {
+  stopSpeech();
+  setComfortUI(false);
   currentUnit = null;
   currentMode = "home";
   matchSelections = {};
   if (window.location.search && window.history && window.history.replaceState) {
-    window.history.replaceState(null, "", window.location.pathname);
+    const kept = initialUrlSupportParam ? `?s=${encodeURIComponent(initialUrlSupportParam)}` : "";
+    window.history.replaceState(null, "", window.location.pathname + kept);
   }
   showView("view-home");
 }
@@ -1701,6 +3171,11 @@ function renderHome() {
         <button class="action-btn exam" onclick="openExamLogin('${u.id}')">
           ✍️ 隨堂線上測驗
         </button>
+        ${u.mistakesReady ? `
+          <a class="action-btn" href="${u.mistakesHref}" style="text-decoration:none;flex:1 1 100%;background:#eef6f2;color:#1f6351;border:2px solid #9bd1c0;">
+            📖 錯題紀錄與類題練習
+          </a>
+        ` : ""}
       `;
     } else if (u.mistakesReady) {
       actionsHtml = `
@@ -1798,6 +3273,7 @@ function renderCardHTML(card, ctx) {
         const gRes = ctx.graded ? gradeScoringUnit(unitObj, val) : null;
 
         let inpCls = "math-input";
+        if (p.slotClass) inpCls += ` ${p.slotClass}`;
         if (isLocked) inpCls += " input-correct";
         else if (gRes) inpCls += gRes.isCorrect ? " input-correct" : " input-wrong";
 
@@ -2057,6 +3533,72 @@ function renderCardHTML(card, ctx) {
         </div>
       `;
     }).join("") + `</div>`;
+  } else if (card.kind === "choice") {
+    const badges = ["1", "2", "3", "4"];
+    bodyHtml = card.items.map(item => {
+      const uid = item.id;
+      const val = ctx.revealedOnly ? item.expected : (ctx.values[uid] ?? "");
+      const normVal = normalizeMathInput(val);
+      const normExp = normalizeMathInput(item.expected);
+      const isLocked = !!(ctx.lockedUnits && ctx.lockedUnits[uid]);
+      const isDisabled = !!(ctx.readOnly || isLocked);
+      const gRes = ctx.graded ? gradeScoringUnit(item, ctx.values[uid] ?? "") : null;
+
+      let fbHtml = "";
+      if (ctx.mode === "retry") {
+        if (isLocked) fbHtml = `<div style="margin-bottom:10px;"><span class="inline-feedback ok">✅ 原已答對</span></div>`;
+        else {
+          const prev = ctx.prevWrongValues?.[uid];
+          fbHtml = `<div style="margin-bottom:10px;"><span class="inline-feedback err">上次選擇：${prev ? escapeHTML(prev) : "未選"}</span></div>`;
+        }
+      } else if (ctx.graded) {
+        if (ctx.mode === "correction" && ctx.retryValues && ctx.retryValues[uid] !== undefined) {
+          const rVal = ctx.retryValues[uid];
+          const rRes = gradeScoringUnit(item, rVal);
+          if (rRes.isCorrect) fbHtml = `<div style="margin-top:12px;"><span class="inline-feedback ok">💪 訂正答對：${escapeHTML(rVal)}</span></div>`;
+          else fbHtml = `<div style="margin-top:12px;"><span class="inline-feedback err">❌ 訂正「${escapeHTML(rVal || "未選")}」｜正解：${escapeHTML(item.expected)}</span></div>`;
+        } else if (gRes.isCorrect) {
+          fbHtml = `<div style="margin-top:12px;"><span class="inline-feedback ok">✓ 答對</span></div>`;
+        } else if (ctx.hideAnswers) {
+          fbHtml = `<div style="margin-top:12px;"><span class="inline-feedback locked-hint">🔒 訂正後顯示正解</span></div>`;
+        } else {
+          fbHtml = `<div style="margin-top:12px;"><span class="inline-feedback err">正解：${escapeHTML(item.expected)}</span></div>`;
+        }
+      }
+
+      const listCls = (item.options.length === 2 && !ctx.audioAssist) ? "choice-list cols-2" : "choice-list";
+      const optsHtml = item.options.map((opt, oIdx) => {
+        const isSelected = normVal !== "" && normVal === normalizeMathInput(opt);
+        const isExpected = normExp === normalizeMathInput(opt);
+        let btnCls = "choice-btn";
+        if (ctx.graded) {
+          if (isSelected && gRes.isCorrect) btnCls += " choice-ok";
+          else if (isSelected && !gRes.isCorrect) btnCls += " choice-err";
+          else if (!ctx.hideAnswers && isExpected) btnCls += " choice-ok";
+        } else if (isLocked && isSelected) {
+          btnCls += " choice-ok";
+        } else if (isSelected) {
+          btnCls += " selected";
+        }
+        const safeOptArg = escapeHTML(opt).replace(/'/g, "&#39;");
+        const speakMiniBtn = ctx.audioAssist
+          ? `<button type="button" class="choice-speak-mini" title="朗讀選項" onclick="speakOptionText('${safeOptArg}', event)">🔊</button>`
+          : "";
+        return `
+          <div class="choice-row-wrap">
+            <button type="button" class="${btnCls}"
+              ${isDisabled ? "disabled" : ""}
+              onclick="selectChoiceOption('${ctx.scope}', '${uid}', ${oIdx}, '${card.cardId}')">
+              <span class="choice-opt-badge">${badges[oIdx] || (oIdx + 1)}</span>
+              <span>${escapeHTML(opt)}</span>
+            </button>
+            ${speakMiniBtn}
+          </div>
+        `;
+      }).join("");
+
+      return `${ctx.mode === "retry" ? fbHtml : ""}<div class="${listCls}">${optsHtml}</div>${ctx.mode !== "retry" ? fbHtml : ""}`;
+    }).join("");
   }
 
   // 解析區塊
@@ -2079,15 +3621,31 @@ function renderCardHTML(card, ctx) {
     }
   }
 
+  const titleContentHtml = card.stemHtml ? card.stemHtml : escapeHTML(card.title);
+  const ttsBtnHtml = ctx.audioAssist
+    ? `<button type="button" class="card-tts-btn" onclick="speakCardById('${card.cardId}', this)">🔊 念題目</button>`
+    : "";
+  const hintBoxHtml = card.hintText
+    ? `<div class="hint-banner">💡 小提示：${escapeHTML(card.hintText)}</div>`
+    : "";
+  const visualBoxHtml = card.visualHtml
+    ? `<div class="visual-aid-box">${card.visualHtml}</div>`
+    : "";
+
   return `
     <div class="stage-card">
       <div class="card-header-row">
         <span class="section-pill ${secClass}">${escapeHTML(card.section)}</span>
         ${cardBadgeHtml}
       </div>
-      <div class="question-title-text">
-        <span class="question-num-pill">${escapeHTML(card.label)}</span>${escapeHTML(card.title)}
+      <div class="card-title-row">
+        <div class="question-title-text">
+          <span class="question-num-pill">${escapeHTML(card.label)}</span>${titleContentHtml}
+        </div>
+        ${ttsBtnHtml}
       </div>
+      ${hintBoxHtml}
+      ${visualBoxHtml}
       ${bodyHtml}
       ${expHtml}
     </div>
@@ -2156,6 +3714,19 @@ function selectCompareSymbol(scope, uid, sym) {
   const { values, locked } = getScopeState(scope);
   if (locked && locked[uid]) return;
   values[uid] = (values[uid] === sym) ? "" : sym;
+  redrawScopeAfterChange(scope);
+}
+
+// 選擇題點選事件
+function selectChoiceOption(scope, uid, optIdx, cardId) {
+  const { values, locked } = getScopeState(scope);
+  if (locked && locked[uid]) return;
+  const card = currentUnit && currentUnit.cards.find(c => c.cardId === cardId);
+  if (!card || !card.items) return;
+  const item = card.items.find(it => it.id === uid);
+  if (!item || !item.options || item.options[optIdx] === undefined) return;
+  const chosen = item.options[optIdx];
+  values[uid] = (normalizeMathInput(values[uid] || "") === normalizeMathInput(chosen)) ? "" : chosen;
   redrawScopeAfterChange(scope);
 }
 
@@ -2343,8 +3914,11 @@ function getPracFilteredCards() {
 }
 
 function openPracticeMode(unitId) {
-  currentUnit = UNITS.find(u => u.id === unitId);
-  if (!currentUnit || !currentUnit.ready) return;
+  const baseUnit = UNITS.find(u => u.id === unitId);
+  if (!baseUnit || !baseUnit.ready) return;
+  const useAssist = (initialUrlSupportParam === "preview");
+  currentUnit = getActiveUnitView(baseUnit, useAssist);
+  setComfortUI(currentUnit.isAssist);
   currentMode = "practice";
   pracSectionFilter = 0;
   pracCardIndex = 0;
@@ -2360,6 +3934,7 @@ function openPracticeMode(unitId) {
 
   renderPracSectionTabs();
   renderPracticeStage();
+  maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   showView("view-practice");
 }
 
@@ -2378,7 +3953,10 @@ function setPracSectionFilter(secIdx) {
   pracCardIndex = 0;
   renderPracSectionTabs();
   if (pracIsListMode) renderPracticeList();
-  else renderPracticeStage();
+  else {
+    renderPracticeStage();
+    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
+  }
 }
 
 function updatePracDotsOnly() {
@@ -2420,7 +3998,8 @@ function renderPracticeStage() {
     graded: st.graded,
     revealedOnly: st.revealed && !st.graded,
     showExplanation: st.graded || st.revealed,
-    readOnly: false
+    readOnly: false,
+    audioAssist: !!(currentUnit && currentUnit.hasAudioAssist)
   };
 
   document.getElementById("prac-stage-card-slot").innerHTML = renderCardHTML(card, ctx);
@@ -2454,11 +4033,19 @@ function resetPracCurrentCard() {
 }
 
 function prevPracCard() {
-  if (pracCardIndex > 0) { pracCardIndex--; renderPracticeStage(); }
+  if (pracCardIndex > 0) {
+    pracCardIndex--;
+    renderPracticeStage();
+    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
+  }
 }
 function nextPracCard() {
   const cards = getPracFilteredCards();
-  if (pracCardIndex < cards.length - 1) { pracCardIndex++; renderPracticeStage(); }
+  if (pracCardIndex < cards.length - 1) {
+    pracCardIndex++;
+    renderPracticeStage();
+    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
+  }
 }
 function jumpPracCard(idx) {
   pracCardIndex = idx;
@@ -2468,6 +4055,7 @@ function jumpPracCard(idx) {
     if (targetEl) targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
   } else {
     renderPracticeStage();
+    maybeAutoSpeakCard(getPracFilteredCards()[pracCardIndex]);
   }
 }
 
@@ -2503,7 +4091,8 @@ function renderPracticeList() {
       graded: st.graded,
       revealedOnly: st.revealed && !st.graded,
       showExplanation: st.graded || st.revealed,
-      readOnly: false
+      readOnly: false,
+      audioAssist: !!(currentUnit && currentUnit.hasAudioAssist)
     };
     return `
       <div id="prac-list-anchor-${card.cardId}">
@@ -2549,14 +4138,15 @@ function clearDailyLocalRecord(examId, cls, seat) {
   try { localStorage.removeItem(getDailyStorageKey(examId, cls, seat)); } catch {}
 }
 
-function parseRawAnswersFromName(nameStr, totalUnits) {
+function parseRawAnswersFromName(nameStr, totalUnits, unitObj) {
   const map = {};
+  const targetUnit = unitObj || currentUnit;
   if (!nameStr || typeof nameStr !== "string") return map;
   if (nameStr.startsWith("M1:")) {
     try {
       const arr = JSON.parse(nameStr.slice(3));
-      if (Array.isArray(arr) && currentUnit) {
-        currentUnit.scoringUnits.forEach((u, i) => {
+      if (Array.isArray(arr) && targetUnit) {
+        targetUnit.scoringUnits.forEach((u, i) => {
           if (arr[i] !== undefined) map[u.id] = String(arr[i]);
         });
       }
@@ -2770,9 +4360,11 @@ async function checkStudentDailyStatus(examId, cls, seat) {
 }
 
 function openExamLogin(unitId) {
-  currentUnit = UNITS.find(u => u.id === unitId);
-  if (!currentUnit || !currentUnit.ready) return;
-  document.getElementById("login-unit-title").textContent = `${currentUnit.unitNum}《${currentUnit.title}》線上測驗`;
+  const baseUnit = UNITS.find(u => u.id === unitId);
+  if (!baseUnit || !baseUnit.ready) return;
+  currentUnit = getActiveUnitView(baseUnit, false);
+  setComfortUI(false);
+  document.getElementById("login-unit-title").textContent = `${baseUnit.unitNum}《${baseUnit.title}》線上測驗`;
   document.getElementById("student-seat").value = "";
   const loginBtn = document.querySelector("#student-login-form .btn-submit-login");
   if (loginBtn) {
@@ -2798,7 +4390,9 @@ async function startStudentExam(e) {
     }
   }
   const seat = parseInt(seatVal, 10);
-  const examId = currentUnit.examId;
+  const baseUnit = UNITS.find(u => u.id === currentUnit?.id);
+  if (!baseUnit) return;
+  const examId = baseUnit.examId;
 
   const loginBtn = document.querySelector("#student-login-form .btn-submit-login");
   if (loginBtn) {
@@ -2806,6 +4400,7 @@ async function startStudentExam(e) {
     loginBtn.textContent = "⏳ 檢查今日作答紀錄中...";
   }
 
+  await ensureRemoteSupportTokensLoaded();
   const check = await checkStudentDailyStatus(examId, cls, seat);
 
   if (loginBtn) {
@@ -2817,6 +4412,12 @@ async function startStudentExam(e) {
 
   if (check.status === "found") {
     currentSubmission = check.record;
+    const savedIsAssist = String(currentSubmission.client_id || "").endsWith("__sup");
+    currentUnit = getActiveUnitView(baseUnit, savedIsAssist);
+    setComfortUI(currentUnit.isAssist);
+    if (currentSubmission.name) {
+      currentSubmission.rawValues = parseRawAnswersFromName(currentSubmission.name, currentSubmission.total, currentUnit);
+    }
     examValues = { ...(currentSubmission.rawValues || {}) };
     answersRevealedWithoutRetry = false;
     const rawPct = Math.round((currentSubmission.score / currentSubmission.total) * 100);
@@ -2830,6 +4431,10 @@ async function startStudentExam(e) {
     showView("view-exam-result");
     return;
   }
+
+  const useAssist = checkSeatUsesAssist(cls, seat);
+  currentUnit = getActiveUnitView(baseUnit, useAssist);
+  setComfortUI(currentUnit.isAssist);
 
   currentSubmission = null;
   examSectionFilter = 0;
@@ -2847,6 +4452,7 @@ async function startStudentExam(e) {
 
   renderExamSectionTabs();
   renderExamStage();
+  maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
   showView("view-exam-test");
 }
 
@@ -2871,6 +4477,7 @@ function setExamSectionFilter(secIdx) {
   examCardIndex = 0;
   renderExamSectionTabs();
   renderExamStage();
+  maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
 }
 
 function updateExamDotsAndProgressOnly() {
@@ -2906,7 +4513,8 @@ function renderExamStage() {
     values: examValues,
     graded: false,
     showExplanation: false,
-    readOnly: false
+    readOnly: false,
+    audioAssist: !!(currentUnit && currentUnit.hasAudioAssist)
   };
 
   document.getElementById("exam-stage-card-slot").innerHTML = renderCardHTML(card, ctx);
@@ -2916,15 +4524,24 @@ function renderExamStage() {
 }
 
 function prevExamCard() {
-  if (examCardIndex > 0) { examCardIndex--; renderExamStage(); }
+  if (examCardIndex > 0) {
+    examCardIndex--;
+    renderExamStage();
+    maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
+  }
 }
 function nextExamCard() {
   const cards = getExamFilteredCards();
-  if (examCardIndex < cards.length - 1) { examCardIndex++; renderExamStage(); }
+  if (examCardIndex < cards.length - 1) {
+    examCardIndex++;
+    renderExamStage();
+    maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
+  }
 }
 function jumpExamCard(idx) {
   examCardIndex = idx;
   renderExamStage();
+  maybeAutoSpeakCard(getExamFilteredCards()[examCardIndex]);
 }
 
 // 送出正式考卷
@@ -2966,7 +4583,8 @@ async function confirmSubmitExam() {
   const total = currentUnit.scoringUnits.length;
   const examId = currentUnit.examId;
   const examTitle = `${currentUnit.unitNum}《${currentUnit.title}》`;
-  const clientId = (crypto.randomUUID ? crypto.randomUUID() : `cid-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const rawCid = (crypto.randomUUID ? crypto.randomUUID() : `cid-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const clientId = currentUnit.isAssist ? `${rawCid}__sup` : rawCid;
   const serializedName = `M1:${JSON.stringify(rawArr)}`;
 
   const payload = {
@@ -3007,6 +4625,15 @@ async function confirmSubmitExam() {
     const check = await checkStudentDailyStatus(examId, currentStudent.class, currentStudent.seat);
     if (check.status === "found") {
       currentSubmission = check.record;
+      const baseUnit = UNITS.find(u => u.id === currentUnit?.id);
+      if (baseUnit) {
+        const savedIsAssist = String(currentSubmission.client_id || "").endsWith("__sup");
+        currentUnit = getActiveUnitView(baseUnit, savedIsAssist);
+        setComfortUI(currentUnit.isAssist);
+        if (currentSubmission.name) {
+          currentSubmission.rawValues = parseRawAnswersFromName(currentSubmission.name, currentSubmission.total, currentUnit);
+        }
+      }
       examValues = { ...(currentSubmission.rawValues || {}) };
       currentMode = "result";
       renderExamResultView(true);
@@ -3183,7 +4810,8 @@ function renderCorrectionSheet() {
       graded: true,
       hideAnswers: hideAnsForThisCard,
       showExplanation: true,
-      readOnly: true
+      readOnly: true,
+      audioAssist: !!(currentUnit && currentUnit.hasAudioAssist)
     };
     html += renderCardHTML(card, ctx);
   });
@@ -3246,7 +4874,8 @@ function renderRetryCards() {
       prevWrongValues: origValues,
       graded: false,
       showExplanation: false,
-      readOnly: false
+      readOnly: false,
+      audioAssist: !!(currentUnit && currentUnit.hasAudioAssist)
     };
     return renderCardHTML(card, ctx);
   }).join("");
@@ -3371,6 +5000,7 @@ function handleInitialRoute() {
 // 初始化
 initSeatSelect();
 renderHome();
+loadRemoteSupportTokens();
 syncPendingLocalRetries();
 handleInitialRoute();
 </script>
